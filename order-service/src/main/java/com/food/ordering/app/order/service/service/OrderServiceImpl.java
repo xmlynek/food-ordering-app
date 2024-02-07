@@ -1,9 +1,9 @@
-package com.food.ordering.app.order.service;
+package com.food.ordering.app.order.service.service;
 
-import com.food.ordering.app.order.entity.Order;
-import com.food.ordering.app.order.entity.OrderStatus;
-import com.food.ordering.app.order.repository.OrderItemRepository;
-import com.food.ordering.app.order.repository.OrderRepository;
+import com.food.ordering.app.order.service.entity.Order;
+import com.food.ordering.app.order.service.entity.OrderStatus;
+import com.food.ordering.app.order.service.repository.OrderItemRepository;
+import com.food.ordering.app.order.service.repository.OrderRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.food.ordering.app.order.exception;
+package com.food.ordering.app.order.service.exception;
 
 import java.util.HashMap;
 import java.util.List;

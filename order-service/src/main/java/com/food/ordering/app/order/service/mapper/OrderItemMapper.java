@@ -1,7 +1,7 @@
-package com.food.ordering.app.order.mapper;
+package com.food.ordering.app.order.service.mapper;
 
-import com.food.ordering.app.order.dto.OrderItemRequest;
-import com.food.ordering.app.order.entity.OrderItem;
+import com.food.ordering.app.order.service.dto.OrderItemRequest;
+import com.food.ordering.app.order.service.entity.OrderItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

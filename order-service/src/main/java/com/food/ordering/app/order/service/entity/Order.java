@@ -1,4 +1,4 @@
-package com.food.ordering.app.order.entity;
+package com.food.ordering.app.order.service.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

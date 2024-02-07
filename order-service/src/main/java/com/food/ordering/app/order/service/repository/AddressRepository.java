@@ -1,6 +1,6 @@
-package com.food.ordering.app.order.repository;
+package com.food.ordering.app.order.service.repository;
 
-import com.food.ordering.app.order.entity.Address;
+import com.food.ordering.app.order.service.entity.Address;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 

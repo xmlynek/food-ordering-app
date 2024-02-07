@@ -1,10 +1,10 @@
-package com.food.ordering.app.order.controller;
+package com.food.ordering.app.order.service.controller;
 
-import com.food.ordering.app.order.dto.OrderCreatedResponse;
-import com.food.ordering.app.order.dto.OrderRequest;
-import com.food.ordering.app.order.entity.Order;
-import com.food.ordering.app.order.mapper.OrderMapper;
-import com.food.ordering.app.order.service.OrderService;
+import com.food.ordering.app.order.service.dto.OrderCreatedResponse;
+import com.food.ordering.app.order.service.dto.OrderRequest;
+import com.food.ordering.app.order.service.entity.Order;
+import com.food.ordering.app.order.service.mapper.OrderMapper;
+import com.food.ordering.app.order.service.service.OrderService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
