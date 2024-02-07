@@ -6,6 +6,12 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+    database: postgresql
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orders
+    username: admin
+    password: password
+    driver-class-name: org.postgresql.Driver
   docker:
     compose:
       lifecycle-management: start_only
