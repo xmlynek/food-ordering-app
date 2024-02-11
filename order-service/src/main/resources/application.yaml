@@ -15,3 +15,8 @@ spring:
   docker:
     compose:
       lifecycle-management: start_only
+axon:
+  serializer:
+    events: jackson
+    general: jackson
+    messages: jackson

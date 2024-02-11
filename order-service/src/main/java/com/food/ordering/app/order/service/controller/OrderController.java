@@ -1,5 +1,6 @@
 package com.food.ordering.app.order.service.controller;
 
+import com.food.ordering.app.command.CreateOrderCommand;
 import com.food.ordering.app.order.service.dto.OrderCreatedResponse;
 import com.food.ordering.app.order.service.dto.OrderRequest;
 import com.food.ordering.app.order.service.entity.Order;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +29,8 @@ public class OrderController {
   private final OrderService orderService;
   private final OrderMapper orderMapper;
 
+  private final CommandGateway commandGateway;
+
   @GetMapping
   public String getOrderById() {
     return "hello";
@@ -37,6 +41,12 @@ public class OrderController {
   public OrderCreatedResponse createOrder(@Valid @RequestBody OrderRequest orderRequest) {
     Order createdOrder = orderService.createOrder(
         orderMapper.orderRequestToOrderEntity(orderRequest));
+    commandGateway.send(CreateOrderCommand.builder()
+//            .orderId(UUID.randomUUID())
+            .customerId(orderRequest.customerId())
+            .price(orderRequest.price())
+            .restaurantId(orderRequest.restaurantId())
+        .build());
     return orderMapper.orderEntityToOrderCreatedResponse(createdOrder);
   }
 
@@ -49,7 +59,8 @@ public class OrderController {
   }
 
   @GetMapping("/{orderId}")
-  public OrderCreatedResponse findOrderByOrderIdAndCustomerId(@PathVariable("orderId") UUID orderId) {
+  public OrderCreatedResponse findOrderByOrderIdAndCustomerId(
+      @PathVariable("orderId") UUID orderId) {
     return orderMapper.orderEntityToOrderCreatedResponse(
         orderService.findByOrderId(orderId));
   }
