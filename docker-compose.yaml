@@ -22,6 +22,36 @@ services:
       - postgres
     networks:
       - postgres
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0.3
+    environment:
+      KEYCLOAK_USER: user
+      KEYCLOAK_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command:
+      - start-dev
+#      - --import-realm
+#    volumes:
+#      - ./keycloak/export:/opt/keycloak/data/import
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+
+  axonserver:
+    image: axoniq/axonserver:2023.2.2-jdk-17
+    hostname: axonserver
+    volumes:
+      - ./volumes/axonserver-data:/data
+      - ./volumes/axonserver-events:/eventdata
+      - ./volumes/axonserver-config:/config:ro
+    ports:
+      - '8024:8024'
+      - '8124:8124'
+    environment:
+      AXONIQ_AXONSERVER_NAME: food-ordering-axon-server
+
   zipkin:
     image: 'openzipkin/zipkin:latest'
     ports:
