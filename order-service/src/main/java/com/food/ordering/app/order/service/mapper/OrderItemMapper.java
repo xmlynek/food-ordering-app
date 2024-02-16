@@ -1,5 +1,6 @@
 package com.food.ordering.app.order.service.mapper;
 
+import com.food.ordering.app.common.dto.Product;
 import com.food.ordering.app.order.service.dto.OrderItemRequest;
 import com.food.ordering.app.order.service.entity.OrderItem;
 import org.mapstruct.Mapper;
@@ -12,5 +13,7 @@ public interface OrderItemMapper {
   @Mapping(target = "order", ignore = true)
   @Mapping(target = "totalPrice", ignore = true)
   OrderItem orderItemRequestToOrderItemEntity(OrderItemRequest orderItemRequest);
+
+  Product orderItemRequestToProduct(OrderItemRequest orderItemRequest);
 
 }

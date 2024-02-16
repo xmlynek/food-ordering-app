@@ -63,6 +63,11 @@
       <artifactId>axon-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.axonframework.extensions.kafka</groupId>
+      <artifactId>axon-kafka-spring-boot-starter</artifactId>
+    </dependency>
+
 
     <dependency>
       <groupId>com.food.ordering.app</groupId>
@@ -75,12 +80,7 @@
       <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-docker-compose</artifactId>
-      <scope>runtime</scope>
-      <optional>true</optional>
-    </dependency>
+
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>

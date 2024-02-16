@@ -4,7 +4,7 @@ server:
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     database: postgresql
   datasource:
@@ -12,5 +12,55 @@ spring:
     username: admin
     password: password
     driver-class-name: org.postgresql.Driver
+  main:
+    allow-circular-references: true
 
+axon:
+  distributed:
+    enabled: true
+  eventhandling:
+    processors:
+      "[WalletProcessor]":
+        source: kafkaMessageSource
+        mode: subscribing
+  serializer:
+    events: jackson
+    general: jackson
+    messages: jackson
+  kafka:
+    bootstrap-servers: localhost:19092
+    client-id: payment
+    default-topic: local.event
+    properties:
+      security.protocol: PLAINTEXT
 
+    publisher:
+      confirmation-mode: wait_for_ack
+
+    producer:
+#      transaction-id-prefix: payment-service
+      retries: 3
+      event-processor-mode: subscribing
+      # For additional unnamed properties, add them to the `properties` map like so
+      acks: all
+      compression-type: snappy
+      bootstrap-servers: localhost:29092
+
+    #      properties:
+    #        some-key: [ some-value ]
+
+    fetcher:
+      poll-timeout: 3000
+
+    consumer:
+      enable-auto-commit: true
+      auto-commit-interval: 3000
+      event-processor-mode: pooled_streaming
+      # For additional unnamed properties, add them to the `properties` map like so
+      auto-offset-reset: largest
+      properties:
+        auto-startup: true
+      client-id: payment
+      bootstrap-servers: localhost:29092
+#      properties:
+#        some-key: [ some-value ]
