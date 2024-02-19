@@ -99,7 +99,7 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
     log.info("Approve order by restaurant with id {} started for order id: {}",
         data.getRestaurantId().toString(), data.getOrderId().toString());
     return restaurantServiceProxy.approveOrder(data.getOrderId(), data.getCustomerId(),
-        data.getRestaurantId());
+        data.getRestaurantId(), data.getItems());
   }
 
 
