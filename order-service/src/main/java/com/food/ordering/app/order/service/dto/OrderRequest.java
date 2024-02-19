@@ -14,4 +14,8 @@ public record OrderRequest(@NotNull(message = "CustomerId is required") UUID cus
                            @NotNull(message = "Address is required") @Valid AddressRequest address,
                            @NotEmpty(message = "List of items cannot be empty") List<@Valid OrderItemRequest> items) {
 
+  // needed for
+  public BigDecimal getPrice() {
+    return this.price;
+  }
 }

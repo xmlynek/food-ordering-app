@@ -51,12 +51,6 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-docker-compose</artifactId>
-      <scope>runtime</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <scope>runtime</scope>
@@ -71,6 +65,58 @@
       <artifactId>lombok</artifactId>
       <optional>true</optional>
     </dependency>
+
+    <dependency>
+      <groupId>com.food.ordering.app</groupId>
+      <artifactId>common</artifactId>
+    </dependency>
+
+<!--    eventuate tram-->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-optimistic-locking</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-messaging-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-commands-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-spring-orchestration-simple-dsl-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-jdbc-kafka</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-flyway</artifactId>
+    </dependency>
+    <!-- Eventuate Tram Sagas Dependencies -->
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-spring-flyway</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- Eventuate Common Dependencies -->
+<!--    <dependency>-->
+<!--      <groupId>io.eventuate.common</groupId>-->
+<!--      <artifactId>eventuate-common-jdbc</artifactId>-->
+<!--    </dependency>-->
+    <!-- Flyway Core -->
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-testcontainers</artifactId>

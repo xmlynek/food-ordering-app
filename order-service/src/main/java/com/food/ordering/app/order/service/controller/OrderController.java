@@ -4,6 +4,7 @@ import com.food.ordering.app.order.service.dto.OrderCreatedResponse;
 import com.food.ordering.app.order.service.dto.OrderRequest;
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.mapper.OrderMapper;
+import com.food.ordering.app.order.service.service.OrderSagaService;
 import com.food.ordering.app.order.service.service.OrderService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -25,19 +26,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
   private final OrderService orderService;
+  private final OrderSagaService orderSagaService;
   private final OrderMapper orderMapper;
 
-  @GetMapping
-  public String getOrderById() {
-    return "hello";
-  }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public OrderCreatedResponse createOrder(@Valid @RequestBody OrderRequest orderRequest) {
-    Order createdOrder = orderService.createOrder(
+    Order createdOrder = orderSagaService.saveOrderAndCreateOrderSaga(
         orderMapper.orderRequestToOrderEntity(orderRequest));
     return orderMapper.orderEntityToOrderCreatedResponse(createdOrder);
+  }
+
+  // FIXME: replace with dto
+  @GetMapping("/{orderId}")
+  public Order getOrderById(@PathVariable("orderId") UUID orderId) {
+    return orderService.findByOrderId(orderId);
   }
 
   @GetMapping("/customer/{customerId}")
@@ -48,10 +52,11 @@ public class OrderController {
             Collectors.toList());
   }
 
-  @GetMapping("/{orderId}")
-  public OrderCreatedResponse findOrderByOrderIdAndCustomerId(@PathVariable("orderId") UUID orderId) {
-    return orderMapper.orderEntityToOrderCreatedResponse(
-        orderService.findByOrderId(orderId));
-  }
+//  @GetMapping("/{orderId}")
+//  public OrderCreatedResponse findOrderByOrderIdAndCustomerId(
+//      @PathVariable("orderId") UUID orderId) {
+//    return orderMapper.orderEntityToOrderCreatedResponse(
+//        orderService.findByOrderId(orderId));
+//  }
 
 }
