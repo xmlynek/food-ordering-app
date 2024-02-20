@@ -8,6 +8,15 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: order_service
 
+  payment-service-postgres:
+    image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: payment_service
+
   pgadmin:
     image: dpage/pgadmin4
     environment:
@@ -53,6 +62,7 @@ services:
       - "8099:8080"
     depends_on:
       - order-service-postgres
+      - payment-service-postgres
       - kafka
       - zookeeper
     environment:
@@ -71,20 +81,20 @@ services:
       EVENTUATE_CDC_READER_READER1_OFFSETSTORAGETOPICNAME: db.history.common
       EVENTUATE_CDC_READER_READER1_OUTBOXID: 1
 
-#      EVENTUATE_CDC_READER_READER2_TYPE: postgres-wal
-#      EVENTUATE_CDC_READER_READER2_DATASOURCEURL: jdbc:postgresql://order-service-postgres:5432/order_service
-#      EVENTUATE_CDC_READER_READER2_MONITORINGSCHEMA: public
-#      EVENTUATE_CDC_READER_READER2_DATASOURCEUSERNAME: eventuate
-#      EVENTUATE_CDC_READER_READER2_DATASOURCEPASSWORD: eventuate
-#      EVENTUATE_CDC_READER_READER2_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
-#      EVENTUATE_CDC_READER_READER2_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/order_service
-#      EVENTUATE_CDC_READER_READER2_OFFSETSTORAGETOPICNAME: db.history.common
-#      EVENTUATE_CDC_READER_READER2_OUTBOXID: 2
+      EVENTUATE_CDC_READER_READER2_TYPE: postgres-wal
+      EVENTUATE_CDC_READER_READER2_DATASOURCEURL: jdbc:postgresql://payment-service-postgres:5432/payment_service
+      EVENTUATE_CDC_READER_READER2_MONITORINGSCHEMA: public
+      EVENTUATE_CDC_READER_READER2_DATASOURCEUSERNAME: admin
+      EVENTUATE_CDC_READER_READER2_DATASOURCEPASSWORD: password
+      EVENTUATE_CDC_READER_READER2_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
+      EVENTUATE_CDC_READER_READER2_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/payment_service
+      EVENTUATE_CDC_READER_READER2_OFFSETSTORAGETOPICNAME: db.history.common
+      EVENTUATE_CDC_READER_READER2_OUTBOXID: 2
 
       EVENTUATE_CDC_PIPELINE_PIPELINE1_TYPE: eventuate-tram
       EVENTUATE_CDC_PIPELINE_PIPELINE1_READER: reader1
       EVENTUATE_CDC_PIPELINE_PIPELINE1_EVENTUATEDATABASESCHEMA: public
-#
-#      EVENTUATE_CDC_PIPELINE_PIPELINE2_TYPE: eventuate-tram
-#      EVENTUATE_CDC_PIPELINE_PIPELINE2_READER: reader2
-#      EVENTUATE_CDC_PIPELINE_PIPELINE2_EVENTUATEDATABASESCHEMA: public
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_READER: reader2
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_EVENTUATEDATABASESCHEMA: public

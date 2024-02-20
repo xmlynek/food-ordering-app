@@ -4,7 +4,7 @@ import java.util.UUID;
 import lombok.Builder;
 
 @Builder
-public record ProcessPaymentFailed(UUID paymentId, UUID orderId, String failureMessage) implements
+public record ProcessPaymentFailed(UUID orderId, UUID customerId, String failureMessage) implements
     ProcessPaymentResponse {
 
 }

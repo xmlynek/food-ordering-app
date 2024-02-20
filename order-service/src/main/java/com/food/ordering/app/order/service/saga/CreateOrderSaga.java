@@ -32,7 +32,7 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
           .invokeParticipant(this::processPayment)
           .onReply(ProcessPaymentSucceeded.class, this::handleProcessPaymentSucceeded)
           .onReply(ProcessPaymentFailed.class, this::handleProcessPaymentFailed)
-          // TODO: handle failure
+          .withCompensation(this::cancelPayment)
           .step()
           .invokeParticipant(this::approveOrderByRestaurant)
           .onReply(OrderApproveSucceeded.class, this::handleOrderApproveSucceeded)
@@ -46,6 +46,13 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
   @Override
   public SagaDefinition<CreateOrderSagaData> getSagaDefinition() {
     return this.sagaDefinition;
+  }
+
+  private CommandWithDestination cancelPayment(CreateOrderSagaData data) {
+    log.info("Cancel payment compensation saga step started for order {} and payment {}",
+        data.getOrderId().toString(), data.getPaymentId().toString());
+    return paymentServiceProxy.cancelPayment(data.getPaymentId(), data.getOrderId(),
+        data.getCustomerId(), data.getPrice());
   }
 
   private void createOrder(CreateOrderSagaData sagaData) {
@@ -79,14 +86,14 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
 
   private void handleProcessPaymentSucceeded(CreateOrderSagaData data,
       ProcessPaymentSucceeded response) {
+    data.setPaymentId(response.paymentId());
     log.info("Process payment succeeded with for order id: {}, with payment id: {}",
         data.getOrderId().toString(), response.paymentId().toString());
   }
 
   private void handleProcessPaymentFailed(CreateOrderSagaData data,
       ProcessPaymentFailed processPaymentFailed) {
-    log.info("Process payment failed for order id: {}, with payment id: {}",
-        data.getOrderId().toString(), processPaymentFailed.paymentId().toString());
+    log.info("Process payment failed for order id: {}", data.getOrderId().toString());
   }
 
   private CommandWithDestination processPayment(CreateOrderSagaData data) {

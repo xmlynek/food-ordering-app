@@ -24,6 +24,8 @@ public class CreateOrderSagaData {
 
   private UUID restaurantId;
 
+  private UUID paymentId;
+
   private OrderStatus orderStatus;
 
   private Money price;

@@ -5,13 +5,16 @@ import com.food.ordering.app.order.service.dto.OrderItemRequest;
 import com.food.ordering.app.order.service.entity.OrderItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 public interface OrderItemMapper {
 
-  @Mapping(target = "id", ignore = true)
-  @Mapping(target = "order", ignore = true)
-  @Mapping(target = "totalPrice", ignore = true)
+  @Mappings({
+      @Mapping(target = "id", ignore = true),
+      @Mapping(target = "order", ignore = true),
+      @Mapping(target = "totalPrice", ignore = true)
+  })
   OrderItem orderItemRequestToOrderItemEntity(OrderItemRequest orderItemRequest);
 
   OrderProduct orderItemEntityToOrderProduct(OrderItem orderItem);
