@@ -17,6 +17,15 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: payment_service
 
+  restaurant-service-postgres:
+    image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: restaurant_service
+
   pgadmin:
     image: dpage/pgadmin4
     environment:
@@ -63,6 +72,7 @@ services:
     depends_on:
       - order-service-postgres
       - payment-service-postgres
+      - restaurant-service-postgres
       - kafka
       - zookeeper
     environment:
@@ -91,6 +101,16 @@ services:
       EVENTUATE_CDC_READER_READER2_OFFSETSTORAGETOPICNAME: db.history.common
       EVENTUATE_CDC_READER_READER2_OUTBOXID: 2
 
+      EVENTUATE_CDC_READER_READER3_TYPE: postgres-wal
+      EVENTUATE_CDC_READER_READER3_DATASOURCEURL: jdbc:postgresql://restaurant-service-postgres:5432/restaurant_service
+      EVENTUATE_CDC_READER_READER3_MONITORINGSCHEMA: public
+      EVENTUATE_CDC_READER_READER3_DATASOURCEUSERNAME: admin
+      EVENTUATE_CDC_READER_READER3_DATASOURCEPASSWORD: password
+      EVENTUATE_CDC_READER_READER3_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
+      EVENTUATE_CDC_READER_READER3_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/restaurant_service
+      EVENTUATE_CDC_READER_READER3_OFFSETSTORAGETOPICNAME: db.history.common
+      EVENTUATE_CDC_READER_READER3_OUTBOXID: 3
+
       EVENTUATE_CDC_PIPELINE_PIPELINE1_TYPE: eventuate-tram
       EVENTUATE_CDC_PIPELINE_PIPELINE1_READER: reader1
       EVENTUATE_CDC_PIPELINE_PIPELINE1_EVENTUATEDATABASESCHEMA: public
@@ -98,3 +118,7 @@ services:
       EVENTUATE_CDC_PIPELINE_PIPELINE2_TYPE: eventuate-tram
       EVENTUATE_CDC_PIPELINE_PIPELINE2_READER: reader2
       EVENTUATE_CDC_PIPELINE_PIPELINE2_EVENTUATEDATABASESCHEMA: public
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE3_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE3_READER: reader3
+      EVENTUATE_CDC_PIPELINE_PIPELINE3_EVENTUATEDATABASESCHEMA: public

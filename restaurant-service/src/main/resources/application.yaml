@@ -1,17 +1,45 @@
 server:
-  port: 8070
+  port: 8085
 
 spring:
+  application:
+    name: payment-service
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:flyway/{vendor}
   jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-    database: postgresql
+    generate-ddl: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/restaurant
+    url: jdbc:postgresql://localhost:5434/restaurant_service
     username: admin
     password: password
     driver-class-name: org.postgresql.Driver
-  docker:
-    compose:
-      lifecycle-management: start_only
+    hikari:
+      initialization-fail-timeout: 30000
+
+eventuatelocal:
+  kafka:
+    bootstrap:
+      servers: http://localhost:9092
+  zookeeper:
+    connection:
+      string: http://localhost:2181
+
+eventuate:
+  database:
+    schema: public
+
+logging:
+  level:
+    org:
+      springframework:
+        orm:
+          jpa: INFO
+        web:
+          filter:
+            org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+      hibernate:
+        SQL: DEBUG
+    io:
+      eventuate: DEBUG
