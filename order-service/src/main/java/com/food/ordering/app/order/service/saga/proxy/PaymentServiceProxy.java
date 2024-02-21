@@ -12,14 +12,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class PaymentServiceProxy {
 
-  public CommandWithDestination processPayment(UUID orderId, UUID customerId, Money orderTotal) {
-    return send(new ProcessPaymentCommand(orderId, customerId, orderTotal))
+  public CommandWithDestination processPayment(UUID orderId, UUID customerId, Money orderTotal,
+      String paymentToken) {
+    return send(new ProcessPaymentCommand(orderId, customerId, orderTotal, paymentToken))
         // TODO: add to config
         .to("payment-service")
         .build();
   }
 
-  public CommandWithDestination cancelPayment(UUID paymentId, UUID orderId, UUID customerId, Money orderTotal) {
+  public CommandWithDestination cancelPayment(UUID paymentId, UUID orderId, UUID customerId,
+      Money orderTotal) {
     return send(new CancelPaymentCommand(paymentId, orderId, customerId, orderTotal))
         // TODO: add to config
         .to("payment-service")

@@ -15,6 +15,7 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <com.stripe.version>24.16.0</com.stripe.version>
   </properties>
 
   <dependencies>
@@ -67,6 +68,13 @@
     <dependency>
       <groupId>com.food.ordering.app</groupId>
       <artifactId>common</artifactId>
+    </dependency>
+
+    <!--    stripe payment -->
+    <dependency>
+      <groupId>com.stripe</groupId>
+      <artifactId>stripe-java</artifactId>
+      <version>${com.stripe.version}</version>
     </dependency>
 
     <!--    eventuate tram-->

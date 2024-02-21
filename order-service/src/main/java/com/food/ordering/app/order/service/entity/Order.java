@@ -10,10 +10,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,14 +50,17 @@ public class Order {
   @Enumerated(EnumType.STRING)
   private OrderStatus orderStatus;
 
+  @Transient
+  private String paymentToken;
+
   @Embedded
   private Money price;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "ADDRESS_ID")
+  @Embedded
   private Address address;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
+  @Fetch(FetchMode.SUBSELECT)
   @Builder.Default
   private List<OrderItem> items = new ArrayList<>();
 

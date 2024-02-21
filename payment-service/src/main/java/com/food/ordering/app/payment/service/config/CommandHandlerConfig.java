@@ -9,11 +9,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CommandHandlerConfig {
 
+  public static final String PAYMENT_COMMAND_DISPATCHER_NAME = "paymentCommandDispatcher";
+
   @Bean
   public CommandDispatcher consumerCommandDispatcher(PaymentCommandHandler target,
       SagaCommandDispatcherFactory sagaCommandDispatcherFactory) {
 
-    return sagaCommandDispatcherFactory.make("paymentCommandDispatcher",
+    return sagaCommandDispatcherFactory.make(PAYMENT_COMMAND_DISPATCHER_NAME,
         target.commandHandlerDefinitions());
   }
 }

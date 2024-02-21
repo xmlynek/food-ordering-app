@@ -28,6 +28,8 @@ public class CreateOrderSagaData {
 
   private OrderStatus orderStatus;
 
+  private String paymentToken;
+
   private Money price;
 
   @Builder.Default

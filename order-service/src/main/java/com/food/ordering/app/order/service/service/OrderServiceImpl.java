@@ -2,6 +2,7 @@ package com.food.ordering.app.order.service.service;
 
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.entity.OrderStatus;
+import com.food.ordering.app.order.service.exception.OrderNotFoundException;
 import com.food.ordering.app.order.service.repository.OrderItemRepository;
 import com.food.ordering.app.order.service.repository.OrderRepository;
 import java.math.BigDecimal;
@@ -45,5 +46,13 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public List<Order> findAllByCustomerId(UUID customerId) {
     return orderRepository.findAllByCustomerId(customerId);
+  }
+
+  @Override
+  @Transactional
+  public void updateOrderStatus(UUID orderId, OrderStatus orderStatus) {
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new OrderNotFoundException(orderId));
+    order.setOrderStatus(orderStatus);
   }
 }

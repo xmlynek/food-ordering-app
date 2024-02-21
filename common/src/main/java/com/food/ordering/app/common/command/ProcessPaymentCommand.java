@@ -6,7 +6,7 @@ import java.util.UUID;
 import lombok.Builder;
 
 @Builder
-public record ProcessPaymentCommand(UUID orderId, UUID customerId, Money amount) implements
-    Command {
+public record ProcessPaymentCommand(UUID orderId, UUID customerId, Money amount,
+                                    String paymentToken) implements Command {
 
 }
