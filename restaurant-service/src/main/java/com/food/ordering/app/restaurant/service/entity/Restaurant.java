@@ -8,7 +8,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CurrentTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "restaurants")
@@ -40,10 +44,23 @@ public class Restaurant {
   @Column(nullable = false)
   private Boolean isAvailable;
 
+  @Column(nullable = false)
+  private Boolean isDeleted;
+
+//  @Embedded
+//  private Address address;
+
+//  private String phoneNumber;
+
   // TODO:
   // image
 
   @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-  private List<Product> products;
+  @Fetch(FetchMode.SUBSELECT)
+  @Builder.Default
+  private List<MenuItem> menuItems = new ArrayList<>();
+
+  @Version
+  private Long version;
 
 }

@@ -21,7 +21,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CurrentTimestamp;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "payments")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
