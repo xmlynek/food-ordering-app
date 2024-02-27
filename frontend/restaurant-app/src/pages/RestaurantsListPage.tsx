@@ -1,10 +1,12 @@
-import {Avatar, List, Typography} from "antd";
+import {Button, Card, Space, Typography} from "antd";
 import {useQuery} from "@tanstack/react-query";
-import {useNavigate} from "react-router-dom";
+import React from "react";
+import RestaurantList from "../components/Restaurant/RestaurantList.tsx";
+import {Outlet, useNavigate} from "react-router-dom";
 
 const {Title} = Typography;
 
-const RestaurantsListPage = () => {
+const RestaurantsListPage: React.FC = () => {
 
   const navigate = useNavigate();
 
@@ -26,23 +28,20 @@ const RestaurantsListPage = () => {
 
   return (
       <div style={{padding: '20px'}}>
-        <Title level={1}>List of your restaurants</Title>
-        <List
-            loading={isPending}
-            itemLayout="horizontal"
-            pagination={{position: 'bottom', align: 'start', pageSize: 10}}
-            dataSource={restaurants}
-            renderItem={item => (
-                <List.Item onClick={() => navigate(item.id)} >
-                  <List.Item.Meta
-                      avatar={<Avatar />}
-                      title={
-                        <p>{item.name}</p>} // Replace href with a link to the restaurant detail page
-                      description={item?.isAvailable? 'Available' : 'Not available'}
-                  />
-                </List.Item>
-            )}
-        />
+        <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
+          <Title level={1}>Restaurants</Title>
+        </ Space>
+        {/*{error && 'An error has occurred: ' + error.message}*/}
+        <Card title="List of your restaurants" bordered={false} extra={
+          <Button type="primary" onClick={() => {
+            navigate("add")
+          }}>
+            Create Restaurant
+          </Button>
+        }>
+          {restaurants && <RestaurantList restaurants={restaurants} isPending={isPending}/>}
+        </Card>
+        <Outlet/>
       </div>
   );
 };

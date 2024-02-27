@@ -30,7 +30,7 @@ const CreateMenuPage: React.FC = () => {
   const {mutateAsync, isPending, error} = useMutation({
     mutationFn: createMenu, onSuccess: async () => {
       await queryClient.invalidateQueries({queryKey: ['menus']});
-      message.success('Menu item deleted successfully');
+      message.success('Menu created successfully!');
     }
   });
 
@@ -45,6 +45,7 @@ const CreateMenuPage: React.FC = () => {
       navigate(`../`);
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
+      message.error('Menu creation failed!');
     }
   };
   const handleCancel = () => {
@@ -57,7 +58,7 @@ const CreateMenuPage: React.FC = () => {
   return (
       <>
         <Modal
-            title="Add New Menu"
+            title="Create new menu"
             open={true}
             onOk={handleOk}
             confirmLoading={isPending}

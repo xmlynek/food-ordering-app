@@ -9,7 +9,7 @@ interface MenuListProps {
 
 const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler}: MenuListProps) => {
 
-  const handleModify = (id) => {
+  const handleModify = (id: string) => {
     console.log(`Modifying item with id: ${id}`);
     // Show a modal with form for modification
     // or navigate to a different page/component with the item's details pre-filled for editing
