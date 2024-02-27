@@ -1,6 +1,7 @@
 import {Layout, Menu} from "antd";
 import React from "react";
 import {Link} from "react-router-dom";
+import {CheckCircleOutlined, UnorderedListOutlined} from "@ant-design/icons";
 
 
 const {Content, Sider} = Layout;
@@ -17,9 +18,9 @@ const RestaurantLayout: React.FC<RestaurantLayoutProps> = ({children}: Restauran
         <Sider>
           <Menu
               theme="dark"
-              mode="vertical"
-              // defaultSelectedKeys={['orders']}
-              // defaultOpenKeys={['orders']}
+              mode="inline"
+              defaultSelectedKeys={['menu']}
+              defaultOpenKeys={['menu']}
               style={{height: '100%'}}
               // items={[{key: "orders", title: "Orders", label: "Orders"}, {
               //   key: "2",
@@ -27,16 +28,25 @@ const RestaurantLayout: React.FC<RestaurantLayoutProps> = ({children}: Restauran
               //   label: "Menu"
               // }]}
           >
-            <Menu.Item key={'orders'} defaultChecked={true}>
-              <Link to={'orders'} className="text-decoration-none">
-                <span className="nav-text h6">Orders</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key={'menu'}>
-              <Link to={'menu'} className="text-decoration-none">
-                <span className="nav-text h6">menu</span>
-              </Link>
-            </Menu.Item>
+            <Menu.SubMenu key="orders" icon={<UnorderedListOutlined />} title="Orders">
+              <Menu.Item key="activeOrders">
+                <Link to="orders" className="text-decoration-none">Active Orders</Link>
+              </Menu.Item>
+              <Menu.Item key="finishedOrders">
+                <Link to="/orders/finished" className="text-decoration-none">Finished Orders</Link>
+              </Menu.Item>
+            </Menu.SubMenu>
+            <Menu.SubMenu key="menu" icon={<CheckCircleOutlined />} title="Menu">
+              <Menu.Item key="activeMenu">
+                <Link to="menu" className="text-decoration-none">Active Menu</Link>
+              </Menu.Item>
+              <Menu.Item key="inactiveMenu">
+                <Link to="/menu/inactive" className="text-decoration-none">Inactive Menu</Link>
+              </Menu.Item>
+              <Menu.Item key="addMenu">
+                <Link to="menu/add" className="text-decoration-none">Add Menu</Link>
+              </Menu.Item>
+            </Menu.SubMenu>
           </Menu>
         </Sider>
         <Content style={{padding: '0 24px', minHeight: 280}}>

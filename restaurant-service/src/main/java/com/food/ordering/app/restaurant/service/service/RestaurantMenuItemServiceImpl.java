@@ -23,7 +23,8 @@ public class RestaurantMenuItemServiceImpl implements
 
   @Override
   public List<MenuItem> getWholeRestaurantMenu(UUID restaurantId) {
-    return menuItemRepository.findByRestaurantId(restaurantId);
+//    return menuItemRepository.findByRestaurantId(restaurantId);
+    return menuItemRepository.findByRestaurantIdAndIsDeletedFalse(restaurantId);
   }
 
   @Override

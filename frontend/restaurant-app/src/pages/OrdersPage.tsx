@@ -9,7 +9,7 @@ const {Content} = Layout;
 
 const OrdersPage: React.FC = () => {
 
-  const [orders, setOrders] = useState<Array<Order>>([{id: "sdffdsfsd"}, {id: "ssdfsdf"}]);
+  const [orders] = useState<Array<Order>>([{id: "sdffdsfsd"}, {id: "ssdfsdf"}]);
 
   return (
       <Content>

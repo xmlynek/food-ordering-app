@@ -1,29 +1,42 @@
 import {Card, Layout, Space, Typography} from "antd";
 import React from "react";
-import {Outlet} from "react-router-dom";
+import {Outlet, useParams} from "react-router-dom";
 import RestaurantDetails from "../components/Restaurant/RestaurantDetails.tsx";
 import RestaurantLayout from "../components/Restaurant/layout/RestaurantLayout.tsx";
+import {useQuery} from "@tanstack/react-query";
 
 const {Title} = Typography;
 
 const {Content} = Layout;
 
 const RestaurantPage: React.FC = () => {
+  const params = useParams();
 
-  const data: Restaurant = {
-    id: "1",
-    name: "Italian Bistro",
-    description: "Authentic Italian cuisine with a modern twist."
-  }
+  const fetchRestaurantById = async (): Promise<Restaurant> => {
+    const response = await fetch(`http://localhost:8085/api/restaurants/${params.id}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  };
+
+  const {
+    data: restaurant,
+    error,
+    isPending,
+  } = useQuery<Restaurant, Error>({queryKey: ['restaurantById'], queryFn: fetchRestaurantById});
+
+  if (error) return 'An error has occurred: ' + error.message
+  if (isPending) return 'Loading...'
 
   return (
       <Content style={{padding: '0 48px'}}>
         <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
-          <Title level={1}>{data.name}</Title>
+          <Title level={1}>{restaurant.name}</Title>
         </Space>
 
         <Card title="Restaurant Details">
-          <RestaurantDetails restaurant={data}/>
+          <RestaurantDetails restaurant={restaurant}/>
         </Card>
 
         <RestaurantLayout>

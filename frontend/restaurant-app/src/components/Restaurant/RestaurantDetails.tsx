@@ -12,7 +12,8 @@ const RestaurantDetails: React.FC<RestaurantProps> = ({restaurant}: RestaurantPr
       <Descriptions column={2}>
         <Descriptions.Item label="ID">{restaurant.id}</Descriptions.Item>
         <Descriptions.Item label="Name">{restaurant.name}</Descriptions.Item>
-        <Descriptions.Item label="Description">{restaurant.description}</Descriptions.Item>
+        <Descriptions.Item
+            label="IsAvailable">{restaurant.isAvailable ? 'Available' : 'Not available'}</Descriptions.Item>
       </Descriptions>
   );
 };

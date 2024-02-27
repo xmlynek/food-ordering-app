@@ -1,19 +1,35 @@
 import React from "react";
-import {List} from "antd";
+import {Button, List} from "antd";
+import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 
 interface MenuListProps {
   menus: Array<MenuItem>;
+  deleteHandler: (menuId: string) => void;
 }
 
-const MenuList: React.FC<MenuListProps> = ({menus}: MenuListProps) => {
+const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler}: MenuListProps) => {
+
+  const handleModify = (id) => {
+    console.log(`Modifying item with id: ${id}`);
+    // Show a modal with form for modification
+    // or navigate to a different page/component with the item's details pre-filled for editing
+  };
+
 
   return (
       <List
           itemLayout="horizontal"
-          pagination={{position: 'bottom', align: 'start', pageSize: 5}}
+          pagination={{position: 'bottom', align: 'start', pageSize: 25}}
           dataSource={menus}
           renderItem={item => (
-              <List.Item>
+              <List.Item
+                  actions={[
+                    <Button key="list-modify" icon={<EditOutlined/>} type="primary"
+                            onClick={() => handleModify(item.id)}>Modify</Button>,
+                    <Button key="list-delete" icon={<DeleteOutlined/>} type="primary" danger
+                            onClick={() => deleteHandler(item.id)}>Delete</Button>
+                  ]}
+              >
                 <p>
                   id: {item.id}
                 </p>

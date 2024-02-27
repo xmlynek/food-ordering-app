@@ -1,7 +1,8 @@
 interface Restaurant {
   id: string;
   name: string;
-  description: string;
+  isAvailable: boolean;
+  menuItems: MenuItem[];
 }
 
 interface MenuItem {
