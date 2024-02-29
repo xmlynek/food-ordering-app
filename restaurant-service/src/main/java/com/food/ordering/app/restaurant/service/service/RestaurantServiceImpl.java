@@ -23,7 +23,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     return restaurantRepository.findAll();
   }
 
-  @Transactional(readOnly = true)
+//  @Transactional(readOnly = true)
   @Override
   public Restaurant getRestaurantById(UUID restaurantId) {
     // TODO: projection?

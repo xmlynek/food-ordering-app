@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -21,20 +20,19 @@ public class OrderServiceImpl implements OrderService {
   private final OrderItemRepository orderItemRepository;
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional
   public Order createOrder(Order order) {
     order.setOrderStatus(OrderStatus.PENDING);
 
-    Order savedOrder = orderRepository.save(order);
     order.getItems().forEach(orderItem -> {
-      orderItem.setOrder(savedOrder);
+      orderItem.setOrder(order);
       orderItem.setTotalPrice(
           orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
     });
 
     orderItemRepository.saveAll(order.getItems());
 
-    return savedOrder;
+    return orderRepository.save(order);
   }
 
   @Override

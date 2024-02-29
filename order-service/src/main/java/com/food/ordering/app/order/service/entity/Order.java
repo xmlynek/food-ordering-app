@@ -54,7 +54,7 @@ public class Order {
   private String paymentToken;
 
   @Embedded
-  private Money price;
+  private Money totalPrice;
 
   @Embedded
   private Address address;

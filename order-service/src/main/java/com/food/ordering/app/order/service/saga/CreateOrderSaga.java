@@ -100,13 +100,13 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
     log.info("Cancel payment compensation saga step started for order {} and payment {}",
         data.getOrderId().toString(), data.getPaymentId().toString());
     return paymentServiceProxy.cancelPayment(data.getPaymentId(), data.getOrderId(),
-        data.getCustomerId(), data.getPrice());
+        data.getCustomerId(), data.getTotalPrice());
   }
 
   private CommandWithDestination processPayment(CreateOrderSagaData data) {
     log.info("Process payment started for order id: {}", data.getOrderId().toString());
     return paymentServiceProxy.processPayment(data.getOrderId(), data.getCustomerId(),
-        data.getPrice(), data.getPaymentToken());
+        data.getTotalPrice(), data.getPaymentToken());
   }
 
   private CommandWithDestination approveOrderByRestaurant(CreateOrderSagaData data) {

@@ -17,5 +17,6 @@ public interface OrderItemMapper {
   })
   OrderItem orderItemRequestToOrderItemEntity(OrderItemRequest orderItemRequest);
 
+  @Mapping(target = "price", expression = "java(new io.eventuate.examples.common.money.Money(orderItem.getPrice()))")
   OrderProduct orderItemEntityToOrderProduct(OrderItem orderItem);
 }

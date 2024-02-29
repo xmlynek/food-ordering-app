@@ -50,6 +50,15 @@ public class ExceptionAdviceController {
         new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()), HttpStatus.BAD_REQUEST);
   }
 
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler({InvalidPriceValueException.class, InvalidQuantityValueException.class})
+  public ResponseEntity<ErrorResponse> handleInvalidPriceAndQuantityException(
+      RuntimeException ex) {
+    log.warn("Handled order validation exception {}", ex.getMessage());
+    return new ResponseEntity<>(
+        new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+  }
+
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(NoResourceFoundException.class)
   public ResponseEntity<ErrorResponse> handleNoResourceFoundException(

@@ -17,7 +17,7 @@ public interface OrderMapper {
       @Mapping(target = "orderStatus", ignore = true),
       @Mapping(target = "failureMessages", ignore = true),
       @Mapping(target = "version", ignore = true),
-      @Mapping(target = "price", expression = "java(new io.eventuate.examples.common.money.Money(orderRequest.getPrice()))")
+      @Mapping(target = "totalPrice", expression = "java(new io.eventuate.examples.common.money.Money(orderRequest.getPrice()))")
   })
   Order orderRequestToOrderEntity(OrderRequest orderRequest);
 
@@ -25,7 +25,8 @@ public interface OrderMapper {
 
   @Mappings({
       @Mapping(target = "orderId", source = "id"),
-      @Mapping(target = "paymentId", ignore = true)
+      @Mapping(target = "paymentId", ignore = true),
+      @Mapping(target = "totalPrice", source = "totalPrice"),
   })
   CreateOrderSagaData orderEntityToCreateOrderSagaData(Order order);
 }

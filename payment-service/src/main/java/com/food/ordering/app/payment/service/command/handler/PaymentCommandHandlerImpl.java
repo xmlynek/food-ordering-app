@@ -9,13 +9,10 @@ import com.food.ordering.app.payment.service.entity.Payment;
 import com.food.ordering.app.payment.service.mapper.PaymentMapper;
 import com.food.ordering.app.payment.service.service.PaymentService;
 import com.stripe.Stripe;
-import com.stripe.model.Charge;
 import io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder;
 import io.eventuate.tram.commands.consumer.CommandMessage;
 import io.eventuate.tram.messaging.common.Message;
 import jakarta.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,18 +42,18 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
       Payment payment = paymentService.createPayment(
           paymentMapper.paymentRequestToPaymentEntity(command));
       log.info("Created payment {}", payment.getId().toString());
-
-      Map<String, Object> chargeParams = new HashMap<>();
-      chargeParams.put("amount",
-          Integer.parseInt(command.amount().getAmount().toString().replace(".", "")));
-      chargeParams.put("currency", "EUR");
-      chargeParams.put("description", "Food ordering app test payment");
-      chargeParams.put("source", command.paymentToken());
-      Charge charge = Charge.create(chargeParams);
-
-      paymentService.updateStatus(payment.getId(), PaymentStatus.COMPLETED);
-      log.info("Payment {} payment succeeded, chargeID {}", payment.getId().toString(),
-          charge.getId());
+//
+//      Map<String, Object> chargeParams = new HashMap<>();
+//      chargeParams.put("amount",
+//          Integer.parseInt(command.amount().getAmount().toString().replace(".", "")));
+//      chargeParams.put("currency", "EUR");
+//      chargeParams.put("description", "Food ordering app test payment");
+//      chargeParams.put("source", command.paymentToken());
+//      Charge charge = Charge.create(chargeParams);
+//
+//      paymentService.updateStatus(payment.getId(), PaymentStatus.COMPLETED);
+//      log.info("Payment {} payment succeeded, chargeID {}", payment.getId().toString(),
+//          charge.getId());
 
       return CommandHandlerReplyBuilder.withSuccess(
           new ProcessPaymentSucceeded(payment.getId(), command.orderId()));

@@ -30,7 +30,7 @@ public class CreateOrderSagaData {
 
   private String paymentToken;
 
-  private Money price;
+  private Money totalPrice;
 
   @Builder.Default
   private List<OrderProduct> items = new ArrayList<>();
