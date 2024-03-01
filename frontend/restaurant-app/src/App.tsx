@@ -6,7 +6,7 @@ import {lazy, Suspense} from "react";
 const HomePage = lazy(() => import("./pages/HomePage.tsx"))
 const RestaurantsListPage = lazy(() => import("./pages/RestaurantsListPage.tsx"))
 const RestaurantPage = lazy(() => import("./pages/RestaurantPage.tsx"))
-const OrdersPage = lazy(() => import("./pages/OrdersPage.tsx"))
+const OrderTicketsPage = lazy(() => import("./pages/OrderTicketsPage.tsx"))
 const MenusPage = lazy(() => import("./pages/MenusPage.tsx"))
 const CreateRestaurantPage = lazy(() => import("./pages/CreateRestaurantPage.tsx"))
 const CreateMenuPage = lazy(() => import("./pages/CreateMenuPage.tsx"))
@@ -25,7 +25,7 @@ function App() {
                 <Route path="add" element={<CreateRestaurantPage/>}/>
               </Route>
               <Route path="/restaurants/:id" element={<RestaurantPage/>}>
-                <Route path="orders" element={<OrdersPage/>}/>
+                <Route path="orders" element={<OrderTicketsPage/>}/>
                 <Route path="menu" element={<MenusPage/>}>
                   <Route path="add" element={<CreateMenuPage/>}/>
                 </Route>

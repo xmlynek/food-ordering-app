@@ -3,6 +3,7 @@ import {useQuery} from "@tanstack/react-query";
 import React from "react";
 import RestaurantList from "../components/Restaurant/RestaurantList.tsx";
 import {Outlet, useNavigate} from "react-router-dom";
+import {Restaurant} from "../model/restaurant.ts";
 
 const {Title} = Typography;
 
@@ -39,7 +40,7 @@ const RestaurantsListPage: React.FC = () => {
             Create Restaurant
           </Button>
         }>
-          {restaurants && <RestaurantList restaurants={restaurants} isPending={isPending}/>}
+          {<RestaurantList restaurants={restaurants} isPending={isPending}/>}
         </Card>
         <Outlet/>
       </div>

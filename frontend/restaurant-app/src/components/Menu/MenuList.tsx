@@ -1,13 +1,15 @@
 import React from "react";
 import {Button, List} from "antd";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
+import {MenuItem} from "../../model/restaurant.ts";
 
 interface MenuListProps {
   menus: Array<MenuItem>;
+  isPending: boolean;
   deleteHandler: (menuId: string) => void;
 }
 
-const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler}: MenuListProps) => {
+const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler, isPending}: MenuListProps) => {
 
   const handleModify = (id: string) => {
     console.log(`Modifying item with id: ${id}`);
@@ -18,6 +20,7 @@ const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler}: MenuListProps
 
   return (
       <List
+          loading={isPending}
           itemLayout="horizontal"
           pagination={{position: 'bottom', align: 'start', pageSize: 25}}
           dataSource={menus}

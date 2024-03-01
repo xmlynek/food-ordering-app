@@ -41,7 +41,7 @@ public class RestaurantOrderTickerServiceImpl implements RestaurantOrderTickerSe
   @Override
   public RestaurantOrderTicket getOrderTicketByRestaurantIdAndOrderId(UUID restaurantId,
       UUID orderId) {
-    return orderTicketRepository.findByRestaurantIdAndOrderId(restaurantId, orderId)
+    return orderTicketRepository.findByRestaurantIdAndId(restaurantId, orderId)
         .orElseThrow(() -> new OrderTicketNotFoundException(restaurantId, orderId));
   }
 
@@ -59,7 +59,7 @@ public class RestaurantOrderTickerServiceImpl implements RestaurantOrderTickerSe
     Restaurant restaurant = restaurantService.getRestaurantById(command.restaurantId());
 
     RestaurantOrderTicket orderTicket = RestaurantOrderTicket.builder()
-        .orderId(command.orderId())
+        .id(command.orderId())
         .customerId(command.customerId())
         .restaurant(restaurant)
         // TODO: set to created_PENDING?

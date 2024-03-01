@@ -1,5 +1,6 @@
 import {Descriptions} from "antd";
 import React from "react";
+import {Restaurant} from "../../model/restaurant.ts";
 
 
 interface RestaurantProps {

@@ -10,7 +10,7 @@ import org.mapstruct.Mappings;
 public interface OrderTicketItemMapper {
 
   @Mappings({
-      @Mapping(target = "orderTicketId", source = "orderTicket.orderId"),
+      @Mapping(target = "orderTicketId", source = "orderTicket.id"),
       @Mapping(target = "menuItemId", source = "menuItem.id"),
   })
   OrderTicketItemResponse orderTicketItemToOrderTicketItemResponse(OrderTicketItem orderTicketItem);

@@ -34,8 +34,7 @@ import org.hibernate.annotations.FetchMode;
 public class RestaurantOrderTicket {
 
   @Id
-  @Column(nullable = false)
-  private UUID orderId;
+  private UUID id;
 
   @Column(nullable = false, updatable = false)
   private UUID customerId;   // TODO: vymazat?

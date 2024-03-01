@@ -1,6 +1,7 @@
 import React from "react";
 import {Avatar, List} from "antd";
 import {useNavigate} from "react-router-dom";
+import {Restaurant} from "../../model/restaurant.ts";
 
 
 interface RestaurantListProps {

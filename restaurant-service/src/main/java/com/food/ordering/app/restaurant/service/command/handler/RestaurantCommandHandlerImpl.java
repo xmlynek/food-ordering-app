@@ -27,7 +27,7 @@ public class RestaurantCommandHandlerImpl extends RestaurantCommandHandler {
         command.restaurantId());
     try {
       RestaurantOrderTicket orderTicket = restaurantOrderTickerService.createOrderTicket(command);
-      log.info("Approve order succeeded for order {} and restaurant {}", orderTicket.getOrderId(),
+      log.info("Approve order succeeded for order {} and restaurant {}", orderTicket.getId(),
           orderTicket.getRestaurant().getId());
 
       return CommandHandlerReplyBuilder.withSuccess(

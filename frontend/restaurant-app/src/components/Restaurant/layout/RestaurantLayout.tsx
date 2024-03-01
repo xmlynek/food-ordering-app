@@ -20,7 +20,7 @@ const RestaurantLayout: React.FC<RestaurantLayoutProps> = ({children}: Restauran
               theme="dark"
               mode="inline"
               defaultSelectedKeys={['menu']}
-              defaultOpenKeys={['menu']}
+              defaultOpenKeys={['menu', 'orders']}
               style={{height: '100%'}}
               // items={[{key: "orders", title: "Orders", label: "Orders"}, {
               //   key: "2",

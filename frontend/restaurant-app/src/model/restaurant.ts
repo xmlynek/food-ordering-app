@@ -1,11 +1,11 @@
-interface Restaurant {
+export interface Restaurant {
   id: string;
   name: string;
   isAvailable: boolean;
   menuItems: MenuItem[];
 }
 
-interface MenuItem {
+export interface MenuItem {
   id: string;
   name: string;
   description: string;

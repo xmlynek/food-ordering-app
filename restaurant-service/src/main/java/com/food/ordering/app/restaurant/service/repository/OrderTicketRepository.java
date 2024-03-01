@@ -10,6 +10,6 @@ public interface OrderTicketRepository extends JpaRepository<RestaurantOrderTick
 
   List<RestaurantOrderTicket> findAllByRestaurantId(UUID restaurantId);
 
-  Optional<RestaurantOrderTicket> findByRestaurantIdAndOrderId(UUID restaurantId, UUID orderId);
+  Optional<RestaurantOrderTicket> findByRestaurantIdAndId(UUID restaurantId, UUID orderId);
 
 }

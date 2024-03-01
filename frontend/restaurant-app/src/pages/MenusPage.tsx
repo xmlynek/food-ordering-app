@@ -3,6 +3,7 @@ import React from "react";
 import MenuList from "../components/Menu/MenuList.tsx";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {Outlet, useParams} from "react-router-dom";
+import {MenuItem} from "../model/restaurant.ts";
 
 const {Title} = Typography;
 const {Content} = Layout;
@@ -48,9 +49,7 @@ const MenusPage: React.FC = () => {
     // Or set local state to remove the item from the list
   };
 
-
   if (error) return 'An error has occurred: ' + error.message
-  if (isPending) return 'Loading...'
 
   return (
       <Content>
@@ -58,7 +57,7 @@ const MenusPage: React.FC = () => {
         {/*<Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>*/}
         <Title style={{marginTop: 0}} level={2}>List of menus</Title>
         {/*</ Space>*/}
-        <MenuList deleteHandler={handleDelete} menus={menus}/>
+        <MenuList deleteHandler={handleDelete} menus={menus} isPending={isPending}/>
 
       </Content>
   );

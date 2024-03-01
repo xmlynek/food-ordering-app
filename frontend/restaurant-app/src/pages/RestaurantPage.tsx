@@ -4,6 +4,7 @@ import {Outlet, useParams} from "react-router-dom";
 import RestaurantDetails from "../components/Restaurant/RestaurantDetails.tsx";
 import RestaurantLayout from "../components/Restaurant/layout/RestaurantLayout.tsx";
 import {useQuery} from "@tanstack/react-query";
+import {Restaurant} from "../model/restaurant.ts";
 
 const {Title} = Typography;
 

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record RestaurantOrderTicketResponse(UUID orderId,
+public record RestaurantOrderTicketResponse(UUID id,
                                             LocalDateTime createdAt,
                                             RestaurantOrderTicketStatus status,
                                             BigDecimal totalPrice,
