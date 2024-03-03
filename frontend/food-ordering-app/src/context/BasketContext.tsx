@@ -3,6 +3,7 @@ import {message} from "antd";
 
 interface BasketContextType {
   basket: BasketItem[];
+  calculateTotalPrice: () => number;
   addToBasket: (item: BasketItem) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   removeFromBasket: (itemId: string) => void;
@@ -10,6 +11,7 @@ interface BasketContextType {
 
 export const BasketContext = createContext<BasketContextType>({
   basket: [],
+  calculateTotalPrice: () => 0,
   addToBasket: () => {
   },
   updateQuantity: () => {
@@ -80,9 +82,13 @@ export const BasketProvider = ({children}: BasketProviderProps) => {
     );
   };
 
+  const calculateTotalPrice = () => {
+    return basket.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
 
   return (
-      <BasketContext.Provider value={{basket, addToBasket, removeFromBasket, updateQuantity}}>
+      <BasketContext.Provider
+          value={{basket, calculateTotalPrice, addToBasket, removeFromBasket, updateQuantity}}>
         {children}
       </BasketContext.Provider>
   );

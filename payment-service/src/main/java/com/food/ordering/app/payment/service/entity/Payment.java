@@ -40,7 +40,7 @@ public class Payment {
   @CurrentTimestamp
   private LocalDateTime createdAt;
 
-//  private String chargeId;
+  private String chargeId;
 
   @Embedded
   private Money amount;

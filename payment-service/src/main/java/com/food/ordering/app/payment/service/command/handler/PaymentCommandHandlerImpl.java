@@ -9,6 +9,10 @@ import com.food.ordering.app.payment.service.entity.Payment;
 import com.food.ordering.app.payment.service.mapper.PaymentMapper;
 import com.food.ordering.app.payment.service.service.PaymentService;
 import com.stripe.Stripe;
+import com.stripe.model.Charge;
+import com.stripe.model.Refund;
+import com.stripe.param.ChargeCreateParams;
+import com.stripe.param.RefundCreateParams;
 import io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder;
 import io.eventuate.tram.commands.consumer.CommandMessage;
 import io.eventuate.tram.messaging.common.Message;
@@ -28,6 +32,7 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
 
   @PostConstruct
   public void init() {
+    // TODO: use configuration
     Stripe.apiKey = "sk_test_51Oc4G2Hg2RuOlHnDmj9OJ8NPORZpLpqHPg9kJN0msWpiTS9d3kfDj86sOoMyIBnppg0dGN80LyUODIzDZrn9xJDO00Lco5Q5f1";
   }
 
@@ -39,21 +44,25 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
     log.info("Process payment started for order id {}", command.orderId().toString());
 
     try {
-      Payment payment = paymentService.createPayment(
-          paymentMapper.paymentRequestToPaymentEntity(command));
-      log.info("Created payment {}", payment.getId().toString());
-//
-//      Map<String, Object> chargeParams = new HashMap<>();
-//      chargeParams.put("amount",
-//          Integer.parseInt(command.amount().getAmount().toString().replace(".", "")));
-//      chargeParams.put("currency", "EUR");
-//      chargeParams.put("description", "Food ordering app test payment");
-//      chargeParams.put("source", command.paymentToken());
-//      Charge charge = Charge.create(chargeParams);
-//
-//      paymentService.updateStatus(payment.getId(), PaymentStatus.COMPLETED);
-//      log.info("Payment {} payment succeeded, chargeID {}", payment.getId().toString(),
-//          charge.getId());
+      Payment payment = paymentService.savePayment(paymentMapper.paymentRequestToPaymentEntity(command));
+
+      ChargeCreateParams chargeCreateParams = ChargeCreateParams.builder()
+          .setAmount(Long.parseLong(command.amount().getAmount().toString().replace(".", "")))
+          .setCurrency("EUR")
+          .setDescription("Food ordering app test payment")
+          .setSource(command.paymentToken())
+          .build();
+      Charge charge = Charge.create(chargeCreateParams);
+
+      log.info("Created payment {} with charge id {}", payment.getId().toString(),
+          payment.getChargeId());
+
+      payment.setChargeId(charge.getId());
+      payment.setPaymentStatus(PaymentStatus.COMPLETED);
+      payment = paymentService.savePayment(payment);
+
+      log.info("Payment {} payment succeeded, chargeID {}", payment.getId().toString(),
+          charge.getId());
 
       return CommandHandlerReplyBuilder.withSuccess(
           new ProcessPaymentSucceeded(payment.getId(), command.orderId()));
@@ -72,15 +81,24 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
         command.paymentId().toString(), command.orderId().toString());
 
     try {
+      Payment payment = paymentService.getPaymentById(command.paymentId());
+
+      RefundCreateParams params = RefundCreateParams.builder()
+          .setCharge(payment.getChargeId())
+          .build();
+      Refund refund = Refund.create(params);
+
       paymentService.updateStatus(command.paymentId(), PaymentStatus.CANCELLED);
-      log.info("Payment with id {} was cancelled", command.paymentId().toString());
+      log.info("Payment with id {} was cancelled and refunded with status: {}", command.paymentId(),
+          refund.getStatus());
       return CommandHandlerReplyBuilder.withSuccess();
     } catch (Exception e) {
       log.error("Payment compensation failed. {}", e.getMessage());
 //      return CommandHandlerReplyBuilder.withFailure(
 //          new ProcessPaymentFailed(command.orderId(), command.customerId(), e.getMessage()));
+      return CommandHandlerReplyBuilder.withFailure();
     }
-    return CommandHandlerReplyBuilder.withSuccess();
+//    return CommandHandlerReplyBuilder.withSuccess();
 //    return null;
   }
 }

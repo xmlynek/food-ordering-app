@@ -2,6 +2,7 @@ package com.food.ordering.app.payment.service.service;
 
 import com.food.ordering.app.common.enums.PaymentStatus;
 import com.food.ordering.app.payment.service.entity.Payment;
+import com.food.ordering.app.payment.service.exception.PaymentNotFoundException;
 import com.food.ordering.app.payment.service.repository.PaymentRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +18,16 @@ public class PaymentServiceImpl implements PaymentService {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public Payment createPayment(Payment payment) {
+  public Payment savePayment(Payment payment) {
     payment.setPaymentStatus(PaymentStatus.INITIALIZED);
 
     return paymentRepository.save(payment);
+  }
+
+  @Override
+  public Payment getPaymentById(UUID paymentId) {
+    return paymentRepository.findById(paymentId)
+        .orElseThrow(() -> new PaymentNotFoundException(paymentId));
   }
 
   @Override

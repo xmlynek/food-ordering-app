@@ -17,7 +17,7 @@ public interface OrderMapper {
       @Mapping(target = "orderStatus", ignore = true),
       @Mapping(target = "failureMessages", ignore = true),
       @Mapping(target = "version", ignore = true),
-      @Mapping(target = "totalPrice", expression = "java(new io.eventuate.examples.common.money.Money(orderRequest.getPrice()))")
+      @Mapping(target = "totalPrice", expression = "java(new io.eventuate.examples.common.money.Money(orderRequest.totalPrice()))")
   })
   Order orderRequestToOrderEntity(OrderRequest orderRequest);
 
