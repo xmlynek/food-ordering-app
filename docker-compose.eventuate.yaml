@@ -1,33 +1,56 @@
+version: '3.7'
+
 services:
   order-service-postgres:
     image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
     ports:
-      - 5432:5432
+      - "5432:5432"
+    restart: on-failure
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: order_service
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d order_service" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   payment-service-postgres:
     image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
     ports:
-      - 5433:5432
+      - "5433:5432"
+    restart: on-failure
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: payment_service
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d payment_service" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   restaurant-service-postgres:
     image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
     ports:
-      - 5434:5432
+      - "5434:5432"
+    restart: on-failure
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: restaurant_service
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d restaurant_service" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   keycloak:
     image: quay.io/keycloak/keycloak:20.0.3
+    ports:
+      - "8083:8080"
+    restart: on-failure
     environment:
       KEYCLOAK_USER: user
       KEYCLOAK_PASSWORD: password
@@ -38,34 +61,43 @@ services:
       - --import-realm
     volumes:
       - ./volumes/keycloak/export:/opt/keycloak/data/import
-    ports:
-      - "8083:8080"
 
   pgadmin:
     image: dpage/pgadmin4
+    ports:
+      - "5050:80"
+    restart: on-failure
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
-    ports:
-      - "5050:80"
     depends_on:
       - order-service-postgres
+      - payment-service-postgres
+      - restaurant-service-postgres
 
   zookeeper:
     image: eventuateio/eventuate-zookeeper:0.18.0.RELEASE
     ports:
-      - 2181:2181
+      - "2181:2181"
+    restart: on-failure
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       KAFKA_HEAP_OPTS: -Xmx64m
+    healthcheck:
+      test: [ "CMD", "echo", "ruok", "|", "nc", "localhost", "2181", "|", "grep", "imok" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   kafka:
     image: eventuateio/eventuate-kafka:0.18.0.RELEASE
     ports:
-      - 9092:9092
+      - "9092:9092"
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
+    restart: on-failure
     environment:
       KAFKA_LISTENERS: LC://kafka:29092,LX://kafka:9092
       KAFKA_ADVERTISED_LISTENERS: LC://kafka:29092,LX://${DOCKER_HOST_IP:-localhost}:9092
@@ -79,17 +111,22 @@ services:
     image: 'openzipkin/zipkin:latest'
     ports:
       - '9411:9411'
+    restart: on-failure
 
   cdcservice:
     image: eventuateio/eventuate-cdc-service:0.16.0.RELEASE
     ports:
       - "8099:8080"
+    restart: on-failure
     depends_on:
-      - order-service-postgres
-      - payment-service-postgres
-      - restaurant-service-postgres
-      - kafka
-      - zookeeper
+      order-service-postgres:
+        condition: service_healthy
+      payment-service-postgres:
+        condition: service_healthy
+      restaurant-service-postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     environment:
       CDC_OPTS: "--debug"
 
