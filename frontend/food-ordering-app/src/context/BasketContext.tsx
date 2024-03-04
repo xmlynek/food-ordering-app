@@ -1,5 +1,6 @@
 import {createContext, useState, ReactNode, useEffect} from 'react';
 import {message} from "antd";
+import {getBasketFromLocalStorage, saveBasketToLocalStorage} from "../utils/localStorageUtils.ts";
 
 interface BasketContextType {
   basket: BasketItem[];
@@ -24,14 +25,7 @@ interface BasketProviderProps {
   children: ReactNode;
 }
 
-const getBasketFromLocalStorage = () => {
-  const storedBasket = localStorage.getItem('basket');
-  return storedBasket ? JSON.parse(storedBasket) : [];
-};
 
-const saveBasketToLocalStorage = (basket: BasketItem[]) => {
-  localStorage.setItem('basket', JSON.stringify(basket));
-};
 
 
 export const BasketProvider = ({children}: BasketProviderProps) => {

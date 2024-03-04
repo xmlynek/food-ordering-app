@@ -7,6 +7,7 @@ import {
 import {useBasket} from "../../hooks/useBasketContext.tsx";
 import {useMutation} from "@tanstack/react-query";
 import axios from "axios";
+import {clearBasketFromLocalStorage} from "../../utils/localStorageUtils.ts";
 
 const cardElementOptions = {
   style: {
@@ -44,6 +45,7 @@ const CheckoutForm = () => {
     onSuccess: async (data) => {
       // await queryClient.invalidateQueries({queryKey: ['order-tickets']});
       message.success(`Order ${data.id} created successfully`);
+      clearBasketFromLocalStorage();
     }
   });
 
