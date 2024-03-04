@@ -1,0 +1,14 @@
+server:
+  port: 8075
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    database: postgresql
+  datasource:
+    url: jdbc:postgresql://localhost:5435/customer
+    username: admin
+    password: password
+    driver-class-name: org.postgresql.Driver
