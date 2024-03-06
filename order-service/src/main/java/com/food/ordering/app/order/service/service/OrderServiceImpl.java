@@ -3,9 +3,7 @@ package com.food.ordering.app.order.service.service;
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.entity.OrderStatus;
 import com.food.ordering.app.order.service.exception.OrderNotFoundException;
-import com.food.ordering.app.order.service.repository.OrderItemRepository;
 import com.food.ordering.app.order.service.repository.OrderRepository;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -17,20 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderServiceImpl implements OrderService {
 
   private final OrderRepository orderRepository;
-  private final OrderItemRepository orderItemRepository;
 
   @Override
   @Transactional
   public Order createOrder(Order order) {
     order.setOrderStatus(OrderStatus.PENDING);
 
-    order.getItems().forEach(orderItem -> {
-      orderItem.setOrder(order);
-      orderItem.setTotalPrice(
-          orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
-    });
-
-    orderItemRepository.saveAll(order.getItems());
+    order.getItems().forEach(orderItem -> orderItem.setOrder(order));
 
     return orderRepository.save(order);
   }

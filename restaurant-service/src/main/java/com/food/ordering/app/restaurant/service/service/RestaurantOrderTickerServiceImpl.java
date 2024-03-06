@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -55,6 +56,7 @@ public class RestaurantOrderTickerServiceImpl implements RestaurantOrderTickerSe
    * @throws InvalidPriceValueException    if the price is less than or equal to zero
    */
   @Override
+  @Transactional
   public RestaurantOrderTicket createOrderTicket(ApproveOrderCommand command) {
     Restaurant restaurant = restaurantService.getRestaurantById(command.restaurantId());
 
@@ -66,15 +68,13 @@ public class RestaurantOrderTickerServiceImpl implements RestaurantOrderTickerSe
         .status(RestaurantOrderTicketStatus.APPROVED)
         .build();
 
-    List<OrderTicketItem> orderTicketItems = createOrderTicketItems(
-        command.products(), command.restaurantId(), orderTicket);
+    orderTicket.setOrderItems(createOrderTicketItems(
+        command.products(), command.restaurantId(), orderTicket));
 
-    orderTicket.setOrderItems(orderTicketItems);
     orderTicket.setTotalPrice(orderTicket.getOrderItems().stream()
         .map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity())))
         .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-    orderTicketItemRepository.saveAll(orderTicket.getOrderItems());
     return orderTicketRepository.save(orderTicket);
   }
 

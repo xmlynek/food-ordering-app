@@ -13,7 +13,7 @@ public interface OrderItemMapper {
   @Mappings({
       @Mapping(target = "id", ignore = true),
       @Mapping(target = "order", ignore = true),
-      @Mapping(target = "totalPrice", ignore = true)
+      @Mapping(target = "totalPrice", expression = "java(orderItemRequest.price().multiply(java.math.BigDecimal.valueOf(orderItemRequest.quantity())))")
   })
   OrderItem orderItemRequestToOrderItemEntity(OrderItemRequest orderItemRequest);
 
