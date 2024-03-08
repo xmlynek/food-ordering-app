@@ -5,6 +5,7 @@ import com.food.ordering.app.restaurant.service.dto.MenuItemResponse;
 import com.food.ordering.app.restaurant.service.mapper.MenuItemMapper;
 import com.food.ordering.app.restaurant.service.service.RestaurantMenuItemService;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/restaurants/{restaurantId}/menu")
@@ -51,10 +54,13 @@ public class RestaurantMenuController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MenuItemResponse> createRestaurantMenu(@PathVariable UUID restaurantId,
-      @Valid @RequestBody MenuItemRequest menuItemRequest) {
+      @Valid @RequestPart("menuItemRequest") MenuItemRequest menuItemRequest,
+      @RequestPart("image") MultipartFile image) throws IOException {
+
     MenuItemResponse newMenuItem = menuItemMapper.menuItemToMenuItemResponse(
         menuItemService.createMenuItem(restaurantId,
-            menuItemMapper.menuItemRequestToMenuItem(menuItemRequest)));
+            menuItemMapper.menuItemRequestToMenuItem(menuItemRequest), image));
+
     return new ResponseEntity<>(newMenuItem, HttpStatus.CREATED);
   }
 

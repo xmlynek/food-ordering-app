@@ -6,6 +6,7 @@ import java.util.UUID;
 public record MenuItemResponse(UUID id,
                                String name,
                                String description,
-                               BigDecimal price) {
+                               BigDecimal price,
+                               String imageUrl) {
 
 }

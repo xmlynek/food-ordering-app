@@ -1,7 +1,9 @@
 import React from "react";
-import {Button, List} from "antd";
+import {Avatar, Button, List} from "antd";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {MenuItem} from "../../model/restaurant.ts";
+import styles from './MenuList.module.css';
+import {useNavigate} from "react-router-dom";
 
 interface MenuListProps {
   menus: Array<MenuItem>;
@@ -10,22 +12,28 @@ interface MenuListProps {
 }
 
 const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler, isPending}: MenuListProps) => {
+  const navigate = useNavigate();
 
   const handleModify = (id: string) => {
     console.log(`Modifying item with id: ${id}`);
-    // Show a modal with form for modification
-    // or navigate to a different page/component with the item's details pre-filled for editing
+    navigate(`${id}/edit`)
   };
 
 
   return (
       <List
+          className={styles.menuList}
           loading={isPending}
-          itemLayout="horizontal"
-          pagination={{position: 'bottom', align: 'start', pageSize: 25}}
+          itemLayout="vertical"
+          size="large"
+          pagination={{
+            position: 'bottom',
+            pageSize: 5,
+          }}
           dataSource={menus}
           renderItem={item => (
               <List.Item
+                  key={item.id}
                   actions={[
                     <Button key="list-modify" icon={<EditOutlined/>} type="primary"
                             onClick={() => handleModify(item.id)}>Modify</Button>,
@@ -33,20 +41,12 @@ const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler, isPending}: Me
                             onClick={() => deleteHandler(item.id)}>Delete</Button>
                   ]}
               >
-                <p>
-                  id: {item.id}
-                </p>
-                <br/>
-                {/*<List.Item.Meta*/}
-                {/*    avatar={<Avatar src={item.logo}/>}*/}
-                {/*    title={*/}
-                {/*      <p>{item.name}</p>} // Replace href with a link to the restaurant detail page*/}
-                {/*    description={item.description}*/}
-                {/*/>                */}
                 <List.Item.Meta
-                    title={item.name}
+                    avatar={<Avatar src={item.imageUrl} size={128}/>}
+                    title={<a href={`${item.id}/edit`}>{item.name}</a>}
                     description={item.description}
                 />
+                <div className={styles.menuPrice}>Price: €{item.price.toFixed(2)}</div>
               </List.Item>
           )}
       />

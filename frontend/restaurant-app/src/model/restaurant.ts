@@ -1,3 +1,5 @@
+import {FileType} from "../components/UI/UploadComponent.tsx";
+
 export interface Restaurant {
   id: string;
   name: string;
@@ -10,4 +12,12 @@ export interface MenuItem {
   name: string;
   description: string;
   price: number;
+  imageUrl: string;
+}
+
+export interface MenuItemFormValues {
+  name: string;
+  description: string;
+  price: number;
+  image: FileType;
 }

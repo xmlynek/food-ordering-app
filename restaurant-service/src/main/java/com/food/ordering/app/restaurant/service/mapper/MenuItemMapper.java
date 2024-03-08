@@ -16,7 +16,8 @@ public interface MenuItemMapper {
       @Mapping(target = "createdAt", ignore = true),
       @Mapping(target = "isAvailable", ignore = true),
       @Mapping(target = "restaurant", ignore = true),
-      @Mapping(target = "isDeleted", ignore = true)
+      @Mapping(target = "isDeleted", ignore = true),
+      @Mapping(target = "imageUrl", ignore = true),
   })
   MenuItem menuItemRequestToMenuItem(MenuItemRequest menuItemRequest);
 

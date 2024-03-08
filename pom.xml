@@ -34,6 +34,7 @@
     <eventuate-examples-common-money.version>0.2.0.RELEASE</eventuate-examples-common-money.version>
     <io.eventuate.platform.bom.version>2023.1.RELEASE</io.eventuate.platform.bom.version>
     <com.food.ordering.app.common.version>${project.version}</com.food.ordering.app.common.version>
+    <spring.cloud.gcp.dependencies.version>5.0.4</spring.cloud.gcp.dependencies.version>
   </properties>
 
   <dependencyManagement>
@@ -64,6 +65,13 @@
         <groupId>com.food.ordering.app</groupId>
         <artifactId>common</artifactId>
         <version>${com.food.ordering.app.common.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.cloud</groupId>
+        <artifactId>spring-cloud-gcp-dependencies</artifactId>
+        <version>${spring.cloud.gcp.dependencies.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

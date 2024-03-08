@@ -58,6 +58,5 @@ public class MenuItem {
   @Version
   private Long version;
 
-  // TODO: add images
-  // Images
+  private String imageUrl;
 }

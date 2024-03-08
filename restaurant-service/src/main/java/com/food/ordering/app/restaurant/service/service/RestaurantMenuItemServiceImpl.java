@@ -7,11 +7,13 @@ import com.food.ordering.app.restaurant.service.exception.MenuItemNotFoundExcept
 import com.food.ordering.app.restaurant.service.exception.RestaurantNotFoundException;
 import com.food.ordering.app.restaurant.service.repository.MenuItemRepository;
 import com.food.ordering.app.restaurant.service.repository.RestaurantRepository;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class RestaurantMenuItemServiceImpl implements
 
   private final MenuItemRepository menuItemRepository;
   private final RestaurantRepository restaurantRepository;
+  private final StorageService imageStorageService;
 
   @Override
   public List<MenuItem> getWholeRestaurantMenu(UUID restaurantId) {
@@ -35,7 +38,8 @@ public class RestaurantMenuItemServiceImpl implements
 
   @Transactional
   @Override
-  public MenuItem createMenuItem(UUID restaurantId, MenuItem menuItem) {
+  public MenuItem createMenuItem(UUID restaurantId, MenuItem menuItem, MultipartFile image)
+      throws IOException {
     Restaurant restaurant = restaurantRepository.findById(restaurantId)
         .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
 
@@ -43,7 +47,14 @@ public class RestaurantMenuItemServiceImpl implements
     menuItem.setIsAvailable(true);
     menuItem.setRestaurant(restaurant);
 
-    return menuItemRepository.save(menuItem);
+    MenuItem savedMenuItem = menuItemRepository.save(menuItem);
+
+    if (image != null) {
+      String imageUrl = imageStorageService.uploadFile(image, savedMenuItem.getId());
+      savedMenuItem.setImageUrl(imageUrl);
+    }
+
+    return savedMenuItem;
   }
 
   @Override

@@ -1,5 +1,5 @@
 server:
-  port: 8085
+  port: ${SERVER_PORT:8085}
 
 spring:
   application:
@@ -11,36 +11,45 @@ spring:
   jpa:
     generate-ddl: true
   datasource:
-    url: jdbc:postgresql://localhost:5434/restaurant_service
-    username: admin
-    password: password
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME:admin}
+    password: ${DATASOURCE_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
     hikari:
       initialization-fail-timeout: 30000
   thymeleaf:
     enabled: false
+  cloud:
+    gcp:
+      credentials:
+        location: ${GCP_CREDENTIALS_LOCATION}
+      storage:
+        project-id: ${GCP_STORAGE_PROJECT_ID}
+        credentials:
+          default-scopes: ${GCP_STORAGE_CREDENTIALS_DEFAULT_SCOPES:www.googleapis.com/auth/devstorage.read_write}
 eventuatelocal:
   kafka:
     bootstrap:
-      servers: http://localhost:9092
+      servers: ${EVENTUATE_KAFKA_BOOTSTRAP_SERVERS:http://localhost:9092}
   zookeeper:
     connection:
-      string: http://localhost:2181
+      string: ${EVENTUATE_ZOOKEEPER_URL:http://localhost:2181}
 
 eventuate:
   database:
-    schema: public
+    schema: ${EVENTUATE_DATABASE_SCHEMA:public}
+
+app:
+  gcp:
+    storage:
+      bucket-name: ${GCP_STORAGE_BUCKET_NAME}
 
 logging:
   level:
     org:
       springframework:
-        orm:
-          jpa: INFO
         web:
           filter:
             org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
-      hibernate:
-        SQL: DEBUG
     io:
       eventuate: DEBUG

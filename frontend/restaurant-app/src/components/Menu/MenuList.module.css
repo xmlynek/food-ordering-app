@@ -1,0 +1,40 @@
+/* General list styling for better spacing and readability */
+.menu-list .ant-list-items {
+  padding: 16px;
+  background: #f0f2f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Larger avatars for more prominence */
+.menu-list .ant-list-item-meta-avatar {
+  display: flex;
+  align-items: center;
+}
+
+.menu-list .ant-avatar {
+  width: 64px;
+  height: 64px;
+  line-height: 64px;
+}
+
+/* Styling for the price to make it stand out */
+.menu-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #3f8600; /* A green color for positive association with price */
+  margin-top: 8px;
+}
+
+/* Button styling for a consistent look */
+.menu-list .ant-btn {
+  margin-right: 8px;
+}
+
+/* Extra image styling for better fit and presentation */
+.menu-list .ant-list-item-extra {
+  max-width: 272px;
+  height: auto;
+  border-radius: 4px;
+  overflow: hidden;
+}
