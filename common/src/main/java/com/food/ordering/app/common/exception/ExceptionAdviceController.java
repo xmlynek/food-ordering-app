@@ -60,12 +60,13 @@ public class ExceptionAdviceController {
   }
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  @ExceptionHandler(NoResourceFoundException.class)
-  public ResponseEntity<ErrorResponse> handleNoResourceFoundException(
-      NoResourceFoundException ex) {
-    log.warn("Handled no resource found {}", ex.getMessage());
-    return new ResponseEntity<>(
-        new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()), HttpStatus.NOT_FOUND);
+  @ExceptionHandler({RestaurantNotFoundException.class, MenuItemNotFoundException.class,
+      NoResourceFoundException.class})
+  public ResponseEntity<ErrorResponse> handleNotFoundException(
+      RuntimeException ex) {
+    log.warn("Handling not found exception: {}", ex.getMessage());
+    return new ResponseEntity<>(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()),
+        HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(Exception.class)

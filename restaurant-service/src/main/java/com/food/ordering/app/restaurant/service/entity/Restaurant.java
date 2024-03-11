@@ -39,7 +39,11 @@ public class Restaurant {
   private String name;
 
   @CurrentTimestamp
+  @Column(nullable = false)
   private LocalDateTime createdAt;
+
+  @Column(nullable = false)
+  private LocalDateTime lastModifiedAt;
 
   @Column(nullable = false)
   private Boolean isAvailable;
@@ -63,4 +67,7 @@ public class Restaurant {
   @Version
   private Long version;
 
+  public String getStringId() {
+    return id.toString();
+  }
 }

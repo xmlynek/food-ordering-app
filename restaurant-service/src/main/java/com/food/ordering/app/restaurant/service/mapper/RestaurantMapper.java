@@ -1,5 +1,7 @@
 package com.food.ordering.app.restaurant.service.mapper;
 
+import com.food.ordering.app.common.event.RestaurantCreatedEvent;
+import com.food.ordering.app.common.event.RestaurantRevisedEvent;
 import com.food.ordering.app.restaurant.service.dto.RestaurantRequest;
 import com.food.ordering.app.restaurant.service.dto.RestaurantResponse;
 import com.food.ordering.app.restaurant.service.entity.Restaurant;
@@ -15,10 +17,15 @@ public interface RestaurantMapper {
       @Mapping(target = "version", ignore = true),
       @Mapping(target = "createdAt", ignore = true),
       @Mapping(target = "isAvailable", ignore = true),
+      @Mapping(target = "lastModifiedAt", ignore = true),
       @Mapping(target = "isDeleted", ignore = true),
       @Mapping(target = "menuItems", ignore = true)
   })
   Restaurant restaurantRequestToRestaurantEntity(RestaurantRequest restaurantRequest);
 
   RestaurantResponse restaurantEntityToRestaurantResponse(Restaurant restaurantEntity);
+
+  RestaurantCreatedEvent restaurantEntityToRestaurantCreateEvent(Restaurant restaurantEntity);
+
+  RestaurantRevisedEvent restaurantEntityToRestaurantRevisedEvent(Restaurant restaurantEntity);
 }

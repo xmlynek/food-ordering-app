@@ -1,9 +1,7 @@
-package com.food.ordering.app.restaurant.service;
+package com.food.ordering.app.catalog.service;
 
 import com.food.ordering.app.common.config.JsonObjectMapperJavaTimeModuleConfiguration;
-import com.food.ordering.app.restaurant.service.config.AppGCPConfigProperties;
 import io.eventuate.tram.spring.flyway.EventuateTramFlywayMigrationConfiguration;
-import io.eventuate.tram.spring.optimisticlocking.OptimisticLockingDecoratorConfiguration;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,20 +11,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @SpringBootApplication
-@EnableConfigurationProperties({AppGCPConfigProperties.class})
+@EnableR2dbcRepositories
 @Import({
-    OptimisticLockingDecoratorConfiguration.class,
+    EventuateTramFlywayMigrationConfiguration.class,
     JsonObjectMapperJavaTimeModuleConfiguration.class,
-    EventuateTramFlywayMigrationConfiguration.class
 })
-public class RestaurantServiceApplication {
-
+public class CatalogServiceApplication {
   private final Logger _logger = LoggerFactory.getLogger(getClass());
 
 
@@ -44,7 +40,6 @@ public class RestaurantServiceApplication {
   }
 
   public static void main(String[] args) {
-    SpringApplication.run(RestaurantServiceApplication.class, args);
+    SpringApplication.run(CatalogServiceApplication.class, args);
   }
-
 }

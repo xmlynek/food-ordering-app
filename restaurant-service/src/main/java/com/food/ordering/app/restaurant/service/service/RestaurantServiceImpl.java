@@ -1,9 +1,16 @@
 package com.food.ordering.app.restaurant.service.service;
 
+import com.food.ordering.app.common.event.RestaurantCreatedEvent;
+import com.food.ordering.app.common.event.RestaurantDeletedEvent;
+import com.food.ordering.app.common.event.RestaurantRevisedEvent;
+import com.food.ordering.app.common.exception.RestaurantNotFoundException;
 import com.food.ordering.app.restaurant.service.dto.RestaurantRequest;
 import com.food.ordering.app.restaurant.service.entity.Restaurant;
-import com.food.ordering.app.restaurant.service.exception.RestaurantNotFoundException;
+import com.food.ordering.app.restaurant.service.event.publisher.RestaurantDomainEventPublisher;
+import com.food.ordering.app.restaurant.service.mapper.RestaurantMapper;
 import com.food.ordering.app.restaurant.service.repository.RestaurantRepository;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
+
   private final RestaurantRepository restaurantRepository;
+  private final RestaurantDomainEventPublisher domainEventPublisher;
+  private final RestaurantMapper restaurantMapper;
 
 
   @Transactional(readOnly = true)
@@ -23,7 +33,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     return restaurantRepository.findAll();
   }
 
-//  @Transactional(readOnly = true)
+  //  @Transactional(readOnly = true)
   @Override
   public Restaurant getRestaurantById(UUID restaurantId) {
     // TODO: projection?
@@ -34,11 +44,21 @@ public class RestaurantServiceImpl implements RestaurantService {
   @Transactional
   @Override
   public Restaurant createRestaurant(Restaurant restaurant) {
-    // TODO: publish event for CQRS
     restaurant.setIsDeleted(false);
-    restaurant.setIsAvailable(true);
+    restaurant.setCreatedAt(LocalDateTime.now());
+    restaurant.setIsAvailable(
+        true); // TODO: set to false by default until the restaurant contains some menus?
+    restaurant.setLastModifiedAt(LocalDateTime.now());
 
-    return restaurantRepository.save(restaurant);
+    Restaurant createdRestaurant = restaurantRepository.save(restaurant);
+
+    RestaurantCreatedEvent restaurantCreatedEvent = restaurantMapper.restaurantEntityToRestaurantCreateEvent(
+        createdRestaurant);
+
+    domainEventPublisher.publish(createdRestaurant,
+        Collections.singletonList(restaurantCreatedEvent));
+
+    return createdRestaurant;
   }
 
   @Transactional
@@ -47,8 +67,16 @@ public class RestaurantServiceImpl implements RestaurantService {
     Restaurant restaurant = restaurantRepository.findById(restaurantId)
         .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
     restaurant.setName(restaurantRequest.name());
+    restaurant.setLastModifiedAt(LocalDateTime.now());
 
-    return restaurantRepository.save(restaurant);
+    Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
+
+    RestaurantRevisedEvent restaurantRevisedEvent = restaurantMapper.restaurantEntityToRestaurantRevisedEvent(
+        updatedRestaurant);
+
+    domainEventPublisher.publish(updatedRestaurant,
+        Collections.singletonList(restaurantRevisedEvent));
+    return updatedRestaurant;
   }
 
   @Transactional
@@ -59,6 +87,10 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     // soft delete
     restaurant.setIsDeleted(true);
-//    restaurantRepository.delete(restaurant);
+    restaurant.setIsAvailable(false);
+    restaurant.setLastModifiedAt(LocalDateTime.now());
+
+    domainEventPublisher.publish(restaurant,
+        Collections.singletonList(new RestaurantDeletedEvent()));
   }
 }

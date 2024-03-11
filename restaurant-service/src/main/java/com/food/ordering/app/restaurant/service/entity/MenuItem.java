@@ -43,7 +43,11 @@ public class MenuItem {
   private BigDecimal price;
 
   @CurrentTimestamp
+  @Column(nullable = false)
   private LocalDateTime createdAt;
+
+  @Column(nullable = false)
+  private LocalDateTime lastModifiedAt;
 
   @Column(nullable = false)
   private Boolean isAvailable;
@@ -59,4 +63,8 @@ public class MenuItem {
   private Long version;
 
   private String imageUrl;
+
+  public String getStringId() {
+    return id.toString();
+  }
 }

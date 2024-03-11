@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class RestaurantExceptionAdviceController extends ExceptionAdviceController {
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  @ExceptionHandler({RestaurantNotFoundException.class, MenuItemNotFoundException.class,
-      OrderTicketNotFoundException.class})
-  public ResponseEntity<ErrorResponse> handleNotFoundException(
-      RuntimeException ex) {
-    log.warn("Handling not found exception: {}", ex.getMessage());
+  @ExceptionHandler({OrderTicketNotFoundException.class})
+  public ResponseEntity<ErrorResponse> handleOrderTicketNotFoundException(
+      OrderTicketNotFoundException ex) {
+    log.warn("Handling OrderTicketNotFoundException: {}", ex.getMessage());
     return new ResponseEntity<>(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()),
         HttpStatus.NOT_FOUND);
   }
