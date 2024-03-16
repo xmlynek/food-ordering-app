@@ -1,5 +1,6 @@
 package com.food.ordering.app.catalog.service.mapper;
 
+import com.food.ordering.app.catalog.service.dto.MenuItemDto;
 import com.food.ordering.app.catalog.service.entity.MenuItem;
 import com.food.ordering.app.common.event.RestaurantMenuItemCreatedEvent;
 import com.food.ordering.app.common.event.RestaurantMenuItemRevisedEvent;
@@ -20,4 +21,6 @@ public interface MenuItemMapper {
     @Mapping(target = "id", expression = "java(menuItemId)"),
   })
   MenuItem restaurantMenuItemRevisedEvent(String menuItemId, RestaurantMenuItemRevisedEvent event);
+
+  MenuItemDto menuItemToMenuItemDto(MenuItem menuItem);
 }

@@ -1,20 +1,15 @@
 package com.food.ordering.app.catalog.service.service;
 
-import com.food.ordering.app.catalog.service.entity.MenuItem;
-import com.food.ordering.app.catalog.service.entity.Restaurant;
+import com.food.ordering.app.catalog.service.dto.BasicRestaurantDto;
+import com.food.ordering.app.catalog.service.dto.FullRestaurantDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface RestaurantQueryService {
 
-  Mono<Page<Restaurant>> findAllRestaurants(Pageable pageable);
+  Mono<Page<BasicRestaurantDto>> findAllRestaurants(Pageable pageable, String searchValue);
 
-  Mono<Restaurant> findRestaurantById(String id);
-
-  Flux<MenuItem> findAllMenuItems(String restaurantId);
-
-  Mono<MenuItem> findMenuItemById(String restaurantId, String menuItemId);
+  Mono<FullRestaurantDto> findRestaurantById(String id);
 
 }
