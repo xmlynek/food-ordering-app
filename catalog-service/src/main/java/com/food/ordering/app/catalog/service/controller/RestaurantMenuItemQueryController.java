@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/api/catalog/restaurants/{restaurantId}/menu")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class RestaurantMenuItemQueryController {
 
   private final RestaurantMenuItemQueryService menuItemQueryService;

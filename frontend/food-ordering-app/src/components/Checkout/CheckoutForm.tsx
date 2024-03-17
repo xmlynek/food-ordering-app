@@ -6,8 +6,8 @@ import {
 } from "@stripe/react-stripe-js";
 import {useBasket} from "../../hooks/useBasketContext.tsx";
 import {useMutation} from "@tanstack/react-query";
-import axios from "axios";
 import {clearBasketFromLocalStorage} from "../../utils/localStorageUtils.ts";
+import {postOrder} from "../../client/ordersApiClient.ts";
 
 const cardElementOptions = {
   style: {
@@ -34,10 +34,6 @@ const CheckoutForm = () => {
   const [form] = Form.useForm();
   const {calculateTotalPrice, basket} = useBasket();
 
-  async function postOrder(orderData) {
-    const response = await axios.post('http://localhost:8080/api/orders', orderData);
-    return response.data;
-  }
 
   const {mutateAsync, isLoading, isError, data, error} = useMutation({
     mutationKey: ['postOrder'],

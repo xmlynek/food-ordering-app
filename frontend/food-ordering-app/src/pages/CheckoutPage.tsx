@@ -5,6 +5,7 @@ import {loadStripe} from "@stripe/stripe-js";
 
 const {Title} = Typography;
 
+// TODO: add to config
 const stripePromise = loadStripe('pk_test_51Oc4G2Hg2RuOlHnDqgW42ddAokEcXPW0MSOEqtKbMUCKGPTNAdXC9ui5BapPvOr59BXFdSeaObNTOVYqEQUsOgO6001DCDN9Iw');
 
 
