@@ -25,6 +25,7 @@
     <module>common</module>
     <module>account-service</module>
     <module>catalog-service</module>
+    <module>api-gateway</module>
   </modules>
 
   <properties>
@@ -37,6 +38,7 @@
     <io.eventuate.platform.bom.version>2023.1.RELEASE</io.eventuate.platform.bom.version>
     <com.food.ordering.app.common.version>${project.version}</com.food.ordering.app.common.version>
     <spring.cloud.gcp.dependencies.version>5.0.4</spring.cloud.gcp.dependencies.version>
+    <spring-cloud.version>2023.0.0</spring-cloud.version>
   </properties>
 
   <dependencyManagement>
@@ -67,6 +69,13 @@
         <groupId>com.food.ordering.app</groupId>
         <artifactId>common</artifactId>
         <version>${com.food.ordering.app.common.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.google.cloud</groupId>
