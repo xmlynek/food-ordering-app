@@ -18,14 +18,15 @@ ELASTICSEARCH_REACTIVE_CLIENT_PASSWORD: password
 
 logging:
   level:
-    org:
-      springframework:
-        orm:
-          jpa: INFO
-        web:
-          filter:
-            org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
-      hibernate:
-        SQL: DEBUG
-    io:
-      eventuate: DEBUG
+    reactor.netty.channel.ChannelOperationsHandler: DEBUG
+    reactor.netty.http.server.HttpServer: DEBUG
+    reactor.netty.http.client: DEBUG
+    io.netty.handler: DEBUG
+    io.netty.handler.proxy.HttpProxyHandler: DEBUG
+    io.netty.handler.proxy.ProxyHandler: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG
+    reactor.netty.channel: DEBUG
+    org.springframework.orm.jpa: INFO
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+    org.hibernate.SQL: DEBUG
+    io.eventuate: DEBUG
