@@ -1,15 +1,20 @@
-export interface Order {
-  id: string;
-  createdAt: string;
-  status: String; // TODO: make as enum
-  totalPrice: number;
-  orderItems: OrderItem[];
+export interface CreateOrderDto {
+  customerId: string;
+  restaurantId: string;
+  paymentToken: string;
+  address: Address;
+  totalPrice: string;
+  items: CreateOrderItemDto[];
 }
 
-export interface OrderItem {
-  id: string;
-  orderTicketId: string;
-  menuItemId: string;
+export interface Address {
+  street: string;
+  postalCode: string;
+  city: string;
+}
+
+export interface CreateOrderItemDto {
+  productId: string;
   quantity: number;
-  price: number;
+  price: string;
 }

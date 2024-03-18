@@ -9,7 +9,7 @@ const {Title, Text} = Typography;
 
 const BasketPage: React.FC = () => {
   const navigate = useNavigate();
-  const {basket, calculateTotalPrice, removeFromBasket, updateQuantity} = useBasket();
+  const {basket, totalItems, calculateTotalPrice, removeFromBasket, updateQuantity} = useBasket();
 
   const handleQuantityChange = async (item: BasketItem, number: number) => {
     if (number <= 0) {
@@ -45,7 +45,8 @@ const BasketPage: React.FC = () => {
                 >
                   <Row gutter={16} align="middle">
                     <Col xs={6} sm={4} md={3} lg={4}>
-                      <Avatar size={64} src={item.image || 'placeholderImage.png'} alt={item.name}/>
+                      <Avatar size={64} src={item.imageUrl || 'placeholderImage.png'}
+                              alt={item.name}/>
                     </Col>
                     <Col xs={18} sm={20} md={21} lg={20}>
                       <Title level={5}>{item.name}</Title>
@@ -54,7 +55,7 @@ const BasketPage: React.FC = () => {
                         <Button icon={<MinusCircleOutlined/>}
                                 onClick={() => handleQuantityChange(item, item.quantity - 1)}/>
                         <InputNumber min={1} value={item.quantity}
-                                     onChange={(value) => handleQuantityChange(item, value)}
+                                     onChange={(value) => handleQuantityChange(item, value !== null ? value : 1)}
                                      style={{margin: '0 8px'}}/>
                         <Button icon={<PlusCircleOutlined/>}
                                 onClick={() => handleQuantityChange(item, item.quantity + 1)}/>
@@ -69,8 +70,8 @@ const BasketPage: React.FC = () => {
               <Title level={4}>Summary</Title>
               <Divider/>
               <Row justify="space-between">
-                <Text>Total Items (TODO update):</Text>
-                <Text>{basket.length}</Text>
+                <Text>Total Items:</Text>
+                <Text>{totalItems}</Text>
               </Row>
               <Row justify="space-between" style={{marginTop: '16px'}}>
                 <Text>Total Amount:</Text>

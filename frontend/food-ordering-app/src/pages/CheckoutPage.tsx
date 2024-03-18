@@ -1,20 +1,58 @@
-import {Card, Typography} from "antd";
+import {Card, message, Typography} from "antd";
 import CheckoutForm from "../components/Checkout/CheckoutForm.tsx";
 import {Elements} from "@stripe/react-stripe-js";
-import {loadStripe} from "@stripe/stripe-js";
+import {useBasket} from "../hooks/useBasketContext.tsx";
+import {postOrder} from "../client/ordersApiClient.ts";
+import {clearBasketFromLocalStorage} from "../utils/localStorageUtils.ts";
+import {CheckoutFormValues} from "../model/checkout.ts";
+import {useMutation} from "@tanstack/react-query";
+import {Token} from "@stripe/stripe-js";
+import keycloak from "../keycloak/keycloak.ts";
+import {stripePromise} from "../stripe/stripe.ts";
 
 const {Title} = Typography;
 
-// TODO: add to config
-const stripePromise = loadStripe('pk_test_51Oc4G2Hg2RuOlHnDqgW42ddAokEcXPW0MSOEqtKbMUCKGPTNAdXC9ui5BapPvOr59BXFdSeaObNTOVYqEQUsOgO6001DCDN9Iw');
-
 
 const CheckoutPage = () => {
+  const {calculateTotalPrice, basket} = useBasket();
+
+  // TODO: do something after order is created
+  const {mutateAsync, isLoading, isError, data, error} = useMutation({
+    mutationKey: ['postOrder'],
+    mutationFn: postOrder,
+    onSuccess: async (data) => {
+      // await queryClient.invalidateQueries({queryKey: ['order-tickets']});
+      message.success(`Order ${data.id} created successfully`);
+      clearBasketFromLocalStorage();
+    }
+  });
+
+
+  const handleSubmit = async (values: CheckoutFormValues, token: Token) => {
+    await mutateAsync({
+      customerId: keycloak!.subject || '',
+      restaurantId: basket?.[0].restaurantId,
+      paymentToken: token?.id,
+      address: {
+        street: token?.card?.address_line1 || values.addressLine,
+        postalCode: token?.card?.address_zip || values.postalCode,
+        city: token?.card?.address_city || values.city,
+      },
+      totalPrice: calculateTotalPrice().toFixed(2),
+      items: basket.map(item => ({
+        productId: item.id,
+        quantity: item.quantity,
+        price: item.price.toFixed(2)
+      }))
+    });
+  };
+
+
   return (
       <Elements stripe={stripePromise}>
-        <Card bordered={false} style={{ maxWidth: 1280, margin: '20px auto', padding: '20px' }}>
-          <Title level={2} style={{ textAlign: 'center', marginBottom: '40px' }}>Checkout</Title>
-          <CheckoutForm />
+        <Card bordered={false} style={{maxWidth: 1280, margin: '20px auto', padding: '20px'}}>
+          <Title level={2} style={{textAlign: 'center', marginBottom: '40px'}}>Checkout</Title>
+          <CheckoutForm onSubmit={handleSubmit} totalPrice={calculateTotalPrice().toFixed(2)}/>
         </Card>
       </Elements>
   );

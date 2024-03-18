@@ -1,10 +1,10 @@
 import {Descriptions} from "antd";
 import React from "react";
-import {Restaurant} from "../../model/restaurant.ts";
+import {FullRestaurantRestDTO} from "../../model/restApiDto.ts";
 
 
 interface RestaurantProps {
-  restaurant: Restaurant;
+  restaurant: FullRestaurantRestDTO;
 }
 
 const RestaurantDetails: React.FC<RestaurantProps> = ({restaurant}: RestaurantProps) => {

@@ -4,6 +4,7 @@ import {getBasketFromLocalStorage, saveBasketToLocalStorage} from "../utils/loca
 
 interface BasketContextType {
   basket: BasketItem[];
+  totalItems: number;
   calculateTotalPrice: () => number;
   addToBasket: (item: BasketItem) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
@@ -12,6 +13,7 @@ interface BasketContextType {
 
 export const BasketContext = createContext<BasketContextType>({
   basket: [],
+  totalItems: 0,
   calculateTotalPrice: () => 0,
   addToBasket: () => {
   },
@@ -26,14 +28,16 @@ interface BasketProviderProps {
 }
 
 
-
-
 export const BasketProvider = ({children}: BasketProviderProps) => {
   const [basket, setBasket] = useState<BasketItem[]>(getBasketFromLocalStorage());
+  const [totalItems, setTotalItems] = useState<number>(0);
 
   useEffect(() => {
     // Update localStorage whenever the basket changes
     saveBasketToLocalStorage(basket);
+    // Calculate and update the total number of items
+    const total = basket.reduce((acc, item) => acc + item.quantity, 0);
+    setTotalItems(total);
   }, [basket]);
 
   const addToBasket = async (newItem: BasketItem) => {
@@ -82,7 +86,7 @@ export const BasketProvider = ({children}: BasketProviderProps) => {
 
   return (
       <BasketContext.Provider
-          value={{basket, calculateTotalPrice, addToBasket, removeFromBasket, updateQuantity}}>
+          value={{basket, totalItems, calculateTotalPrice, addToBasket, removeFromBasket, updateQuantity}}>
         {children}
       </BasketContext.Provider>
   );

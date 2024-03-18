@@ -1,15 +1,11 @@
-import {Button, Col, Form, Input, message, Row} from "antd";
-import {
-  CardElement,
-  useElements,
-  useStripe
-} from "@stripe/react-stripe-js";
-import {useBasket} from "../../hooks/useBasketContext.tsx";
-import {useMutation} from "@tanstack/react-query";
-import {clearBasketFromLocalStorage} from "../../utils/localStorageUtils.ts";
-import {postOrder} from "../../client/ordersApiClient.ts";
+import {Button, Col, Form, Input, Row} from "antd";
+import {CardElement, useElements, useStripe} from "@stripe/react-stripe-js";
+import {StripeCardElementOptions, Token} from "@stripe/stripe-js";
+import {CheckoutFormValues} from "../../model/checkout.ts";
+import React from "react";
 
-const cardElementOptions = {
+const cardElementOptions: StripeCardElementOptions = {
+  hidePostalCode: true,
   style: {
     base: {
       color: "#32325d",
@@ -17,36 +13,31 @@ const cardElementOptions = {
       fontSmoothing: "antialiased",
       fontSize: "16px",
       "::placeholder": {
-        color: "#aab7c4"
+        color: "#7b858e"
       },
-      iconColor: '#c4f0ff', // Customize the color of icons in the CardElement
+      iconColor: '#000000', // Customize the color of icons in the CardElement
     },
     invalid: {
-      color: "#fa755a",
-      iconColor: "#fa755a"
+      color: "#ff2d00",
+      iconColor: "#ff2d00"
     }
   }
 };
 
-const CheckoutForm = () => {
-  const stripe = useStripe();
+interface CheckoutFormProps {
+  onSubmit: (values: CheckoutFormValues, token: Token) => void;
+  totalPrice: string;
+}
+
+const CheckoutForm: React.FC<CheckoutFormProps> = ({
+                                                     onSubmit,
+                                                     totalPrice,
+                                                   }: CheckoutFormProps) => {
+  const [form] = Form.useForm<CheckoutFormValues>();
   const elements = useElements();
-  const [form] = Form.useForm();
-  const {calculateTotalPrice, basket} = useBasket();
+  const stripe = useStripe();
 
-
-  const {mutateAsync, isLoading, isError, data, error} = useMutation({
-    mutationKey: ['postOrder'],
-    mutationFn: postOrder,
-    onSuccess: async (data) => {
-      // await queryClient.invalidateQueries({queryKey: ['order-tickets']});
-      message.success(`Order ${data.id} created successfully`);
-      clearBasketFromLocalStorage();
-    }
-  });
-
-
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values: CheckoutFormValues) => {
     if (!stripe || !elements) {
       return;
     }
@@ -58,39 +49,23 @@ const CheckoutForm = () => {
         currency: 'eur',
         address_country: values.country,
         address_city: values.city,
-        address_line1: values.line1,
-        address_state: values.state,
+        address_line1: values.addressLine,
+        address_zip: values.postalCode,
         name: values.name,
       });
-
 
       if (error) {
         console.log('[error]', error);
       } else {
         // console.log('[PaymentMethod]', paymentMethod);
         console.log('[token]', token);
-        // Process paymentMethod further (e.g., send to your server)
-        await mutateAsync({
-          customerId: "b4ccc7e2-fb81-4040-87fe-f04189bb21be", // TODO change with keycloak user
-          restaurantId: basket?.[0].restaurantId,
-          paymentToken: token?.id,
-          address: {
-            street: token?.card?.address_line1,
-            postalCode: token?.card?.address_zip,
-            city: token?.card?.address_city,
-          },
-          totalPrice: calculateTotalPrice().toFixed(2),
-          items: basket.map(item => ({
-            productId: item.id,
-            quantity: item.quantity,
-            price: item.price.toFixed(2)
-          }))
-        });
+        onSubmit(values, token);
       }
     } else {
       console.log("CardElement not found");
     }
   };
+
 
   return (
       <Form form={form} layout="vertical" onFinish={handleSubmit} className="checkout-form">
@@ -102,7 +77,7 @@ const CheckoutForm = () => {
             </Form.Item>
             <Form.Item name="city" label="City"
                        rules={[{required: true, message: 'Please input your city!'}]}>
-              <Input placeholder="Anytown"/>
+              <Input placeholder="Town"/>
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
@@ -110,14 +85,14 @@ const CheckoutForm = () => {
                        rules={[{required: true, message: 'Please input your country!'}]}>
               <Input placeholder="Country"/>
             </Form.Item>
-            <Form.Item name="line1" label="Address Line 1"
+            <Form.Item name="addressLine" label="Address Line 1"
                        rules={[{required: true, message: 'Please input your address!'}]}>
               <Input placeholder="123 Any Street"/>
             </Form.Item>
-            {/*<Form.Item name="postal_code" label="Postal Code"*/}
-            {/*           rules={[{required: true, message: 'Please input your postal code!'}]}>*/}
-            {/*  <Input placeholder="ABC 123"/>*/}
-            {/*</Form.Item>*/}
+            <Form.Item name="postalCode" label="Postal Code"
+                       rules={[{required: true, message: 'Please input your postal code!'}]}>
+              <Input placeholder="ABC 123"/>
+            </Form.Item>
           </Col>
           <Col xs={24}>
             <Form.Item label="Card Details"
@@ -128,7 +103,7 @@ const CheckoutForm = () => {
           <Col xs={24} style={{textAlign: 'center'}}>
             <Button type="primary" htmlType="submit" disabled={!stripe} size="large">
               Confirm order <strong
-                style={{marginLeft: '8px'}}>({calculateTotalPrice().toFixed(2)}€)</strong>
+                style={{marginLeft: '8px'}}>({totalPrice}€)</strong>
             </Button>
           </Col>
         </Row>

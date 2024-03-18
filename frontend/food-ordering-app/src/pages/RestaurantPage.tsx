@@ -3,9 +3,9 @@ import React from "react";
 import {useParams} from "react-router-dom";
 import RestaurantDetails from "../components/Restaurant/RestaurantDetails.tsx";
 import {useQuery} from "@tanstack/react-query";
-import {Restaurant} from "../model/restaurant.ts";
 import RestaurantMenuList from "../components/RestaurantMenu/RestaurantMenuList.tsx";
-import {fetchRestaurantById} from "../client/restaurantApiClient.ts";
+import {fetchRestaurantById} from "../client/catalogRestaurantsApiClient.ts";
+import {FullRestaurantRestDTO} from "../model/restApiDto.ts";
 
 const {Title} = Typography;
 
@@ -20,7 +20,7 @@ const RestaurantPage: React.FC = () => {
     data: restaurant,
     error,
     isPending,
-  } = useQuery<Restaurant, Error>({
+  } = useQuery<FullRestaurantRestDTO, Error>({
     queryKey: ['restaurantById', restaurantId],
     queryFn: fetchRestaurantById.bind(null, restaurantId),
   })
