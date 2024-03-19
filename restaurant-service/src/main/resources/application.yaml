@@ -10,6 +10,11 @@ spring:
     locations: classpath:flyway/{vendor}
   jpa:
     generate-ddl: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH2_ISSUER_URI}
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME:admin}

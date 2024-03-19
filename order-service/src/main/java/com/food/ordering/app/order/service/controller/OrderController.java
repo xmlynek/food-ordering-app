@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,7 @@ public class OrderController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
+  @PreAuthorize("isFullyAuthenticated() && #orderRequest.customerId().toString() == authentication.name")
   public OrderCreatedResponse createOrder(@Valid @RequestBody OrderRequest orderRequest) {
     Order createdOrder = orderSagaService.saveOrderAndCreateOrderSaga(
         orderMapper.orderRequestToOrderEntity(orderRequest));

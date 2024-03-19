@@ -35,13 +35,12 @@ public class RestaurantMenuItemServiceImpl implements
 
   @Override
   public List<MenuItem> getWholeRestaurantMenu(UUID restaurantId) {
-//    return menuItemRepository.findByRestaurantId(restaurantId);
     return menuItemRepository.findByRestaurantIdAndIsDeletedFalse(restaurantId);
   }
 
   @Override
   public MenuItem getMenuItemById(UUID restaurantId, UUID menuItemId) {
-    return menuItemRepository.findByIdAndRestaurantId(menuItemId, restaurantId)
+    return menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalse(menuItemId, restaurantId)
         .orElseThrow(() -> new MenuItemNotFoundException(menuItemId));
   }
 
@@ -77,8 +76,8 @@ public class RestaurantMenuItemServiceImpl implements
   @Override
   @Transactional
   public MenuItem updateMenuItem(UUID restaurantId, UUID menuItemId,
-      MenuItemRequest menuItemRequest) { // TODO: update this method and request body
-    MenuItem menuItem = menuItemRepository.findByIdAndRestaurantId(menuItemId, restaurantId)
+      MenuItemRequest menuItemRequest) {
+    MenuItem menuItem = menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalse(menuItemId, restaurantId)
         .orElseThrow(() -> new MenuItemNotFoundException(menuItemId));
 
     menuItem.setName(menuItemRequest.name());
@@ -100,7 +99,7 @@ public class RestaurantMenuItemServiceImpl implements
   @Override
   @Transactional
   public void deleteMenuItem(UUID restaurantId, UUID menuItemId) {
-    MenuItem menuItem = menuItemRepository.findByIdAndRestaurantId(menuItemId, restaurantId)
+    MenuItem menuItem = menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalse(menuItemId, restaurantId)
         .orElseThrow(() -> new MenuItemNotFoundException(menuItemId));
     menuItem.setIsDeleted(true);
     menuItem.setIsAvailable(false);

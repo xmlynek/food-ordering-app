@@ -18,6 +18,7 @@ public interface RestaurantMapper {
       @Mapping(target = "createdAt", ignore = true),
       @Mapping(target = "isAvailable", ignore = true),
       @Mapping(target = "lastModifiedAt", ignore = true),
+      @Mapping(target = "ownerId", ignore = true),
       @Mapping(target = "isDeleted", ignore = true),
       @Mapping(target = "menuItems", ignore = true)
   })

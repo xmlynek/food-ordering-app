@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +31,15 @@ public class RestaurantServiceImpl implements RestaurantService {
   @Override
   public List<Restaurant> getAllRestaurants() {
     // TODO: add pagination?
-    return restaurantRepository.findAll();
+    return restaurantRepository.findAllByOwnerIdAndIsDeletedFalse(
+        SecurityContextHolder.getContext().getAuthentication().getName());
   }
 
   //  @Transactional(readOnly = true)
   @Override
   public Restaurant getRestaurantById(UUID restaurantId) {
     // TODO: projection?
-    return restaurantRepository.findById(restaurantId)
+    return restaurantRepository.findByIdAndIsDeletedFalse(restaurantId)
         .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
   }
 
@@ -49,6 +51,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     restaurant.setIsAvailable(
         true); // TODO: set to false by default until the restaurant contains some menus?
     restaurant.setLastModifiedAt(LocalDateTime.now());
+    restaurant.setOwnerId(SecurityContextHolder.getContext().getAuthentication().getName());
 
     Restaurant createdRestaurant = restaurantRepository.save(restaurant);
 

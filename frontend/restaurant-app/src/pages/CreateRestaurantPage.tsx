@@ -4,12 +4,13 @@ import {useNavigate} from "react-router-dom";
 import CreateRestaurantForm from "../components/Restaurant/CreateRestaurantForm.tsx";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {createRestaurant} from "../client/restaurantApiClient.ts";
+import {RestaurantFormValues} from "../model/restaurant.ts";
 
 
 
 const CreateRestaurantPage: React.FC = () => {
   const queryClient = useQueryClient();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<RestaurantFormValues>();
   const navigate = useNavigate();
 
 

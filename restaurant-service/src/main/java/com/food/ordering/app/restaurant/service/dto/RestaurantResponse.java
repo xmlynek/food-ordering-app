@@ -5,6 +5,8 @@ import java.util.UUID;
 
 public record RestaurantResponse(UUID id,
                                  String name,
+                                 String description,
+                                 AddressDto address,
                                  Boolean isAvailable,
                                  List<MenuItemResponse> menuItems) {
 

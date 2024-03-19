@@ -2,6 +2,7 @@ package com.food.ordering.app.restaurant.service.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,6 +39,12 @@ public class Restaurant {
   @Column(unique = true, nullable = false)
   private String name;
 
+  @Column(nullable = false)
+  private String description;
+
+  @Column(nullable = false)
+  private String ownerId;
+
   @CurrentTimestamp
   @Column(nullable = false)
   private LocalDateTime createdAt;
@@ -51,13 +58,9 @@ public class Restaurant {
   @Column(nullable = false)
   private Boolean isDeleted;
 
-//  @Embedded
-//  private Address address;
-
-//  private String phoneNumber;
-
-  // TODO:
-  // image
+  @Embedded
+  @Column(nullable = false)
+  private Address address;
 
   @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
   @Fetch(FetchMode.SUBSELECT)

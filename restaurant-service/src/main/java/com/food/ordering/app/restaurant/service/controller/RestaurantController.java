@@ -32,7 +32,7 @@ public class RestaurantController {
 
 
   @GetMapping
-  public ResponseEntity<List<RestaurantResponse>> getAllRestaurants() {
+  public ResponseEntity<List<RestaurantResponse>> getPrincipalRestaurants() {
     List<RestaurantResponse> response = restaurantService.getAllRestaurants().stream()
         .map(restaurantMapper::restaurantEntityToRestaurantResponse)
         .collect(Collectors.toList());

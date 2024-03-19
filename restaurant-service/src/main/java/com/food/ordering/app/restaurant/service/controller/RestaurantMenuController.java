@@ -35,7 +35,7 @@ public class RestaurantMenuController {
   private final MenuItemMapper menuItemMapper;
 
   @GetMapping
-  public ResponseEntity<List<MenuItemResponse>> getWholeRestaurantMenu(
+  public ResponseEntity<List<MenuItemResponse>> getRestaurantMenu(
       @PathVariable UUID restaurantId) {
     List<MenuItemResponse> menuItems = menuItemService.getWholeRestaurantMenu(restaurantId).stream()
         .map(menuItemMapper::menuItemToMenuItemResponse)

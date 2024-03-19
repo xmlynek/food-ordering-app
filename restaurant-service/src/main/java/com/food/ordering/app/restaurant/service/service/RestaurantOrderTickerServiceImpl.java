@@ -12,7 +12,6 @@ import com.food.ordering.app.restaurant.service.entity.Restaurant;
 import com.food.ordering.app.restaurant.service.entity.RestaurantOrderTicket;
 import com.food.ordering.app.restaurant.service.exception.MenuItemNotAvailableException;
 import com.food.ordering.app.restaurant.service.exception.OrderTicketNotFoundException;
-import com.food.ordering.app.restaurant.service.repository.OrderTicketItemRepository;
 import com.food.ordering.app.restaurant.service.repository.OrderTicketRepository;
 import io.eventuate.examples.common.money.Money;
 import java.math.BigDecimal;
@@ -31,7 +30,6 @@ public class RestaurantOrderTickerServiceImpl implements RestaurantOrderTickerSe
 
   private final RestaurantMenuItemService restaurantMenuItemService;
   private final RestaurantService restaurantService;
-  private final OrderTicketItemRepository orderTicketItemRepository;
   private final OrderTicketRepository orderTicketRepository;
 
   @Override

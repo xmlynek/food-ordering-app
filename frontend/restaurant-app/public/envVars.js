@@ -13,6 +13,8 @@ window.envVars = {
       'http://localhost:8083'),
   REACT_KEYCLOAK_REALM: getDefault('${REACT_KEYCLOAK_REALM}',
       'restaurant'),
+  REACT_KEYCLOAK_CLIENT_ID: getDefault('${REACT_KEYCLOAK_CLIENT_ID}',
+      'frontend'),
   REACT_RESTAURANT_SERVICE_PATH: getDefault('${REACT_RESTAURANT_SERVICE_PATH}',
       '/restaurant-service/api/restaurants'),
 };

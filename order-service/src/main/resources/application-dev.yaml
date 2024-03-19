@@ -1,4 +1,5 @@
 DATASOURCE_URL: jdbc:postgresql://localhost:5432/order_service
+OAUTH2_ISSUER_URI: http://localhost:8083/realms/food-ordering-app
 
 logging:
   level:

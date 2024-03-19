@@ -1,4 +1,4 @@
-import {Restaurant} from "../model/restaurant.ts";
+import {Restaurant, RestaurantFormValues} from "../model/restaurant.ts";
 import {axiosInstance} from "./axiosInstance.ts";
 
 export const fetchRestaurantById = async (restaurantId: string): Promise<Restaurant> => {
@@ -11,7 +11,7 @@ export const fetchRestaurants = async (): Promise<Restaurant[]> => {
   return response.data;
 };
 
-export const createRestaurant = async (restaurantData) => {
+export const createRestaurant = async (restaurantData: RestaurantFormValues) => {
   const response = await axiosInstance.post(`${window.envVars.REACT_RESTAURANT_SERVICE_PATH}`, restaurantData);
   return response.data;
 };

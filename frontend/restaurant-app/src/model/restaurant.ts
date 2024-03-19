@@ -21,3 +21,13 @@ export interface MenuItemFormValues {
   price: number;
   image: FileType;
 }
+
+export interface RestaurantFormValues {
+  name: string;
+  description: string;
+  address: {
+    street: string;
+    postalCode: string;
+    city: string;
+  };
+}
