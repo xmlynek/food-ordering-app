@@ -34,22 +34,6 @@ eventuatelocal:
   zookeeper:
     connection:
       string: ${EVENTUATE_ZOOKEEPER_URL:http://localhost:2181}
-  cdc:
-    polling:
-      interval:
-        in:
-          milliseconds: ${EVENTUATELOCAL_CDC_POLLING_INTERVAL_IN_MILLISECONDS:500}
-      retry:
-        interval:
-          in:
-            milliseconds: ${EVENTUATELOCAL_CDC_POLLING_RETRY_INTERVAL_IN_MILLISECONDS:500}
-    max:
-      events:
-        per:
-          polling: ${EVENTUATELOCAL_CDC_MAX_EVENTS_PER_POLLING:1000}
-      attempts:
-        for:
-          polling: ${EVENTUATELOCAL_CDC_MAX_ATTEMPTS_FOR_POLLING:100}
 
 
 eventuate:
