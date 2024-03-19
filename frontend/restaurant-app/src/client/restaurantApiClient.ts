@@ -12,6 +12,6 @@ export const fetchRestaurants = async (): Promise<Restaurant[]> => {
 };
 
 export const createRestaurant = async (restaurantData) => {
-  const response = await axiosInstance.post(`${window.envVars.REACT_RESTAURANT_SERVICE_PATH}`, {restaurantData});
+  const response = await axiosInstance.post(`${window.envVars.REACT_RESTAURANT_SERVICE_PATH}`, restaurantData);
   return response.data;
 };
