@@ -3,9 +3,9 @@ import React from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import MenuItemFormSkeleton from "../components/Menu/MenuItemFormSkeleton.tsx";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import axios from "axios";
 import {MenuItemFormValues} from "../model/restaurant.ts";
 import UploadFormItem from "../components/UI/UploadFormItem.tsx";
+import {createRestaurantMenuItem} from "../client/restaurantMenuItemsApiClient.ts";
 
 
 const CreateMenuPage: React.FC = () => {
@@ -14,28 +14,13 @@ const CreateMenuPage: React.FC = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const createMenu = async (menuData: MenuItemFormValues) => {
-    const formData = new FormData();
-    formData.append('menuItemRequest', new Blob([JSON.stringify({
-      name: menuData.name,
-      description: menuData.description,
-      price: menuData.price
-    })], {type: 'application/json'}));
-    formData.append('image', menuData.image);
+  const restaurantId = params.id as string;
 
-    const response = await axios.post(`http://localhost:8085/api/restaurants/${params.id}/menu`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    return response.data;
-  };
 
   const {mutateAsync, isPending} = useMutation({
-    mutationFn: createMenu, onSuccess: async () => {
+    mutationFn: createRestaurantMenuItem.bind(null, restaurantId), onSuccess: async () => {
       await queryClient.invalidateQueries({queryKey: ['menus']});
-      message.success('Menu created successfully!');
+      await message.success('Menu created successfully!');
     }
   });
 

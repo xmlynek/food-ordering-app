@@ -4,20 +4,13 @@ import React from "react";
 import RestaurantList from "../components/Restaurant/RestaurantList.tsx";
 import {Outlet, useNavigate} from "react-router-dom";
 import {Restaurant} from "../model/restaurant.ts";
+import {fetchRestaurants} from "../client/restaurantApiClient.ts";
 
 const {Title} = Typography;
 
 const RestaurantsListPage: React.FC = () => {
 
   const navigate = useNavigate();
-
-  const fetchRestaurants = async (): Promise<Restaurant[]> => {
-    const response = await fetch('http://localhost:8085/api/restaurants');
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json();
-  };
 
   const {
     data: restaurants,

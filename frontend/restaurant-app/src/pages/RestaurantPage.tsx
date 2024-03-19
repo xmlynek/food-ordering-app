@@ -5,6 +5,7 @@ import RestaurantDetails from "../components/Restaurant/RestaurantDetails.tsx";
 import RestaurantLayout from "../components/Restaurant/layout/RestaurantLayout.tsx";
 import {useQuery} from "@tanstack/react-query";
 import {Restaurant} from "../model/restaurant.ts";
+import {fetchRestaurantById} from "../client/restaurantApiClient.ts";
 
 const {Title} = Typography;
 
@@ -13,19 +14,16 @@ const {Content} = Layout;
 const RestaurantPage: React.FC = () => {
   const params = useParams();
 
-  const fetchRestaurantById = async (): Promise<Restaurant> => {
-    const response = await fetch(`http://localhost:8085/api/restaurants/${params.id}`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json();
-  };
+  const restaurantId = params.id as string
 
   const {
     data: restaurant,
     error,
     isPending,
-  } = useQuery<Restaurant, Error>({queryKey: ['restaurantById'], queryFn: fetchRestaurantById});
+  } = useQuery<Restaurant, Error>({
+    queryKey: ['restaurantById', restaurantId],
+    queryFn: fetchRestaurantById.bind(null, restaurantId)
+  });
 
   if (error) return 'An error has occurred: ' + error.message
   if (isPending) return 'Loading...'

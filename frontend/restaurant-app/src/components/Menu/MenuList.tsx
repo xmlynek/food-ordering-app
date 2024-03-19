@@ -43,7 +43,7 @@ const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler, isPending}: Me
               >
                 <List.Item.Meta
                     avatar={<Avatar src={item.imageUrl} size={128}/>}
-                    title={<a href={`${item.id}/edit`}>{item.name}</a>}
+                    title={<p onClick={handleModify.bind(null, item.id)}>{item.name}</p>}
                     description={item.description}
                 />
                 <div className={styles.menuPrice}>Price: €{item.price.toFixed(2)}</div>

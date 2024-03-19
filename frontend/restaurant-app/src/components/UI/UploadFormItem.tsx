@@ -23,7 +23,11 @@ const UploadFormItem: React.FC<UploadFormItemProps> = ({form}: UploadFormItemPro
           }}
           rules={[{required: true, message: 'Please upload an image!'}]}
       >
-        <UploadComponent onFileChange={(img) => form.setFieldValue("image", img)}/>
+        <UploadComponent onFileChange={(img) => {
+          form.setFieldValue("image", img)
+          form.validateFields(['image']);
+        }
+        }/>
       </Form.Item>
   );
 }

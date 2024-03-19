@@ -3,6 +3,7 @@ import React from "react";
 import {useNavigate} from "react-router-dom";
 import CreateRestaurantForm from "../components/Restaurant/CreateRestaurantForm.tsx";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {createRestaurant} from "../client/restaurantApiClient.ts";
 
 
 
@@ -11,26 +12,11 @@ const CreateRestaurantPage: React.FC = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const createRestaurant = async (restaurantData) => {
-    const response = await fetch(`http://localhost:8085/api/restaurants`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(restaurantData),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to create restaurant');
-    }
-
-    return response.json();
-  };
 
   const {mutateAsync, isPending, error} = useMutation({
     mutationFn: createRestaurant, onSuccess: async (data) => {
       await queryClient.invalidateQueries({queryKey: ['restaurants']});
-      message.success(`Restaurant ${data.name} created successfully`);
+      await message.success(`Restaurant ${data.name} created successfully`);
     }
   });
 
@@ -45,7 +31,7 @@ const CreateRestaurantPage: React.FC = () => {
       navigate(`../`);
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
-      message.error('Restaurant creation failed!');
+      await message.error('Restaurant creation failed!');
     }
   };
   const handleCancel = () => {

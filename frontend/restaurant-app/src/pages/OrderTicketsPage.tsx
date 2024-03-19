@@ -4,7 +4,7 @@ import {OrderTicket} from "../model/orderTicket.ts";
 import OrderTicketList from "../components/Order/OrderTicketList.tsx";
 import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
-import axios from "axios";
+import {fetchOrderTickets} from "../client/restaurantOrdersApiClient.ts";
 
 const {Title} = Typography;
 const {Content} = Layout;
@@ -12,14 +12,12 @@ const {Content} = Layout;
 const OrderTicketsPage: React.FC = () => {
   const params = useParams()
 
-  const fetchOrderTickets = async (): Promise<OrderTicket[]> => {
-    const response = await axios.get(`http://localhost:8085/api/restaurants/${params.id}/orderTickets`);
-    return response.data;
-  };
+  const restaurantId = params.id as string;
+
 
   const {data: orderTickets, isPending, error} = useQuery<OrderTicket[], Error>({
     queryKey: ["order-tickets"],
-    queryFn: fetchOrderTickets
+    queryFn: fetchOrderTickets.bind(null, restaurantId),
   });
 
   // if (isPending) {

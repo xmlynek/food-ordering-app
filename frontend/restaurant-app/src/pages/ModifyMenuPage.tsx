@@ -3,8 +3,11 @@ import {Form, message, Modal, Skeleton} from 'antd';
 import {useNavigate, useParams} from 'react-router-dom';
 import MenuItemFormSkeleton from '../components/Menu/MenuItemFormSkeleton.tsx';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import axios from 'axios';
 import {MenuItem, MenuItemFormValues} from '../model/restaurant.ts';
+import {
+  fetchRestaurantMenuItem,
+  updateRestaurantMenuItem
+} from "../client/restaurantMenuItemsApiClient.ts";
 
 const ModifyMenuPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -12,32 +15,18 @@ const ModifyMenuPage: React.FC = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  // Define the query to fetch the menu item data
-  const fetchMenuItem = async () => {
-    const {data} = await axios.get(`http://localhost:8085/api/restaurants/${params.id}/menu/${params.menuId}`);
-    return data;
-  };
+  const restaurantId = params.id as string;
+  const menuId = params.menuId as string;
+
 
   const {data: menuItemData, isPending: isFetchPending} = useQuery<MenuItem, Error>({
     queryKey: ['menuItemById'],
-    queryFn: fetchMenuItem,
+    queryFn: fetchRestaurantMenuItem.bind(null, restaurantId, menuId)
   });
 
 
-  const updateMenu = async (menuData: MenuItemFormValues) => {
-
-
-    const response = await axios.put(`http://localhost:8085/api/restaurants/${params.id}/menu/${params.menuId}`, menuData, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    return response.data;
-  };
-
   const {mutateAsync, isPending} = useMutation({
-    mutationFn: updateMenu,
+    mutationFn: updateRestaurantMenuItem.bind(null, restaurantId, menuId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({queryKey: ['menus']});
       message.success('Menu updated successfully!');
