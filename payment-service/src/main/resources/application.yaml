@@ -1,5 +1,5 @@
 server:
-  port: 8090
+  port: ${SERVER_PORT:8080}
 
 spring:
   application:
@@ -11,35 +11,52 @@ spring:
   jpa:
     generate-ddl: true
   datasource:
-    url: jdbc:postgresql://localhost:5433/payment_service
-    username: admin
-    password: password
-    driver-class-name: org.postgresql.Driver
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME:admin}
+    password: ${DATASOURCE_PASSWORD:password}
+    driver-class-name: ${DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
     hikari:
       initialization-fail-timeout: 30000
 
 eventuatelocal:
   kafka:
     bootstrap:
-      servers: http://localhost:9092
+      servers: ${EVENTUATE_KAFKA_BOOTSTRAP_SERVERS:http://localhost:9092}
   zookeeper:
     connection:
-      string: http://localhost:2181
+      string: ${EVENTUATE_ZOOKEEPER_URL:http://localhost:2181}
+  cdc:
+    polling:
+      interval:
+        in:
+          milliseconds: ${EVENTUATELOCAL_CDC_POLLING_INTERVAL_IN_MILLISECONDS:500}
+      retry:
+        interval:
+          in:
+            milliseconds: ${EVENTUATELOCAL_CDC_POLLING_RETRY_INTERVAL_IN_MILLISECONDS:500}
+    max:
+      events:
+        per:
+          polling: ${EVENTUATELOCAL_CDC_MAX_EVENTS_PER_POLLING:1000}
+      attempts:
+        for:
+          polling: ${EVENTUATELOCAL_CDC_MAX_ATTEMPTS_FOR_POLLING:100}
 
 eventuate:
   database:
-    schema: public
+    schema: ${EVENTUATE_DATABASE_SCHEMA:public}
 
 logging:
   level:
+    root: INFO
     org:
       springframework:
         orm:
           jpa: INFO
         web:
           filter:
-            org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+            org.springframework.web.filter.CommonsRequestLoggingFilter: INFO
       hibernate:
-        SQL: DEBUG
+        SQL: WARN
     io:
-      eventuate: DEBUG
+      eventuate: WARN

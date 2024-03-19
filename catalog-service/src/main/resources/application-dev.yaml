@@ -22,11 +22,11 @@ logging:
     reactor.netty.http.server.HttpServer: DEBUG
     reactor.netty.http.client: DEBUG
     io.netty.handler: DEBUG
-    io.netty.handler.proxy.HttpProxyHandler: DEBUG
-    io.netty.handler.proxy.ProxyHandler: DEBUG
+    io.netty.handler.proxy.HttpProxyHandler: TRACE
+    io.netty.handler.proxy.ProxyHandler: TRACE
     org.springframework.web.reactive.function.client: DEBUG
     reactor.netty.channel: DEBUG
     org.springframework.orm.jpa: INFO
-    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
-    org.hibernate.SQL: DEBUG
+    org.hibernate.SQL: INFO
     io.eventuate: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

@@ -51,10 +51,11 @@ eventuate:
 
 logging:
   level:
-    org:
-      springframework:
-        web:
-          filter:
-            org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
-    io:
-      eventuate: DEBUG
+    root: INFO
+    reactor.netty: WARN
+    io.netty.handler: WARN
+    org.springframework.web.reactive.function.client: WARN
+    org.springframework.orm.jpa: WARN
+    org.hibernate.SQL: WARN
+    io.eventuate: INFO
+    org.springframework.web.filter.CommonsRequestLoggingFilter: WARN
