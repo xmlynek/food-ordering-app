@@ -30,6 +30,10 @@ eventuate:
   database:
     schema: ${EVENTUATE_DATABASE_SCHEMA:public}
 
+app:
+  properties:
+    stripe-api-key: ${STRIPE_API_KEY}
+
 logging:
   level:
     root: INFO

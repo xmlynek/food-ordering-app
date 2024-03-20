@@ -1,5 +1,6 @@
 package com.food.ordering.app.payment.service;
 
+import com.food.ordering.app.payment.service.config.AppConfigurationProperties;
 import io.eventuate.tram.spring.flyway.EventuateTramFlywayMigrationConfiguration;
 import io.eventuate.tram.spring.optimisticlocking.OptimisticLockingDecoratorConfiguration;
 import jakarta.servlet.FilterChain;
@@ -11,11 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @SpringBootApplication
+@EnableConfigurationProperties(AppConfigurationProperties.class)
 @Import({
     OptimisticLockingDecoratorConfiguration.class,
     EventuateTramFlywayMigrationConfiguration.class

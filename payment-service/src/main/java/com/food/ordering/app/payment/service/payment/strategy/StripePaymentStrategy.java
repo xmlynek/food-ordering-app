@@ -3,13 +3,11 @@ package com.food.ordering.app.payment.service.payment.strategy;
 import com.food.ordering.app.payment.service.payment.model.dto.PaymentRequest;
 import com.food.ordering.app.payment.service.payment.model.dto.PaymentResult;
 import com.food.ordering.app.payment.service.payment.model.dto.RefundResult;
-import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import com.stripe.model.Refund;
 import com.stripe.param.ChargeCreateParams;
 import com.stripe.param.RefundCreateParams;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,12 +16,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class StripePaymentStrategy implements PaymentStrategy {
-
-  @PostConstruct
-  public void init() {
-    // TODO: use configuration
-    Stripe.apiKey = "sk_test_51Oc4G2Hg2RuOlHnDmj9OJ8NPORZpLpqHPg9kJN0msWpiTS9d3kfDj86sOoMyIBnppg0dGN80LyUODIzDZrn9xJDO00Lco5Q5f1";
-  }
 
   @Override
   public PaymentResult processPayment(PaymentRequest paymentRequest) throws StripeException {
