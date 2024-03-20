@@ -1,33 +1,26 @@
-import {FileType} from "../components/UI/UploadComponent.tsx";
+import {Address} from "./address.ts";
+import {MenuItem} from "./menuItem.ts";
 
 export interface Restaurant {
   id: string;
   name: string;
+  description: string;
+  address: Address;
   isAvailable: boolean;
   menuItems: MenuItem[];
 }
 
-export interface MenuItem {
+export interface BasicRestaurantRestDto {
   id: string;
   name: string;
   description: string;
-  price: number;
-  imageUrl: string;
-}
-
-export interface MenuItemFormValues {
-  name: string;
-  description: string;
-  price: number;
-  image: FileType;
+  address: Address;
+  isAvailable: boolean;
 }
 
 export interface RestaurantFormValues {
   name: string;
   description: string;
-  address: {
-    street: string;
-    postalCode: string;
-    city: string;
-  };
+  isAvailable?: boolean;
+  address: Address;
 }

@@ -5,7 +5,7 @@ import com.food.ordering.app.common.event.RestaurantMenuItemDeletedEvent;
 import com.food.ordering.app.common.event.RestaurantMenuItemRevisedEvent;
 import com.food.ordering.app.common.exception.MenuItemNotFoundException;
 import com.food.ordering.app.common.exception.RestaurantNotFoundException;
-import com.food.ordering.app.restaurant.service.dto.MenuItemRequest;
+import com.food.ordering.app.restaurant.service.dto.MenuItemUpdateRequest;
 import com.food.ordering.app.restaurant.service.entity.MenuItem;
 import com.food.ordering.app.restaurant.service.entity.Restaurant;
 import com.food.ordering.app.restaurant.service.event.publisher.RestaurantMenuItemDomainEventPublisher;
@@ -76,13 +76,14 @@ public class RestaurantMenuItemServiceImpl implements
   @Override
   @Transactional
   public MenuItem updateMenuItem(UUID restaurantId, UUID menuItemId,
-      MenuItemRequest menuItemRequest) {
+      MenuItemUpdateRequest menuItemRequest) {
     MenuItem menuItem = menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalse(menuItemId, restaurantId)
         .orElseThrow(() -> new MenuItemNotFoundException(menuItemId));
 
     menuItem.setName(menuItemRequest.name());
     menuItem.setDescription(menuItemRequest.description());
     menuItem.setPrice(menuItemRequest.price());
+    menuItem.setIsAvailable(menuItemRequest.isAvailable());
     menuItem.setLastModifiedAt(LocalDateTime.now());
 
     MenuItem updatedMenuItem = menuItemRepository.save(menuItem);

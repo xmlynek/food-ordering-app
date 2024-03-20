@@ -39,6 +39,8 @@ public class RestaurantQueryServiceImpl implements RestaurantQueryService {
         .filter(QueryBuilders.bool()
             .should(QueryBuilders.wildcard().field("name").wildcard("*" + searchValue + "*").build()
                 ._toQuery())
+            .should(QueryBuilders.wildcard().field("description").wildcard("*" + searchValue + "*").build()
+                ._toQuery())
             .should(QueryBuilders.nested().path("menuItems").query(QueryBuilders.bool()
                     .should(
                         QueryBuilders.wildcard().field("menuItems.name")

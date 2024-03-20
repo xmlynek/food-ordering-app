@@ -1,5 +1,5 @@
 import React from "react";
-import {Avatar, Button, List} from "antd";
+import {Avatar, Button, List, Tag} from "antd";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {MenuItem} from "../../model/restaurant.ts";
 import styles from './MenuList.module.css';
@@ -13,12 +13,9 @@ interface MenuListProps {
 
 const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler, isPending}: MenuListProps) => {
   const navigate = useNavigate();
-
   const handleModify = (id: string) => {
-    console.log(`Modifying item with id: ${id}`);
     navigate(`${id}/edit`)
   };
-
 
   return (
       <List
@@ -43,7 +40,10 @@ const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler, isPending}: Me
               >
                 <List.Item.Meta
                     avatar={<Avatar src={item.imageUrl} size={128}/>}
-                    title={<p onClick={handleModify.bind(null, item.id)}>{item.name}</p>}
+                    title={<div><p onClick={handleModify.bind(null, item.id)}>{item.name}</p>
+                      <span>{item.isAvailable ? (<Tag color="green">Available</Tag>) : (
+                          <Tag color="red">Not available</Tag>)}
+                          </span></div>}
                     description={item.description}
                 />
                 <div className={styles.menuPrice}>Price: €{item.price.toFixed(2)}</div>

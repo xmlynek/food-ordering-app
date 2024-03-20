@@ -1,6 +1,6 @@
 package com.food.ordering.app.restaurant.service.service;
 
-import com.food.ordering.app.restaurant.service.dto.MenuItemRequest;
+import com.food.ordering.app.restaurant.service.dto.MenuItemUpdateRequest;
 import com.food.ordering.app.restaurant.service.entity.MenuItem;
 import java.io.IOException;
 import java.util.List;
@@ -16,7 +16,7 @@ public interface RestaurantMenuItemService {
   MenuItem createMenuItem(UUID restaurantId, MenuItem menuItem, MultipartFile image)
       throws IOException;
 
-  MenuItem updateMenuItem(UUID restaurantId, UUID menuItemId, MenuItemRequest menuItemRequest);
+  MenuItem updateMenuItem(UUID restaurantId, UUID menuItemId, MenuItemUpdateRequest menuItemUpdateRequest);
 
   void deleteMenuItem(UUID restaurantId, UUID menuItemId);
 }

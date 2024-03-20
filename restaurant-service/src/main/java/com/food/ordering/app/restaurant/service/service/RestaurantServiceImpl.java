@@ -4,9 +4,10 @@ import com.food.ordering.app.common.event.RestaurantCreatedEvent;
 import com.food.ordering.app.common.event.RestaurantDeletedEvent;
 import com.food.ordering.app.common.event.RestaurantRevisedEvent;
 import com.food.ordering.app.common.exception.RestaurantNotFoundException;
-import com.food.ordering.app.restaurant.service.dto.RestaurantRequest;
+import com.food.ordering.app.restaurant.service.dto.RestaurantUpdateRequest;
 import com.food.ordering.app.restaurant.service.entity.Restaurant;
 import com.food.ordering.app.restaurant.service.event.publisher.RestaurantDomainEventPublisher;
+import com.food.ordering.app.restaurant.service.mapper.AddressMapper;
 import com.food.ordering.app.restaurant.service.mapper.RestaurantMapper;
 import com.food.ordering.app.restaurant.service.repository.RestaurantRepository;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class RestaurantServiceImpl implements RestaurantService {
   private final RestaurantRepository restaurantRepository;
   private final RestaurantDomainEventPublisher domainEventPublisher;
   private final RestaurantMapper restaurantMapper;
+  private final AddressMapper addressMapper;
 
 
   @Transactional(readOnly = true)
@@ -66,11 +68,14 @@ public class RestaurantServiceImpl implements RestaurantService {
 
   @Transactional
   @Override
-  public Restaurant updateRestaurant(UUID restaurantId, RestaurantRequest restaurantRequest) {
+  public Restaurant updateRestaurant(UUID restaurantId, RestaurantUpdateRequest restaurantUpdateRequest) {
     Restaurant restaurant = restaurantRepository.findById(restaurantId)
         .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
-    restaurant.setName(restaurantRequest.name());
+    restaurant.setName(restaurantUpdateRequest.name());
     restaurant.setLastModifiedAt(LocalDateTime.now());
+    restaurant.setIsAvailable(restaurantUpdateRequest.isAvailable());
+    restaurant.setDescription(restaurantUpdateRequest.description());
+    restaurant.setAddress(addressMapper.addressDtoToAddress(restaurantUpdateRequest.address()));
 
     Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
 

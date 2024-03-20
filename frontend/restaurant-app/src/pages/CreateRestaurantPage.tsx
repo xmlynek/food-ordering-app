@@ -1,11 +1,10 @@
 import {Form, message, Modal} from "antd";
 import React from "react";
 import {useNavigate} from "react-router-dom";
-import CreateRestaurantForm from "../components/Restaurant/CreateRestaurantForm.tsx";
+import RestaurantForm from "../components/Restaurant/RestaurantForm.tsx";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {createRestaurant} from "../client/restaurantApiClient.ts";
-import {RestaurantFormValues} from "../model/restaurant.ts";
-
+import {BasicRestaurantRestDto, RestaurantFormValues} from "../model/restaurant.ts";
 
 
 const CreateRestaurantPage: React.FC = () => {
@@ -14,7 +13,7 @@ const CreateRestaurantPage: React.FC = () => {
   const navigate = useNavigate();
 
 
-  const {mutateAsync, isPending, error} = useMutation({
+  const {mutateAsync, isPending, error} = useMutation<BasicRestaurantRestDto, Error>({
     mutationFn: createRestaurant, onSuccess: async (data) => {
       await queryClient.invalidateQueries({queryKey: ['restaurants']});
       await message.success(`Restaurant ${data.name} created successfully`);
@@ -51,7 +50,7 @@ const CreateRestaurantPage: React.FC = () => {
           destroyOnClose={true}
           maskClosable={false}
       >
-        <CreateRestaurantForm form={form}/>
+        <RestaurantForm form={form}/>
       </Modal>
   );
 };

@@ -2,6 +2,7 @@ package com.food.ordering.app.restaurant.service.controller;
 
 import com.food.ordering.app.restaurant.service.dto.MenuItemRequest;
 import com.food.ordering.app.restaurant.service.dto.MenuItemResponse;
+import com.food.ordering.app.restaurant.service.dto.MenuItemUpdateRequest;
 import com.food.ordering.app.restaurant.service.mapper.MenuItemMapper;
 import com.food.ordering.app.restaurant.service.service.RestaurantMenuItemService;
 import jakarta.validation.Valid;
@@ -67,9 +68,9 @@ public class RestaurantMenuController {
   @PutMapping("/{menuId}")
   public ResponseEntity<MenuItemResponse> updateRestaurantMenu(@PathVariable UUID restaurantId,
       @PathVariable UUID menuId,
-      @Valid @RequestBody MenuItemRequest menuItemRequest) {
+      @Valid @RequestBody MenuItemUpdateRequest menuItemUpdateRequest) {
     MenuItemResponse updatedMenuItem = menuItemMapper.menuItemToMenuItemResponse(
-        menuItemService.updateMenuItem(restaurantId, menuId, menuItemRequest));
+        menuItemService.updateMenuItem(restaurantId, menuId, menuItemUpdateRequest));
     return ResponseEntity.ok(updatedMenuItem);
   }
 

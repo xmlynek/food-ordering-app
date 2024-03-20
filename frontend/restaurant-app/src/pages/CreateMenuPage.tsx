@@ -3,9 +3,9 @@ import React from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import MenuItemFormSkeleton from "../components/Menu/MenuItemFormSkeleton.tsx";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {MenuItemFormValues} from "../model/restaurant.ts";
 import UploadFormItem from "../components/UI/UploadFormItem.tsx";
 import {createRestaurantMenuItem} from "../client/restaurantMenuItemsApiClient.ts";
+import {MenuItemFormValues} from "../model/menuItem.ts";
 
 
 const CreateMenuPage: React.FC = () => {

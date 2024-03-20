@@ -1,5 +1,5 @@
 import React from "react";
-import {Col, Form, FormInstance, Input, Row, Space, Tooltip} from "antd";
+import {Col, Form, FormInstance, Input, Row, Space, Switch, Tooltip} from "antd";
 import {
   EnvironmentOutlined,
   HomeOutlined,
@@ -12,7 +12,7 @@ interface CreateRestaurantFormProps {
   form: FormInstance<RestaurantFormValues>;
 }
 
-const CreateRestaurantForm: React.FC<CreateRestaurantFormProps> = ({form}: CreateRestaurantFormProps) => {
+const RestaurantForm: React.FC<CreateRestaurantFormProps> = ({form}: CreateRestaurantFormProps) => {
   return (
       <Form form={form} layout="vertical">
         <Row gutter={[16, 16]}>
@@ -42,6 +42,17 @@ const CreateRestaurantForm: React.FC<CreateRestaurantFormProps> = ({form}: Creat
                               placeholder="Describe the restaurant"/>
             </Form.Item>
           </Col>
+          {form.getFieldValue('isAvailable') != null &&
+              <Col span={24}>
+                <Form.Item
+                    label="Availability"
+                    name="isAvailable"
+                    valuePropName="checked"
+                    initialValue={true}
+                >
+                  <Switch/>
+                </Form.Item>
+              </Col>}
         </Row>
         <Form.Item>
           <Space.Compact>
@@ -58,12 +69,12 @@ const CreateRestaurantForm: React.FC<CreateRestaurantFormProps> = ({form}: Creat
               </Col>
               <Col xs={24} sm={12} md={12}>
                 <Form.Item
-                    label={"Postal Code"}
-                    name={['address', 'postalCode']}
-                    rules={[{required: true, message: 'Please input the postal code!'}]}
+                    label={"Country"}
+                    name={['address', 'country']}
+                    rules={[{required: true, message: 'Please input the country!'}]}
                 >
-                  <Input prefix={<MailOutlined className="site-form-item-icon"/>}
-                         placeholder="Postal Code"/>
+                  <Input prefix={<EnvironmentOutlined className="site-form-item-icon"/>}
+                         placeholder="Country"/>
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={12}>
@@ -76,11 +87,22 @@ const CreateRestaurantForm: React.FC<CreateRestaurantFormProps> = ({form}: Creat
                          placeholder="City"/>
                 </Form.Item>
               </Col>
+              <Col xs={24} sm={12} md={12}>
+                <Form.Item
+                    label={"Postal Code"}
+                    name={['address', 'postalCode']}
+                    rules={[{required: true, message: 'Please input the postal code!'}]}
+                >
+                  <Input prefix={<MailOutlined className="site-form-item-icon"/>}
+                         placeholder="Postal Code"/>
+                </Form.Item>
+              </Col>
             </Row>
           </Space.Compact>
         </Form.Item>
       </Form>
-  );
+  )
+      ;
 }
 
-export default CreateRestaurantForm;
+export default RestaurantForm;

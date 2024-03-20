@@ -1,6 +1,5 @@
-package com.food.ordering.app.restaurant.service.entity;
+package com.food.ordering.app.common.model;
 
-import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,10 +11,10 @@ import lombok.Setter;
 @Getter
 @Builder
 @Setter
-@Embeddable
 public class Address {
 
   private String street;
   private String postalCode;
   private String city;
+  private String country;
 }

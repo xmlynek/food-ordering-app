@@ -1,5 +1,6 @@
 package com.food.ordering.app.restaurant.service.entity;
 
+import com.food.ordering.app.common.model.Address;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;

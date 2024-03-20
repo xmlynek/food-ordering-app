@@ -3,7 +3,7 @@ import {useQuery} from "@tanstack/react-query";
 import React from "react";
 import RestaurantList from "../components/Restaurant/RestaurantList.tsx";
 import {Outlet, useNavigate} from "react-router-dom";
-import {Restaurant} from "../model/restaurant.ts";
+import {BasicRestaurantRestDto} from "../model/restaurant.ts";
 import {fetchRestaurants} from "../client/restaurantApiClient.ts";
 
 const {Title} = Typography;
@@ -16,7 +16,7 @@ const RestaurantsListPage: React.FC = () => {
     data: restaurants,
     error,
     isPending,
-  } = useQuery<Restaurant[], Error>({queryKey: ['restaurants'], queryFn: fetchRestaurants});
+  } = useQuery<BasicRestaurantRestDto[], Error>({queryKey: ['restaurants'], queryFn: fetchRestaurants});
 
   if (error) return 'An error has occurred: ' + error.message
 

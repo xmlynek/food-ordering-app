@@ -1,13 +1,13 @@
 import React, {useEffect} from 'react';
-import {Form, message, Modal, Skeleton} from 'antd';
+import {Form, message, Modal, Skeleton, Switch} from 'antd';
 import {useNavigate, useParams} from 'react-router-dom';
 import MenuItemFormSkeleton from '../components/Menu/MenuItemFormSkeleton.tsx';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import {MenuItem, MenuItemFormValues} from '../model/restaurant.ts';
 import {
   fetchRestaurantMenuItem,
   updateRestaurantMenuItem
 } from "../client/restaurantMenuItemsApiClient.ts";
+import {MenuItem, MenuItemFormValues} from "../model/menuItem.ts";
 
 const ModifyMenuPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -39,6 +39,7 @@ const ModifyMenuPage: React.FC = () => {
     if (menuItemData) {
       form.setFieldsValue({
         name: menuItemData.name,
+        isAvailable: menuItemData.isAvailable,
         description: menuItemData.description,
         price: +menuItemData.price,
       });
@@ -70,7 +71,16 @@ const ModifyMenuPage: React.FC = () => {
           maskClosable={false}
       >
         {isFetchPending ? <Skeleton active/> :
-            <MenuItemFormSkeleton form={form}/>}
+            <MenuItemFormSkeleton form={form}>
+              <Form.Item
+                  label="Availability"
+                  name="isAvailable"
+                  valuePropName="checked"
+                  initialValue={true}
+              >
+                <Switch/>
+              </Form.Item>
+            </MenuItemFormSkeleton> }
       </Modal>
   );
 };

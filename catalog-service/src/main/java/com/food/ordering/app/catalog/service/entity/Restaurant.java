@@ -1,5 +1,6 @@
 package com.food.ordering.app.catalog.service.entity;
 
+import com.food.ordering.app.common.model.Address;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,12 @@ public class Restaurant {
 
   @Field(type = FieldType.Text)
   private String name;
+
+  @Field(type = FieldType.Text)
+  private String description;
+
+  @Field(type = FieldType.Nested, includeInParent = true)
+  private Address address;
 
   @Field(type = FieldType.Date, format = {}, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
   private LocalDateTime createdAt;

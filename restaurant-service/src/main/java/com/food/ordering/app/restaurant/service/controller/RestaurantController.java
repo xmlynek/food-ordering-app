@@ -1,7 +1,9 @@
 package com.food.ordering.app.restaurant.service.controller;
 
+import com.food.ordering.app.restaurant.service.dto.BasicRestaurantResponse;
 import com.food.ordering.app.restaurant.service.dto.RestaurantRequest;
 import com.food.ordering.app.restaurant.service.dto.RestaurantResponse;
+import com.food.ordering.app.restaurant.service.dto.RestaurantUpdateRequest;
 import com.food.ordering.app.restaurant.service.mapper.RestaurantMapper;
 import com.food.ordering.app.restaurant.service.service.RestaurantService;
 import jakarta.validation.Valid;
@@ -32,9 +34,9 @@ public class RestaurantController {
 
 
   @GetMapping
-  public ResponseEntity<List<RestaurantResponse>> getPrincipalRestaurants() {
-    List<RestaurantResponse> response = restaurantService.getAllRestaurants().stream()
-        .map(restaurantMapper::restaurantEntityToRestaurantResponse)
+  public ResponseEntity<List<BasicRestaurantResponse>> getPrincipalRestaurants() {
+    List<BasicRestaurantResponse> response = restaurantService.getAllRestaurants().stream()
+        .map(restaurantMapper::restaurantEntityToBasicRestaurantResponse)
         .collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
@@ -47,19 +49,19 @@ public class RestaurantController {
   }
 
   @PostMapping
-  public ResponseEntity<RestaurantResponse> createRestaurant(
+  public ResponseEntity<BasicRestaurantResponse> createRestaurant(
       @Valid @RequestBody RestaurantRequest restaurantRequest) {
-    RestaurantResponse response = restaurantMapper.restaurantEntityToRestaurantResponse(
+    BasicRestaurantResponse response = restaurantMapper.restaurantEntityToBasicRestaurantResponse(
         restaurantService.createRestaurant(
             restaurantMapper.restaurantRequestToRestaurantEntity(restaurantRequest)));
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
   @PutMapping("/{restaurantId}")
-  public ResponseEntity<RestaurantResponse> updateRestaurant(@PathVariable UUID restaurantId,
-      @Valid @RequestBody RestaurantRequest restaurantRequest) {
-    RestaurantResponse response = restaurantMapper.restaurantEntityToRestaurantResponse(
-        restaurantService.updateRestaurant(restaurantId, restaurantRequest));
+  public ResponseEntity<BasicRestaurantResponse> updateRestaurant(@PathVariable UUID restaurantId,
+      @Valid @RequestBody RestaurantUpdateRequest restaurantUpdateRequest) {
+    BasicRestaurantResponse response = restaurantMapper.restaurantEntityToBasicRestaurantResponse(
+        restaurantService.updateRestaurant(restaurantId, restaurantUpdateRequest));
     return ResponseEntity.ok(response);
   }
 

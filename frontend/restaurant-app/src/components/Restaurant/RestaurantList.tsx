@@ -1,11 +1,13 @@
 import React from "react";
-import {Avatar, List} from "antd";
+import {Button, Card, List, Tag, Typography} from "antd";
 import {useNavigate} from "react-router-dom";
-import {Restaurant} from "../../model/restaurant.ts";
+import {BasicRestaurantRestDto} from "../../model/restaurant.ts";
+import styles from './RestaurantList.module.css';
 
+const {Title, Paragraph} = Typography;
 
 interface RestaurantListProps {
-  restaurants: Restaurant[];
+  restaurants: BasicRestaurantRestDto[] | undefined;
   isPending: boolean;
 }
 
@@ -15,24 +17,53 @@ const RestaurantList: React.FC<RestaurantListProps> = ({
                                                        }: RestaurantListProps) => {
   const navigate = useNavigate();
 
+  const handleViewDetailsButton = (id: string, event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    navigate(`/restaurants/${id}/menu`);
+  }
+
+  const handleCardClick = (id: string) => {
+    navigate(`/restaurants/${id}/menu`);
+  }
+
 
   return (
-      <List
-          loading={isPending}
-          itemLayout="horizontal"
-          pagination={{position: 'bottom', align: 'start', pageSize: 10}}
-          dataSource={restaurants}
-          renderItem={item => (
-              <List.Item onClick={() => navigate(item.id)}>
-                <List.Item.Meta
-                    avatar={<Avatar/>}
-                    title={
-                      <p>{item.name}</p>} // Replace href with a link to the restaurant detail page
-                    description={item?.isAvailable ? 'Available' : 'Not available'}
-                />
-              </List.Item>
-          )}
-      />
+      <div className={styles.restaurantList}>
+        <List
+            loading={isPending}
+            grid={{gutter: 16, column: 2, xs: 1, sm: 1, md: 2, lg: 2}}
+            pagination={{position: 'bottom', pageSize: 10}}
+            dataSource={restaurants}
+            renderItem={(restaurant) => (
+                <List.Item>
+                  <Card
+                      hoverable
+                      className={styles.card}
+                      onClick={handleCardClick.bind(null, restaurant.id)}
+                      title={
+                        <div className={styles.cardTitleContainer}>
+                          <Title level={4}>{restaurant.name}</Title>
+                          <span>{restaurant.isAvailable ? (<Tag color="green">Available</Tag>) : (
+                              <Tag color="red">Not available</Tag>)}
+                          </span>
+                        </div>
+                      }
+                  >
+                    <div className={styles.cardContent}>
+                      <Paragraph ellipsis={true}>
+                        <strong>Address:</strong> {`${restaurant.address.street}, ${restaurant.address.city}, ${restaurant.address.postalCode}, ${restaurant.address.country}`}
+                      </Paragraph>
+                      <Paragraph ellipsis={true}>{restaurant.description}</Paragraph>
+                    </div>
+                    <Button className={styles.btnPrimary} type="primary"
+                            onClick={handleViewDetailsButton.bind(null, restaurant.id)}>
+                      View Details
+                    </Button>
+                  </Card>
+                </List.Item>
+            )}
+        />
+      </div>
   );
 };
 

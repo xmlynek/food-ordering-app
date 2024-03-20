@@ -1,6 +1,6 @@
 package com.food.ordering.app.restaurant.service.service;
 
-import com.food.ordering.app.restaurant.service.dto.RestaurantRequest;
+import com.food.ordering.app.restaurant.service.dto.RestaurantUpdateRequest;
 import com.food.ordering.app.restaurant.service.entity.Restaurant;
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +13,7 @@ public interface RestaurantService {
 
   Restaurant createRestaurant(Restaurant restaurant);
 
-  Restaurant updateRestaurant(UUID restaurantId, RestaurantRequest restaurantRequest);
+  Restaurant updateRestaurant(UUID restaurantId, RestaurantUpdateRequest restaurantUpdateRequest);
 
   void deleteRestaurant(UUID restaurantId);
 }

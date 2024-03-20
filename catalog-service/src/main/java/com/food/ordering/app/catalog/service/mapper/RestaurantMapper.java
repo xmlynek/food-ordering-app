@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-@Mapper(componentModel = "spring", uses = {MenuItemMapper.class})
+@Mapper(componentModel = "spring", uses = {MenuItemMapper.class, AddressMapper.class})
 public interface RestaurantMapper {
 
   @Mappings({
