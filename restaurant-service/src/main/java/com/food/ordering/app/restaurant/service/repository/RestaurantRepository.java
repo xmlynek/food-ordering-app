@@ -7,13 +7,12 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
 
   @NonNull
-  @PostFilter("isFullyAuthenticated() and (filterObject.ownerId == authentication.name)")
+//  @PostFilter("isFullyAuthenticated() and (filterObject.ownerId == authentication.name)")
   List<Restaurant> findAllByOwnerIdAndIsDeletedFalse(@NonNull String ownerId);
 
   @Override
