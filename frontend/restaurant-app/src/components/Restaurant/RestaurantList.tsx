@@ -50,10 +50,12 @@ const RestaurantList: React.FC<RestaurantListProps> = ({
                       }
                   >
                     <div className={styles.cardContent}>
-                      <Paragraph ellipsis={true}>
+                      <Paragraph ellipsis={{rows: 3}}>
+                        <strong>Description:</strong> {restaurant.description}
+                      </Paragraph>
+                      <Paragraph>
                         <strong>Address:</strong> {`${restaurant.address.street}, ${restaurant.address.city}, ${restaurant.address.postalCode}, ${restaurant.address.country}`}
                       </Paragraph>
-                      <Paragraph ellipsis={true}>{restaurant.description}</Paragraph>
                     </div>
                     <Button className={styles.btnPrimary} type="primary"
                             onClick={handleViewDetailsButton.bind(null, restaurant.id)}>
