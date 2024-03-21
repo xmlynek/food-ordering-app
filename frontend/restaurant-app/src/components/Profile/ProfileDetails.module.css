@@ -1,0 +1,27 @@
+.cardContainer {
+  margin-top: 50px;
+}
+
+.card {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.avatar {
+  margin: auto;
+}
+
+.title {
+  margin-top: 20px;
+}
+
+.changeDetailsButton {
+  margin-top: 20px;
+}
+
+.centerContent {
+  display: 'flex';
+  justifyContent: 'center';
+  alignItems: 'center';
+  height: '100vh';
+}

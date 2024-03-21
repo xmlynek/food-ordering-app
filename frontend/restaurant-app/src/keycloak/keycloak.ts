@@ -9,3 +9,7 @@ const keycloak = new Keycloak({
 })
 
 export default keycloak;
+
+export const performLogout = async () => {
+  await keycloak.logout({redirectUri: `${window.location.origin}`});
+}

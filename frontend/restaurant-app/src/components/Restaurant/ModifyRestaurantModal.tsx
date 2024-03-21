@@ -1,10 +1,9 @@
 import {Form, message, Modal} from "antd";
 import React, {useEffect} from "react";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {RestaurantFormValues} from "../model/restaurant.ts";
 import {
   BasicRestaurantRestDto,
-  Restaurant
+  Restaurant, RestaurantFormValues
 } from "../../model/restaurant.ts";
 import {updateRestaurant} from "../../client/restaurantApiClient.ts";
 import RestaurantForm from "./RestaurantForm.tsx";
@@ -13,13 +12,13 @@ import RestaurantForm from "./RestaurantForm.tsx";
 interface ModifyRestaurantModalProps {
   restaurant: Restaurant;
   isVisible: boolean;
-  hideModal: () => void;
+  onHideModal: () => void;
 }
 
 const ModifyRestaurantModal: React.FC<ModifyRestaurantModalProps> = ({
                                                                        restaurant,
                                                                        isVisible,
-                                                                       hideModal,
+                                                                       onHideModal,
                                                                      }: ModifyRestaurantModalProps) => {
   const queryClient = useQueryClient();
   const [form] = Form.useForm<RestaurantFormValues>();
@@ -58,7 +57,7 @@ const ModifyRestaurantModal: React.FC<ModifyRestaurantModalProps> = ({
     try {
       const values = await form.validateFields();
       await updateRestaurantMutation(values);
-      hideModal();
+      onHideModal();
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
       await message.error('Restaurant update failed!');
@@ -73,7 +72,7 @@ const ModifyRestaurantModal: React.FC<ModifyRestaurantModalProps> = ({
           open={isVisible}
           confirmLoading={isUpdatePending}
           onOk={handleModalOk}
-          onCancel={hideModal}
+          onCancel={onHideModal}
           destroyOnClose={true}
           maskClosable={true}
       >

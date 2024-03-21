@@ -1,17 +1,15 @@
-import {Button, Card, Col, Layout, message, Modal, Row, Space, Typography} from "antd";
+import {Button, Card, Col, Layout, message, Modal, Row, Space, Spin, Typography} from "antd";
 import React from "react";
 import {Outlet, useNavigate, useParams} from "react-router-dom";
 import RestaurantDetails from "../components/Restaurant/RestaurantDetails.tsx";
 import RestaurantLayout from "../components/Restaurant/layout/RestaurantLayout.tsx";
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {Restaurant, RestaurantFormValues} from "../model/restaurant.ts";
+import {useMutation, useQuery} from "@tanstack/react-query";
+import {Restaurant} from "../model/restaurant.ts";
 import {
   deleteRestaurant,
-  fetchRestaurantById,
-  updateRestaurant
+  fetchRestaurantById
 } from "../client/restaurantApiClient.ts";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
-import RestaurantForm from "../components/Restaurant/RestaurantForm.tsx";
 import ModifyRestaurantModal from "../components/Restaurant/ModifyRestaurantModal.tsx";
 
 const {Title} = Typography;
@@ -65,8 +63,9 @@ const RestaurantPage: React.FC = () => {
     setIsModalVisible(false);
   }
 
-  if (error) return 'An error has occurred: ' + error.message
-  if (isPending) return 'Loading...'
+  if (error) return 'An error has occurred: ' + error.message;
+  if (isPending) return <Spin size="large"/>;
+
 
   return (
       <Content style={{padding: '0 48px'}}>
@@ -79,7 +78,8 @@ const RestaurantPage: React.FC = () => {
             <Col>Restaurant Details</Col>
             <Col>
               <Space>
-                <Button type="primary" icon={<EditOutlined/>} onClick={handleModifyButton}>Modify</Button>
+                <Button type="primary" icon={<EditOutlined/>}
+                        onClick={handleModifyButton}>Modify</Button>
                 <Button danger icon={<DeleteOutlined/>} onClick={showDeleteConfirm}>Delete</Button>
               </Space>
             </Col>
@@ -92,7 +92,8 @@ const RestaurantPage: React.FC = () => {
           <Outlet/>
         </RestaurantLayout>
 
-        <ModifyRestaurantModal restaurant={restaurant} isVisible={isModalVisible} hideModal={handleModalCancel} />
+        <ModifyRestaurantModal restaurant={restaurant} isVisible={isModalVisible}
+                               onHideModal={handleModalCancel}/>
       </Content>
   );
 };

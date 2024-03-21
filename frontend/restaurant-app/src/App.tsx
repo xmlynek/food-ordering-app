@@ -4,15 +4,15 @@ import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
 import {lazy, Suspense} from "react";
 import AppFooter from "./layout/footer/AppFooter.tsx";
 import ModifyMenuPage from "./pages/ModifyMenuPage.tsx";
+import CreateMenuPage from "./pages/CreateMenuPage.tsx";
+import CreateRestaurantPage from "./pages/CreateRestaurantPage.tsx";
 
 const HomePage = lazy(() => import("./pages/HomePage.tsx"));
 const RestaurantsListPage = lazy(() => import("./pages/RestaurantsListPage.tsx"));
 const RestaurantPage = lazy(() => import("./pages/RestaurantPage.tsx"));
 const OrderTicketsPage = lazy(() => import("./pages/OrderTicketsPage.tsx"));
 const MenusPage = lazy(() => import("./pages/MenusPage.tsx"));
-const CreateRestaurantPage = lazy(() => import("./pages/CreateRestaurantPage.tsx"));
-const CreateMenuPage = lazy(() => import("./pages/CreateMenuPage.tsx"));
-// const ModifyMenuPage = lazy(() => import("./pages/ModifyMenuPage.tsx"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage.tsx"));
 
 
 function App() {
@@ -40,6 +40,7 @@ function App() {
                     <Route path=":menuId/edit" element={<ModifyMenuPage/>}/>
                   </Route>
                 </Route>
+                <Route path="/profile" element={<ProfilePage/>}/>
                 <Route path="*" element={<Result
                     status="404"
                     title="404"

@@ -1,23 +1,52 @@
 import {Layout, Menu} from "antd";
-import {AppstoreOutlined, HomeOutlined} from "@ant-design/icons";
-import styles from './Navigation.module.css';
-import {Link} from "react-router-dom";
+import {AppstoreOutlined, HomeOutlined, LogoutOutlined, UserOutlined} from "@ant-design/icons";
+import {Link, useLocation} from "react-router-dom";
+import {performLogout} from "../../keycloak/keycloak.ts";
+
+import classes from './Navigation.module.css';
+
 
 const Navbar = () => {
+  const location = useLocation();
+
+  const getSelectedKeys = () => {
+    const path = location.pathname;
+    if (path.includes('/restaurants')) return ['restaurants'];
+    if (path.includes('/profile')) return ['profile'];
+    return ['home'];
+  };
+
+  const menuItems = [
+    {
+      key: 'home',
+      icon: <HomeOutlined />,
+      label: <Link to="/">Home</Link>,
+    },
+    {
+      key: 'restaurants',
+      icon: <AppstoreOutlined />,
+      label: <Link to="/restaurants">Restaurants</Link>,
+    },
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: <Link to="/profile">Profile</Link>,
+      className: classes.separateMenuItems,
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Logout',
+      onClick: performLogout,
+    },
+  ];
+
   return (
       <Layout.Header>
-        <div className={styles.logo}>
+        <div className={classes.logo}>
           {/*<img src={logo} alt="logo"/>*/}
         </div>
-         {/*TODO: set defaultSelectedkey to the current page*/}
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['home']}>
-          <Menu.Item key="home" icon={<HomeOutlined/>}>
-            <Link to="/">Home</Link>
-          </Menu.Item>
-          <Menu.Item key="restaurants" icon={<AppstoreOutlined/>}>
-            <Link to="/restaurants">Restaurants</Link>
-          </Menu.Item>
-        </Menu>
+        <Menu theme="dark" mode="horizontal" items={menuItems} selectedKeys={getSelectedKeys()} />
       </Layout.Header>
   );
 };

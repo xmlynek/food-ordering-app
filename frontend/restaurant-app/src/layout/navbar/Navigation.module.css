@@ -5,3 +5,11 @@
   margin: 16px 24px 16px 0;
   float: left;
 }
+
+.separateMenuItems {
+  margin-left: auto !important;
+}
+
+.marginFromRight {
+  margin-right: 10% !important;
+}
