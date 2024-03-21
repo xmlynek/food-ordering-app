@@ -1,3 +1,5 @@
+import {Address} from "./address.ts";
+
 export interface CreateOrderDto {
   customerId: string;
   restaurantId: string;
@@ -5,12 +7,6 @@ export interface CreateOrderDto {
   address: Address;
   totalPrice: string;
   items: CreateOrderItemDto[];
-}
-
-export interface Address {
-  street: string;
-  postalCode: string;
-  city: string;
 }
 
 export interface CreateOrderItemDto {

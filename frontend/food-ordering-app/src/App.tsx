@@ -9,7 +9,7 @@ const RestaurantsListPage = lazy(() => import("./pages/RestaurantsListPage.tsx")
 const RestaurantPage = lazy(() => import("./pages/RestaurantPage.tsx"));
 const BasketPage = lazy(() => import("./pages/BasketPage.tsx"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage.tsx"));
-
+const ProfilePage = lazy(() => import("./pages/ProfilePage.tsx"));
 
 function App() {
 
@@ -30,6 +30,7 @@ function App() {
                 <Route path="/restaurants/:id" element={<RestaurantPage/>}/>
                 <Route path="/basket" element={<BasketPage/>}/>
                 <Route path="/checkout" element={<CheckoutPage/>}/>
+                <Route path="/profile" element={<ProfilePage/>}/>
                 <Route path="*" element={<Result
                     status="404"
                     title="404"

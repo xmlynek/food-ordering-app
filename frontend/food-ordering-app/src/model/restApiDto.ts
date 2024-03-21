@@ -1,12 +1,18 @@
+import {Address} from "./address.ts";
+
 export interface BasicRestaurantRestDTO {
   id: string;
   name: string;
+  description: string;
+  address: Address;
   isAvailable: boolean;
 }
 
 export interface FullRestaurantRestDTO {
   id: string;
   name: string;
+  description: string;
+  address: Address;
   isAvailable: boolean;
   createdAt: string;
   lastModifiedAt: string;

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Input, List} from "antd";
+import {Button, Card, Input, List, Tag, Typography} from "antd";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {
   BasicRestaurantRestDTO,
@@ -8,16 +8,16 @@ import {PageableRestApiResponse} from "../../model/pageable.ts";
 import {fetchRestaurants} from "../../client/catalogRestaurantsApiClient.ts";
 import {useQuery} from "@tanstack/react-query";
 
+import styles from './RestaurantList.module.css';
 
-interface RestaurantListProps {
-}
+const {Title, Paragraph} = Typography;
 
 const parseQueryParamAsNumber = (paramValue: string | null, defaultValue: number): number => {
   const result = paramValue !== null ? parseInt(paramValue, 10) : NaN;
   return !isNaN(result) ? result : defaultValue;
 };
 
-const RestaurantList: React.FC<RestaurantListProps> = ({}: RestaurantListProps) => {
+const RestaurantList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState<number>(parseQueryParamAsNumber(searchParams.get('page'), 1));
@@ -62,6 +62,10 @@ const RestaurantList: React.FC<RestaurantListProps> = ({}: RestaurantListProps) 
     });
   }
 
+  const handleCardClick = (restaurantId: string) => {
+    navigate(`${restaurantId}`);
+  }
+
   if (error) return 'An error has occurred: ' + error.message
 
   return (
@@ -77,6 +81,7 @@ const RestaurantList: React.FC<RestaurantListProps> = ({}: RestaurantListProps) 
         <List
             loading={isPending}
             itemLayout="horizontal"
+            grid={{gutter: 16, column: 1}}
             size="large"
             pagination={{
               position: 'bottom',
@@ -92,14 +97,34 @@ const RestaurantList: React.FC<RestaurantListProps> = ({}: RestaurantListProps) 
               responsive: true,
             }}
             dataSource={restaurantsPage?.content || []}
-            renderItem={item => (
-                <List.Item onClick={() => navigate(item.id)}>
-                  <List.Item.Meta
-                      // avatar={<Avatar/>}
+            renderItem={restaurant => (
+                <List.Item>
+                  <Card
+                      hoverable
+                      className={styles.card}
+                      onClick={handleCardClick.bind(null, restaurant.id)}
                       title={
-                        <p>{item.name}</p>} // Replace href with a link to the restaurant detail page
-                      description={item?.isAvailable ? 'Available' : 'Not available'}
-                  />
+                        <div className={styles.cardTitleContainer}>
+                          <Title level={4}>{restaurant.name}</Title>
+                          <span>{restaurant.isAvailable ? (<Tag color="green">Available</Tag>) : (
+                              <Tag color="red">Not available</Tag>)}
+                          </span>
+                        </div>
+                      }
+                  >
+                    <div className={styles.cardContent}>
+                      <Paragraph className={styles.paragraphJustify} ellipsis={{rows: 3}}>
+                        <strong>Description:</strong> {restaurant.description}
+                      </Paragraph>
+                      <Paragraph>
+                        <strong>Address:</strong> {`${restaurant.address.street}, ${restaurant.address.city}, ${restaurant.address.postalCode}, ${restaurant.address.country}`}
+                      </Paragraph>
+                    </div>
+                    <Button className={styles.btnPrimary} type="primary"
+                            onClick={handleCardClick.bind(null, restaurant.id)}>
+                      View Details
+                    </Button>
+                  </Card>
                 </List.Item>
             )
             }
