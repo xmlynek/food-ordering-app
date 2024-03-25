@@ -1,6 +1,6 @@
 import {Affix, Layout, Menu} from "antd";
 import {
-  AppstoreOutlined,
+  AppstoreOutlined, HistoryOutlined,
   HomeOutlined, LogoutOutlined,
   ShoppingCartOutlined,
   UserOutlined
@@ -18,6 +18,8 @@ const Navbar = () => {
     const path = location.pathname;
     if (path.includes('/restaurants')) return ['restaurants'];
     if (path.includes('/profile')) return ['profile'];
+    if (path.includes('/order-history')) return ['order-history'];
+    if (path.includes('/basket')) return ['basket'];
     return ['home'];
   };
 
@@ -36,12 +38,17 @@ const Navbar = () => {
       key: 'basket',
       icon: <ShoppingCartOutlined />,
       label: <Link to="/basket">Basket</Link>,
+      className: styles.separateMenuItems,
     },
     {
       key: 'profile',
       icon: <UserOutlined />,
       label: <Link to="/profile">Profile</Link>,
-      className: styles.separateMenuItems,
+    },
+    {
+      key: 'order-history',
+      icon: <HistoryOutlined />,
+      label: <Link to="/order-history">Order History</Link>,
     },
     {
       key: 'logout',

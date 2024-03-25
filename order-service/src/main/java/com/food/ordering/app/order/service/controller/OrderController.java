@@ -1,17 +1,21 @@
 package com.food.ordering.app.order.service.controller;
 
 import com.food.ordering.app.order.service.dto.OrderCreatedResponse;
+import com.food.ordering.app.order.service.dto.OrderDto;
 import com.food.ordering.app.order.service.dto.OrderRequest;
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.mapper.OrderMapper;
 import com.food.ordering.app.order.service.service.OrderSagaService;
 import com.food.ordering.app.order.service.service.OrderService;
 import jakarta.validation.Valid;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,10 +40,13 @@ public class OrderController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @PreAuthorize("isFullyAuthenticated() && #orderRequest.customerId().toString() == authentication.name")
-  public OrderCreatedResponse createOrder(@Valid @RequestBody OrderRequest orderRequest) {
+  public ResponseEntity<OrderCreatedResponse> createOrder(
+      @Valid @RequestBody OrderRequest orderRequest) {
     Order createdOrder = orderSagaService.saveOrderAndCreateOrderSaga(
         orderMapper.orderRequestToOrderEntity(orderRequest));
-    return orderMapper.orderEntityToOrderCreatedResponse(createdOrder);
+    OrderCreatedResponse orderCreatedResponse = orderMapper.orderEntityToOrderCreatedResponse(
+        createdOrder);
+    return new ResponseEntity<>(orderCreatedResponse, HttpStatus.CREATED);
   }
 
   // FIXME: replace with dto
@@ -49,11 +56,13 @@ public class OrderController {
   }
 
   @GetMapping("/customer/{customerId}")
-  public List<OrderCreatedResponse> findAllOrdersByCustomerId(
-      @PathVariable("customerId") UUID customerId) {
-    return orderService.findAllByCustomerId(customerId).stream()
-        .map(orderMapper::orderEntityToOrderCreatedResponse).collect(
-            Collectors.toList());
+  @PreAuthorize("isFullyAuthenticated() && #customerId == authentication.name")
+  public ResponseEntity<Page<OrderDto>> findAllOrdersByCustomerId(
+      @PathVariable("customerId") String customerId,
+      @SortDefault(value = "createdAt", direction = Direction.DESC) Pageable pageable) {
+    Page<OrderDto> orders = orderService.findAllByCustomerId(UUID.fromString(customerId), pageable)
+        .map(orderMapper::orderEntityToOrderDto);
+    return ResponseEntity.ok(orders);
   }
 
 //  @GetMapping("/{orderId}")

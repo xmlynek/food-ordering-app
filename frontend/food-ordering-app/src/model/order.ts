@@ -14,3 +14,11 @@ export interface CreateOrderItemDto {
   quantity: number;
   price: string;
 }
+
+export interface OrderHistoryDto {
+  id: string;
+  restaurantId: string;
+  totalPrice: number;
+  orderStatus: string;
+  createdAt: string;
+}

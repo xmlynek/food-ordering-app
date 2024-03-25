@@ -3,8 +3,9 @@ package com.food.ordering.app.order.service.service;
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.entity.OrderStatus;
 import com.food.ordering.app.order.service.exception.OrderNotFoundException;
-import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * This interface defines the business logic for managing orders.
@@ -32,9 +33,10 @@ public interface OrderService {
    * Finds all orders for a given customer.
    *
    * @param customerId the ID of the customer
-   * @return a list of orders for the given customer
+   * @param pageable pagination object
+   * @return a page of orders for the given customer
    */
-  List<Order> findAllByCustomerId(UUID customerId);
+  Page<Order> findAllByCustomerId(UUID customerId, Pageable pageable);
 
 
   void updateOrderStatus(UUID orderId, OrderStatus orderStatus);

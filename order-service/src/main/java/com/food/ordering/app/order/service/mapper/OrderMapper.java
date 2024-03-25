@@ -1,6 +1,7 @@
 package com.food.ordering.app.order.service.mapper;
 
 import com.food.ordering.app.order.service.dto.OrderCreatedResponse;
+import com.food.ordering.app.order.service.dto.OrderDto;
 import com.food.ordering.app.order.service.dto.OrderRequest;
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.saga.data.CreateOrderSagaData;
@@ -22,6 +23,11 @@ public interface OrderMapper {
   Order orderRequestToOrderEntity(OrderRequest orderRequest);
 
   OrderCreatedResponse orderEntityToOrderCreatedResponse(Order order);
+
+  @Mappings({
+      @Mapping(target = "totalPrice", expression = "java(order.getTotalPrice().getAmount())"),
+  })
+  OrderDto orderEntityToOrderDto(Order order);
 
   @Mappings({
       @Mapping(target = "orderId", source = "id"),

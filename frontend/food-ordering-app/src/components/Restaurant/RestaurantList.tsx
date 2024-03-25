@@ -9,19 +9,15 @@ import {fetchRestaurants} from "../../client/catalogRestaurantsApiClient.ts";
 import {useQuery} from "@tanstack/react-query";
 
 import styles from './RestaurantList.module.css';
+import {usePagination} from "../../hooks/usePagination.ts";
 
 const {Title, Paragraph} = Typography;
 
-const parseQueryParamAsNumber = (paramValue: string | null, defaultValue: number): number => {
-  const result = paramValue !== null ? parseInt(paramValue, 10) : NaN;
-  return !isNaN(result) ? result : defaultValue;
-};
 
 const RestaurantList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState<number>(parseQueryParamAsNumber(searchParams.get('page'), 1));
-  const [pageSize, setPageSize] = useState<number>(parseQueryParamAsNumber(searchParams.get('size'), 10));
+  const {pageSize, currentPage, handlePageChange} = usePagination();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('searchValue') || '');
 
   const {
@@ -37,17 +33,6 @@ const RestaurantList: React.FC = () => {
   useEffect(() => {
     refetch();
   }, [currentPage, pageSize, searchTerm]);
-
-  const handlePageChange = (page: number, pageSize: number) => {
-    setCurrentPage(() => page);
-    setPageSize(() => pageSize);
-    setSearchParams((prev) => {
-      const updatedParams = new URLSearchParams(prev);
-      updatedParams.set('page', page.toString());
-      updatedParams.set('size', pageSize.toString());
-      return updatedParams;
-    });
-  };
 
   const handleOnSearch = (searchValue: string) => {
     setSearchTerm(() => searchValue);
