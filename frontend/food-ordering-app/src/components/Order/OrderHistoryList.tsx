@@ -63,6 +63,7 @@ const OrderHistoryList: React.FC = () => {
                 <Card
                     hoverable
                     className={styles.card}
+                    styles={{body: {padding: '0px 24px 24px 24px'}}}
                     onClick={handleCardClick.bind(null, orderHistoryItem.id)}
                     title={`Order ${orderHistoryItem.id}`}
                 >
