@@ -32,8 +32,8 @@ const BasketPage: React.FC = () => {
 
 
         {basket.length > 0 ? (
-            <Row gutter={[16, 16]}>
-              <Col xs={24} md={16} lg={16}>
+            <Row gutter={[16, 16]} align="middle">
+              <Col xs={24} md={16} lg={16} xl={{span: 12, offset: 4}}>
                 <BasketItemList basket={basket} onQuantityChange={handleQuantityChange}
                                 onRemoveFromBasket={removeFromBasket}/>
               </Col>

@@ -1,23 +1,7 @@
-.pageContainer {
-  padding: 24px;
+.card {
+  max-width: 640px;
 }
 
-.cardMargin {
-  margin-bottom: 16px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.quantityControl {
-  margin-top: 16px;
-  display: flex;
-  align-items: center;
-}
-
-
-.spaceBetween {
-  justify-content: space-between;
-}
-
-.marginTop {
-  margin-top: 16px;
+.quantityInput {
+  max-width: 55px;
 }

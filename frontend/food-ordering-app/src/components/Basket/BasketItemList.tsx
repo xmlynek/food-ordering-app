@@ -1,10 +1,13 @@
 import React from 'react';
-import {Button, Card, Row, Col, Avatar, InputNumber, Typography} from 'antd';
-import {MinusCircleOutlined, PlusCircleOutlined, DeleteOutlined} from '@ant-design/icons';
+import {Button, Card, Row, Col, Avatar, InputNumber, Typography, Space} from 'antd';
+import {
+  DeleteOutlined,
+  MinusOutlined, PlusOutlined
+} from '@ant-design/icons';
 
 import styles from './BasketItemList.module.css';
 
-const {Title, Text} = Typography;
+const {Text} = Typography;
 
 interface BasketItemListProps {
   basket: BasketItem[];
@@ -19,39 +22,41 @@ const BasketItemList: React.FC<BasketItemListProps> = ({
                                                        }) => {
 
   return (
-      basket.map((item, index) => (
-          <Card
-              key={index}
-              className={styles.cardMargin}
-              actions={[
-                <Button icon={<DeleteOutlined/>} onClick={() => onRemoveFromBasket(item.id)} danger>
-                  Remove
-                </Button>,
-              ]}
-          >
-            <Row gutter={16} align="middle">
-              <Col xs={6} sm={4} md={3} lg={4}>
-                <Avatar size={64} src={item.imageUrl || 'placeholderImage.png'} alt={item.name}/>
-              </Col>
-              <Col xs={18} sm={20} md={21} lg={20}>
-                <Title level={5}>{item.name}</Title>
-                <Text>€{item.price.toFixed(2)} each</Text>
-                <div className={styles.quantityControl}>
-                  <Button icon={<MinusCircleOutlined/>}
-                          onClick={() => onQuantityChange(item, item.quantity - 1)}/>
-                  <InputNumber
-                      min={1}
-                      value={item.quantity}
-                      onChange={(value) => onQuantityChange(item, value !== null ? value : 1)}
-                      className={styles.marginX}
-                  />
-                  <Button icon={<PlusCircleOutlined/>}
-                          onClick={() => onQuantityChange(item, item.quantity + 1)}/>
-                </div>
-              </Col>
-            </Row>
-          </Card>
-      ))
+      <>
+        {basket.map((item) => (
+            <Card key={item.id} bordered={false} className={styles.card}>
+              <Row justify="space-between" align="middle" gutter={16}>
+                <Col>
+                  <Avatar src={item.imageUrl} shape="square" size={64}/>
+                </Col>
+                <Col>
+                  <Text strong>{item.name}</Text>
+                  <br/>
+                  <Text type="secondary">€{item.price.toFixed(2)} each</Text>
+                </Col>
+                <Col>
+                  <Space>
+                    <Button shape="circle" icon={<MinusOutlined/>}
+                            onClick={() => onQuantityChange(item, item.quantity - 1)}/>
+                    <InputNumber min={1} value={item.quantity} className={styles.quantityInput}
+                                 onChange={(value) => onQuantityChange(item, Number(value))}/>
+                    <Button shape="circle" icon={<PlusOutlined/>}
+                            onClick={() => onQuantityChange(item, item.quantity + 1)}/>
+                  </Space>
+                </Col>
+                <Col>
+                  <Button danger icon={<DeleteOutlined/>}
+                          onClick={() => onRemoveFromBasket(item.id)}>
+                    Remove
+                  </Button>
+                </Col>
+                <Col>
+                  <Text strong>€{(item.price * item.quantity).toFixed(2)}</Text>
+                </Col>
+              </Row>
+            </Card>
+        ))}
+      </>
   );
 };
 

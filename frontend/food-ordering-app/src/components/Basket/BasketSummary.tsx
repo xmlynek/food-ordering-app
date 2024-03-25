@@ -19,11 +19,11 @@ const BasketSummary: React.FC<BasketSummaryProps> = ({onCheckout}: BasketSummary
         <Divider/>
         <Row className={styles.spaceBetween}>
           <Text>Total Items:</Text>
-          <Text>{totalItems}</Text>
+          <Text strong>{totalItems}</Text>
         </Row>
         <Row className={`${styles.spaceBetween} ${styles.marginTop}`}>
           <Text>Total Amount:</Text>
-          <Text>${calculateTotalPrice().toFixed(2)}</Text>
+          <Text strong>€{calculateTotalPrice().toFixed(2)}</Text>
         </Row>
         <Divider/>
         <Button type="primary" block onClick={onCheckout}>
