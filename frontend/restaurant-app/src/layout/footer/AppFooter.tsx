@@ -1,32 +1,36 @@
-import {Layout, Row, Col, Typography, Space, Divider} from 'antd';
+import {Layout, Row, Col, Typography, Space} from 'antd';
+
+import styles from './AppFooter.module.css';
 
 const {Footer} = Layout;
-const {Text, Link} = Typography;
+const {Text} = Typography;
 
 const AppFooter = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
-      <Footer style={{ textAlign: 'center', padding: '24px' }}>
+      <Footer className={styles.footer}>
         <Row justify="space-around" align="middle" gutter={[16, 16]}>
-          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-            <Space direction="vertical" size="middle" style={{ display: 'flex', justifyContent: 'center' }}>
-              <Text strong>Foodie's Heaven</Text>
-              <Text type="secondary">The best place to find your next meal.</Text>
+          <Col span={8} order={1} xs={24} sm={12} md={8} lg={8} xl={8} className={styles.column}>
+            <Space direction="vertical" size="middle" className={styles.spaceVertical}>
+              <Text className={styles.footerTitle} strong>Restaurant Management Application</Text>
+              <Text className={styles.footerText}>The best restaurant management system.</Text>
             </Space>
           </Col>
 
-          <Col xs={24} sm={24} md={8} lg={8} xl={8} style={{ textAlign: 'center' }}>
-            <Space split={<Divider type="vertical" />} >
-              <Link href="#">About Us</Link>
-              <Link href="#">Terms of Service</Link>
-              <Link href="#">Contact Us</Link>
-            </Space>
+          <Col span={8} xs={{span: 24, order: 3}} sm={{span: 24, order: 3}}
+               md={{span: 24, order: 3}} lg={{order: 2, span: 8}} xl={{order: 2, span: 8}}
+               className={styles.column}>
+            <Text className={styles.footerText}>&copy; {currentYear} Filip Mlýnek - Restaurant Management Application</Text>
           </Col>
 
-          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-            <Space direction="vertical" size="middle" style={{ display: 'flex', justifyContent: 'center' }}>
-              <Text strong>Contact Info</Text>
-              <Text>Email: contact@foodiesheaven.com</Text>
-              <Text>Phone: (123) 456-7890</Text>
+          <Col span={8} xs={{span: 24, order: 2}} sm={{span: 12, order: 2}} md={{span: 8, order: 2}}
+               lg={8} xl={8}
+               className={styles.column}>
+            <Space direction="vertical" size="middle" className={styles.spaceVertical}>
+              <Text className={styles.footerTitle} strong>Contact Info</Text>
+              <Text className={styles.footerText}>Email: <a href="mailto:xmlynek@stuba.sk"
+                                                            className={styles.link}>xmlynek@stuba.sk</a></Text>
             </Space>
           </Col>
         </Row>
