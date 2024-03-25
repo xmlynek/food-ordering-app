@@ -1,4 +1,4 @@
-import {Affix, Layout, Menu} from "antd";
+import {Affix, Badge, Layout, Menu, Tooltip} from "antd";
 import {
   AppstoreOutlined, HistoryOutlined,
   HomeOutlined, LogoutOutlined,
@@ -9,10 +9,23 @@ import {Link, useLocation} from "react-router-dom";
 import {performLogout} from "../../keycloak/keycloak.ts";
 
 import styles from './Navigation.module.css';
+import {useBasket} from "../../hooks/useBasketContext.tsx";
+import {animated, useSpring} from "react-spring";
 
 
 const Navbar = () => {
+
+  const {calculateTotalPrice, totalItems} = useBasket();
   const location = useLocation();
+
+  const AnimatedBadge = animated(Badge);
+
+  const springProps = useSpring({
+    to: {transform: 'scale(1.1)'},
+    from: {transform: 'scale(1)'},
+    reset: true,
+    reverse: false,
+  });
 
   const getSelectedKeys = () => {
     const path = location.pathname;
@@ -26,33 +39,43 @@ const Navbar = () => {
   const menuItems = [
     {
       key: 'home',
-      icon: <HomeOutlined />,
-      label: <Link to="/">Home</Link>, // Use Link component for navigation
+      icon: <HomeOutlined/>,
+      label: <Link to="/">Home</Link>,
     },
     {
       key: 'restaurants',
-      icon: <AppstoreOutlined />,
+      icon: <AppstoreOutlined/>,
       label: <Link to="/restaurants">Restaurants</Link>,
     },
     {
       key: 'basket',
-      icon: <ShoppingCartOutlined />,
-      label: <Link to="/basket">Basket</Link>,
+      icon: <ShoppingCartOutlined style={{fontSize: '1rem'}}/>,
+      label:
+          <Link to="/basket">Basket
+            <Tooltip
+                title={`Total: $${calculateTotalPrice().toFixed(2)}`}>
+              <AnimatedBadge
+                  offset={[7, -5]}
+                  count={totalItems}
+                  overflowCount={99}
+                  style={{backgroundColor: '#52c41a', ...springProps}}/>
+            </Tooltip>
+          </Link>,
       className: styles.separateMenuItems,
     },
     {
       key: 'profile',
-      icon: <UserOutlined />,
+      icon: <UserOutlined/>,
       label: <Link to="/profile">Profile</Link>,
     },
     {
       key: 'order-history',
-      icon: <HistoryOutlined />,
+      icon: <HistoryOutlined/>,
       label: <Link to="/order-history">Order History</Link>,
     },
     {
       key: 'logout',
-      icon: <LogoutOutlined />,
+      icon: <LogoutOutlined/>,
       label: 'Logout',
       onClick: performLogout,
     },
@@ -64,7 +87,8 @@ const Navbar = () => {
           <div className={styles.logo}>
             {/*<img src={logo} alt="logo"/>*/}
           </div>
-          <Menu theme="dark" mode="horizontal" defaultSelectedKeys={getSelectedKeys()} items={menuItems} />
+          <Menu theme="dark" mode="horizontal" defaultSelectedKeys={getSelectedKeys()}
+                items={menuItems}/>
         </Layout.Header>
       </Affix>
   );

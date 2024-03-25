@@ -1,6 +1,6 @@
-import {createContext, useState, ReactNode, useEffect} from 'react';
-import {message} from "antd";
+import {createContext, useState, ReactNode, useEffect, useMemo} from 'react';
 import {getBasketFromLocalStorage, saveBasketToLocalStorage} from "../utils/localStorageUtils.ts";
+import {message} from "antd";
 
 interface BasketContextType {
   basket: BasketItem[];
@@ -33,28 +33,22 @@ export const BasketProvider = ({children}: BasketProviderProps) => {
   const [totalItems, setTotalItems] = useState<number>(0);
 
   useEffect(() => {
-    // Update localStorage whenever the basket changes
     saveBasketToLocalStorage(basket);
-    // Calculate and update the total number of items
     const total = basket.reduce((acc, item) => acc + item.quantity, 0);
     setTotalItems(total);
   }, [basket]);
 
   const addToBasket = async (newItem: BasketItem) => {
     setBasket((prevBasket) => {
-      // Check if the basket contains items from another restaurant
       const differentRestaurantExists = prevBasket.some(item => item.restaurantId !== newItem.restaurantId);
 
       if (differentRestaurantExists) {
-        // Option 1: Alert the user and don't add the item
         alert("Your basket contains items from a different restaurant. Please clear your basket to add items from this restaurant.");
         return prevBasket;
       } else {
-        // Proceed to check if the item exists and update quantity or add as new
         const existingItemIndex = prevBasket.findIndex(item => item.id === newItem.id);
 
         if (existingItemIndex >= 0) {
-          // Update quantity
           const updatedBasket = [...prevBasket];
           updatedBasket[existingItemIndex] = {
             ...updatedBasket[existingItemIndex],
@@ -63,30 +57,38 @@ export const BasketProvider = ({children}: BasketProviderProps) => {
           message.success('Item added to basket');
           return updatedBasket;
         } else {
-          // Add new item
+          message.success('Item added to basket');
           return [...prevBasket, newItem];
         }
       }
     });
   };
 
-  const removeFromBasket = async (itemId: string) => {
+  const removeFromBasket = (itemId: string) => {
     setBasket(prev => prev.filter(item => item.id !== itemId));
   };
 
-  const updateQuantity = async (itemId: string, quantity: number) => {
+  const updateQuantity = (itemId: string, quantity: number) => {
     setBasket(prev =>
         prev.map(item => item.id === itemId ? {...item, quantity: Math.max(quantity, 1)} : item)
     );
   };
 
-  const calculateTotalPrice = () => {
+  const calculateTotalPrice = (): number => {
     return basket.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
+  const value = useMemo(() => ({
+    basket,
+    calculateTotalPrice,
+    addToBasket,
+    removeFromBasket,
+    updateQuantity,
+  }), [basket]);
+
   return (
       <BasketContext.Provider
-          value={{basket, totalItems, calculateTotalPrice, addToBasket, removeFromBasket, updateQuantity}}>
+          value={{...value, totalItems}}>
         {children}
       </BasketContext.Provider>
   );

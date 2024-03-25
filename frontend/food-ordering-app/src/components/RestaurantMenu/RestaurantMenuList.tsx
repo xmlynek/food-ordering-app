@@ -1,5 +1,5 @@
 import React from "react";
-import {Avatar, Button, Image, List} from "antd";
+import {Button, Image, List} from "antd";
 import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import {ShoppingCartOutlined} from "@ant-design/icons";
