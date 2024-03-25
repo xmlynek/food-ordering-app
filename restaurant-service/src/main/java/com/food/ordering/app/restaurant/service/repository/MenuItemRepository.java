@@ -24,4 +24,7 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
   @NonNull
   @PostAuthorize("isFullyAuthenticated() and (returnObject.isEmpty() or returnObject.get().getRestaurant().ownerId == authentication.name)")
   Optional<MenuItem> findByIdAndRestaurantIdAndIsDeletedFalse(@NonNull UUID menuId, @NonNull UUID restaurantId);
+
+  @NonNull
+  Optional<MenuItem> findByIdAndRestaurantIdAndIsDeletedFalseAndIsAvailableTrue(@NonNull UUID menuId, @NonNull UUID restaurantId);
 }

@@ -4,6 +4,7 @@ import com.food.ordering.app.common.command.ApproveOrderCommand;
 import com.food.ordering.app.common.enums.RestaurantOrderTicketStatus;
 import com.food.ordering.app.common.exception.InvalidPriceValueException;
 import com.food.ordering.app.common.exception.InvalidQuantityValueException;
+import com.food.ordering.app.common.exception.RestaurantNotFoundException;
 import com.food.ordering.app.common.model.OrderProduct;
 import com.food.ordering.app.common.utils.ValidateOrderUtils;
 import com.food.ordering.app.restaurant.service.entity.MenuItem;
@@ -12,7 +13,9 @@ import com.food.ordering.app.restaurant.service.entity.Restaurant;
 import com.food.ordering.app.restaurant.service.entity.RestaurantOrderTicket;
 import com.food.ordering.app.restaurant.service.exception.MenuItemNotAvailableException;
 import com.food.ordering.app.restaurant.service.exception.OrderTicketNotFoundException;
+import com.food.ordering.app.restaurant.service.repository.MenuItemRepository;
 import com.food.ordering.app.restaurant.service.repository.OrderTicketRepository;
+import com.food.ordering.app.restaurant.service.repository.RestaurantRepository;
 import io.eventuate.examples.common.money.Money;
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,8 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RestaurantOrderTickerServiceImpl implements RestaurantOrderTickerService {
 
-  private final RestaurantMenuItemService restaurantMenuItemService;
-  private final RestaurantService restaurantService;
+  private final MenuItemRepository menuItemRepository;
+  private final RestaurantRepository restaurantRepository;
   private final OrderTicketRepository orderTicketRepository;
 
   @Override
@@ -56,7 +59,9 @@ public class RestaurantOrderTickerServiceImpl implements RestaurantOrderTickerSe
   @Override
   @Transactional
   public RestaurantOrderTicket createOrderTicket(ApproveOrderCommand command) {
-    Restaurant restaurant = restaurantService.getRestaurantById(command.restaurantId());
+    Restaurant restaurant = restaurantRepository.findByIdAndIsDeletedFalseAndIsAvailableTrue(
+            command.restaurantId())
+        .orElseThrow(() -> new RestaurantNotFoundException(command.restaurantId()));
 
     RestaurantOrderTicket orderTicket = RestaurantOrderTicket.builder()
         .id(command.orderId())
@@ -90,8 +95,9 @@ public class RestaurantOrderTickerServiceImpl implements RestaurantOrderTickerSe
   private List<OrderTicketItem> createOrderTicketItems(List<OrderProduct> products,
       UUID restaurantId, RestaurantOrderTicket orderTicket) {
     return products.stream().map(product -> {
-      MenuItem menuItemById = restaurantMenuItemService.getMenuItemById(restaurantId,
-          product.productId());
+      MenuItem menuItemById = menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalseAndIsAvailableTrue(
+              product.productId(), restaurantId)
+          .orElseThrow(() -> new MenuItemNotAvailableException(product.productId()));
 
       validateOrderItem(product, menuItemById);
 
@@ -116,7 +122,7 @@ public class RestaurantOrderTickerServiceImpl implements RestaurantOrderTickerSe
   private void validateOrderItem(OrderProduct product, MenuItem menuItem) {
     ValidateOrderUtils.validateOrderProduct(product);
 
-    // check availability
+    // double-check availability
     if (menuItem.getIsDeleted() || !menuItem.getIsAvailable()) {
       throw new MenuItemNotAvailableException(product.productId());
     }
