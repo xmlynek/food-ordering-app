@@ -1,7 +1,5 @@
 package com.food.ordering.app.order.service.saga;
 
-import com.food.ordering.app.common.response.approve.OrderApproveFailed;
-import com.food.ordering.app.common.response.approve.OrderApproveSucceeded;
 import com.food.ordering.app.common.response.kitchen.CreateKitchenTicketFailed;
 import com.food.ordering.app.common.response.kitchen.KitchenTicketCreated;
 import com.food.ordering.app.common.response.payment.ProcessPaymentFailed;
@@ -10,7 +8,6 @@ import com.food.ordering.app.order.service.entity.OrderStatus;
 import com.food.ordering.app.order.service.saga.data.CreateOrderSagaData;
 import com.food.ordering.app.order.service.saga.proxy.KitchenServiceProxy;
 import com.food.ordering.app.order.service.saga.proxy.PaymentServiceProxy;
-import com.food.ordering.app.order.service.saga.proxy.RestaurantServiceProxy;
 import com.food.ordering.app.order.service.service.OrderService;
 import io.eventuate.tram.commands.consumer.CommandWithDestination;
 import io.eventuate.tram.sagas.orchestration.SagaDefinition;
@@ -26,16 +23,11 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
 
   private final OrderService orderService;
   private final PaymentServiceProxy paymentServiceProxy;
-  private final RestaurantServiceProxy restaurantServiceProxy;
   private final KitchenServiceProxy kitchenServiceProxy;
 
   private final SagaDefinition<CreateOrderSagaData> sagaDefinition =
       step()
         .invokeLocal(this::createOrder).withCompensation(this::cancelOrder)
-      .step()
-        .invokeParticipant(this::approveOrderByRestaurant)
-        .onReply(OrderApproveSucceeded.class, this::handleOrderApproveSucceeded)
-        .onReply(OrderApproveFailed.class, this::handleOrderApproveFailed)
       .step()
         .invokeParticipant(this::processPayment)
         .onReply(ProcessPaymentSucceeded.class, this::handleProcessPaymentSucceeded)
@@ -72,28 +64,12 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
 //    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.APPROVED);
   }
 
-  private void handleOrderApproveFailed(CreateOrderSagaData data,
-      OrderApproveFailed orderApproveFailed) {
-    log.info("Approve order by restaurant {} failed for order id: {} with failure message: {}",
-        data.getRestaurantId().toString(), data.getOrderId().toString(),
-        orderApproveFailed.failureMessage());
-    data.getFailureMessages().add(orderApproveFailed.failureMessage());
-    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.CANCELLING);
-  }
-
-  private void handleOrderApproveSucceeded(CreateOrderSagaData data,
-      OrderApproveSucceeded orderApproveSucceeded) {
-    log.info("Approve order by restaurant {} succeeded for order id: {}",
-        data.getRestaurantId().toString(), data.getOrderId().toString());
-    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.APPROVED);
-  }
-
   private void handleCreateKitchenTicketSucceeded(CreateOrderSagaData data,
       KitchenTicketCreated kitchenTicketCreated) {
     data.setTicketId(kitchenTicketCreated.ticketId());
     log.info("Kitchen ticket successfully created with id: {} for order id: {}",
         kitchenTicketCreated.ticketId().toString(), data.getOrderId().toString());
-    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.KITCHEN_TICKET_CREATED);
+    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.APPROVED);
   }
 
   private void handleCreateKitchenTicketFailed(CreateOrderSagaData data,
@@ -140,10 +116,4 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
         data.getRestaurantId(), data.getItems());
   }
 
-  private CommandWithDestination approveOrderByRestaurant(CreateOrderSagaData data) {
-    log.info("Approve order by restaurant with id {} started for order id: {}",
-        data.getRestaurantId().toString(), data.getOrderId().toString());
-    return restaurantServiceProxy.approveOrder(data.getOrderId(), data.getCustomerId(),
-        data.getRestaurantId(), data.getItems());
-  }
 }
