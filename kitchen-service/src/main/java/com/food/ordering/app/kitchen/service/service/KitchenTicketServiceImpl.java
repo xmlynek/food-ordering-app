@@ -1,7 +1,7 @@
 package com.food.ordering.app.kitchen.service.service;
 
 import com.food.ordering.app.common.command.CreateKitchenTicketCommand;
-import com.food.ordering.app.common.enums.RestaurantOrderTicketStatus;
+import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.common.exception.InvalidPriceValueException;
 import com.food.ordering.app.common.exception.RestaurantNotFoundException;
 import com.food.ordering.app.common.model.OrderProduct;
@@ -15,6 +15,7 @@ import com.food.ordering.app.kitchen.service.exception.MenuItemNotAvailableExcep
 import com.food.ordering.app.kitchen.service.repository.KitchenTicketRepository;
 import com.food.ordering.app.kitchen.service.repository.RestaurantMenuItemRepository;
 import com.food.ordering.app.kitchen.service.repository.RestaurantRepository;
+import com.food.ordering.app.kitchen.service.repository.projection.KitchenTicketDetailsView;
 import io.eventuate.examples.common.money.Money;
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,45 +35,39 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   private final KitchenTicketRepository kitchenTicketRepository;
 
   @Override
-  public List<KitchenTicket> getAllOrderTicketsByRestaurantId(UUID restaurantId) {
+  public List<KitchenTicket> getAllKitchenTicketsByRestaurantId(UUID restaurantId) {
     return kitchenTicketRepository.findAllByRestaurantId(restaurantId);
   }
 
   @Override
-  public KitchenTicket getOrderTicketByRestaurantIdAndOrderId(UUID restaurantId,
-      UUID orderId) {
-    return kitchenTicketRepository.findByRestaurantIdAndId(restaurantId, orderId)
-        .orElseThrow(() -> new KitchenTicketNotFoundException(restaurantId, orderId));
+  public KitchenTicketDetailsView getKitchenTicketDetails(UUID restaurantId, UUID ticketId) {
+    return kitchenTicketRepository.findByIdAndRestaurantId(ticketId,
+        restaurantId).orElseThrow(() -> new KitchenTicketNotFoundException(restaurantId, ticketId));
   }
 
-
   @Override
-  public KitchenTicket createOrderTicket(CreateKitchenTicketCommand command) {
+  public KitchenTicket createKitchenTicket(CreateKitchenTicketCommand command) {
     Restaurant restaurant = restaurantRepository.findByIdAndIsDeletedFalseAndIsAvailableTrue(
             command.restaurantId())
         .orElseThrow(() -> new RestaurantNotFoundException(command.restaurantId()));
 
-    KitchenTicket orderTicket = KitchenTicket.builder()
-        .id(command.orderId())
-        .customerId(command.customerId())
-        .restaurant(restaurant)
-        // TODO: set to created_PENDING?
-        .status(RestaurantOrderTicketStatus.APPROVED)
-        .build();
+    KitchenTicket kitchenTicket = KitchenTicket.builder().id(command.orderId())
+        .customerId(command.customerId()).restaurant(restaurant)
+        .status(KitchenTicketStatus.PREPARING).build();
 
-    orderTicket.setOrderItems(createOrderTicketItems(
-        command.products(), command.restaurantId(), orderTicket));
+    kitchenTicket.setTicketItems(
+        createOrderTicketItems(command.products(), command.restaurantId(), kitchenTicket));
 
-    orderTicket.setTotalPrice(orderTicket.getOrderItems().stream()
+    kitchenTicket.setTotalPrice(kitchenTicket.getTicketItems().stream()
         .map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity())))
         .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-    return kitchenTicketRepository.save(orderTicket);
+    return kitchenTicketRepository.save(kitchenTicket);
   }
 
 
   private List<KitchenTicketItem> createOrderTicketItems(List<OrderProduct> products,
-      UUID restaurantId, KitchenTicket orderTicket) {
+      UUID restaurantId, KitchenTicket kitchenTicket) {
     return products.stream().map(product -> {
       MenuItem menuItemById = menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalseAndIsAvailableTrue(
               product.productId(), restaurantId)
@@ -80,12 +75,8 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
 
       validateOrderItem(product, menuItemById);
 
-      return KitchenTicketItem.builder()
-          .menuItem(menuItemById)
-          .price(product.price().getAmount())
-          .quantity(product.quantity())
-          .orderTicket(orderTicket)
-          .build();
+      return KitchenTicketItem.builder().menuItem(menuItemById).price(product.price().getAmount())
+          .quantity(product.quantity()).kitchenTicket(kitchenTicket).build();
     }).collect(Collectors.toList());
   }
 
@@ -98,8 +89,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
     }
     // check price
     if (!product.price().equals(new Money(menuItem.getPrice()))) {
-      throw new InvalidPriceValueException(product.price().getAmount(),
-          product.productId());
+      throw new InvalidPriceValueException(product.price().getAmount(), product.productId());
     }
   }
 

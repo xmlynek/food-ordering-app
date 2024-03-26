@@ -1,6 +1,6 @@
 package com.food.ordering.app.kitchen.service.entity;
 
-import com.food.ordering.app.common.enums.RestaurantOrderTicketStatus;
+import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,7 +37,7 @@ public class KitchenTicket {
   private UUID id;
 
   @Column(nullable = false, updatable = false)
-  private UUID customerId;   // TODO: vymazat?
+  private UUID customerId;
 
   @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
   @JoinColumn(name = "restaurant_id", updatable = false, nullable = false)
@@ -45,14 +45,14 @@ public class KitchenTicket {
 
   @OneToMany(mappedBy = "kitchenTicket", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   @Fetch(FetchMode.SUBSELECT)
-  private List<KitchenTicketItem> orderItems;
+  private List<KitchenTicketItem> ticketItems;
 
   @CurrentTimestamp
   private LocalDateTime createdAt;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private RestaurantOrderTicketStatus status;
+  private KitchenTicketStatus status;
 
   @Column(nullable = false, updatable = false)
   private BigDecimal totalPrice;

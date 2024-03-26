@@ -26,7 +26,7 @@ public class KitchenServiceCommandHandlerImpl extends KitchenServiceCommandHandl
     log.info("Create kitchen ticket started for order {} and restaurant {}", command.orderId(),
         command.restaurantId());
     try {
-      KitchenTicket orderTicket = kitchenTicketService.createOrderTicket(command);
+      KitchenTicket orderTicket = kitchenTicketService.createKitchenTicket(command);
       log.info("Kitchen ticket created for order {} and restaurant {}", orderTicket.getId(),
           orderTicket.getRestaurant().getId());
 

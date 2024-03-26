@@ -32,6 +32,11 @@
       <groupId>com.food.ordering.app</groupId>
       <artifactId>common</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
 
     <dependency>
       <groupId>io.eventuate.tram.core</groupId>
