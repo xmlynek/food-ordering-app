@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class RestaurantOrderTickerServiceImpl implements RestaurantOrderTickerService {
+public class RestaurantOrderTicketServiceImpl implements RestaurantOrderTicketService {
 
   private final MenuItemRepository menuItemRepository;
   private final RestaurantRepository restaurantRepository;

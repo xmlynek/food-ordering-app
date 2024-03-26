@@ -5,7 +5,7 @@ import com.food.ordering.app.common.command.ApproveOrderCommand;
 import com.food.ordering.app.common.response.approve.OrderApproveFailed;
 import com.food.ordering.app.common.response.approve.OrderApproveSucceeded;
 import com.food.ordering.app.restaurant.service.entity.RestaurantOrderTicket;
-import com.food.ordering.app.restaurant.service.service.RestaurantOrderTickerService;
+import com.food.ordering.app.restaurant.service.service.RestaurantOrderTicketService;
 import io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder;
 import io.eventuate.tram.commands.consumer.CommandMessage;
 import io.eventuate.tram.messaging.common.Message;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class RestaurantCommandHandlerImpl extends RestaurantCommandHandler {
 
-  private final RestaurantOrderTickerService restaurantOrderTickerService;
+  private final RestaurantOrderTicketService restaurantOrderTicketService;
 
   @Override
   public Message approveOrder(CommandMessage<ApproveOrderCommand> cm) {
@@ -26,7 +26,7 @@ public class RestaurantCommandHandlerImpl extends RestaurantCommandHandler {
     log.info("Approve order started for order {} and restaurant {}", command.orderId(),
         command.restaurantId());
     try {
-      RestaurantOrderTicket orderTicket = restaurantOrderTickerService.createOrderTicket(command);
+      RestaurantOrderTicket orderTicket = restaurantOrderTicketService.createOrderTicket(command);
       log.info("Approve order succeeded for order {} and restaurant {}", orderTicket.getId(),
           orderTicket.getRestaurant().getId());
 

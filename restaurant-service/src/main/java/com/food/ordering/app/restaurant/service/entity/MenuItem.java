@@ -36,7 +36,7 @@ public class MenuItem {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false, length = 510)
+  @Column(nullable = false)
   private String description;
 
   @Column(nullable = false)

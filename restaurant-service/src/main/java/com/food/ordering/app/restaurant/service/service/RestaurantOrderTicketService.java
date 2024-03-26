@@ -5,7 +5,7 @@ import com.food.ordering.app.restaurant.service.entity.RestaurantOrderTicket;
 import java.util.List;
 import java.util.UUID;
 
-public interface RestaurantOrderTickerService {
+public interface RestaurantOrderTicketService {
 
   RestaurantOrderTicket createOrderTicket(ApproveOrderCommand approveOrderCommand);
 
