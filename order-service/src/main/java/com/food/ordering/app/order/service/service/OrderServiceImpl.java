@@ -4,6 +4,7 @@ import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.entity.OrderStatus;
 import com.food.ordering.app.order.service.exception.OrderNotFoundException;
 import com.food.ordering.app.order.service.repository.OrderRepository;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -44,5 +45,13 @@ public class OrderServiceImpl implements OrderService {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new OrderNotFoundException(orderId));
     order.setOrderStatus(orderStatus);
+  }
+
+  @Override
+  @Transactional
+  public void setFailureMessages(UUID orderId, List<String> failureMessages) {
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new OrderNotFoundException(orderId));
+    order.getFailureMessages().addAll(failureMessages);
   }
 }

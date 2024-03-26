@@ -1,5 +1,6 @@
 package com.food.ordering.app.order.service.entity;
 
+import com.food.ordering.app.common.model.Address;
 import io.eventuate.examples.common.money.Money;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;

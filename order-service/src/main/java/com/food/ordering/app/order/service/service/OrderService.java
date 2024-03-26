@@ -3,6 +3,7 @@ package com.food.ordering.app.order.service.service;
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.entity.OrderStatus;
 import com.food.ordering.app.order.service.exception.OrderNotFoundException;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,5 +41,7 @@ public interface OrderService {
 
 
   void updateOrderStatus(UUID orderId, OrderStatus orderStatus);
+
+  void setFailureMessages(UUID orderId, List<String> failureMessages);
 
 }

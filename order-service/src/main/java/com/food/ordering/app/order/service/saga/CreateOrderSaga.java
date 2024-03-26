@@ -2,10 +2,13 @@ package com.food.ordering.app.order.service.saga;
 
 import com.food.ordering.app.common.response.approve.OrderApproveFailed;
 import com.food.ordering.app.common.response.approve.OrderApproveSucceeded;
+import com.food.ordering.app.common.response.kitchen.CreateKitchenTicketFailed;
+import com.food.ordering.app.common.response.kitchen.KitchenTicketCreated;
 import com.food.ordering.app.common.response.payment.ProcessPaymentFailed;
 import com.food.ordering.app.common.response.payment.ProcessPaymentSucceeded;
 import com.food.ordering.app.order.service.entity.OrderStatus;
 import com.food.ordering.app.order.service.saga.data.CreateOrderSagaData;
+import com.food.ordering.app.order.service.saga.proxy.KitchenServiceProxy;
 import com.food.ordering.app.order.service.saga.proxy.PaymentServiceProxy;
 import com.food.ordering.app.order.service.saga.proxy.RestaurantServiceProxy;
 import com.food.ordering.app.order.service.service.OrderService;
@@ -24,25 +27,27 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
   private final OrderService orderService;
   private final PaymentServiceProxy paymentServiceProxy;
   private final RestaurantServiceProxy restaurantServiceProxy;
+  private final KitchenServiceProxy kitchenServiceProxy;
 
   private final SagaDefinition<CreateOrderSagaData> sagaDefinition =
       step()
-            .invokeLocal(this::createOrder)
-            .withCompensation(this::cancelOrder)
-          .step()
-//          .notifyParticipant(this::processPayment)
-          .invokeParticipant(this::processPayment)
-            .onReply(ProcessPaymentSucceeded.class, this::handleProcessPaymentSucceeded)
-            .onReply(ProcessPaymentFailed.class, this::handleProcessPaymentFailed)
-            .withCompensation(this::cancelPayment)
-          .step()
-            .invokeParticipant(this::approveOrderByRestaurant)
-            .onReply(OrderApproveSucceeded.class, this::handleOrderApproveSucceeded)
-            .onReply(OrderApproveFailed.class, this::handleOrderApproveFailed)
-          // TODO: handle failure
-          .step()
-            .invokeLocal(this::confirmOrder)
-          .build();
+        .invokeLocal(this::createOrder).withCompensation(this::cancelOrder)
+      .step()
+        .invokeParticipant(this::approveOrderByRestaurant)
+        .onReply(OrderApproveSucceeded.class, this::handleOrderApproveSucceeded)
+        .onReply(OrderApproveFailed.class, this::handleOrderApproveFailed)
+      .step()
+        .invokeParticipant(this::processPayment)
+        .onReply(ProcessPaymentSucceeded.class, this::handleProcessPaymentSucceeded)
+        .onReply(ProcessPaymentFailed.class, this::handleProcessPaymentFailed)
+        .withCompensation(this::cancelPayment)
+      .step()
+        .invokeParticipant(this::createKitchenTicket)
+        .onReply(KitchenTicketCreated.class, this::handleCreateKitchenTicketSucceeded)
+        .onReply(CreateKitchenTicketFailed.class, this::handleCreateKitchenTicketFailed)
+      .step()
+        .invokeLocal(this::confirmOrder)
+      .build();
 
 
   @Override
@@ -53,25 +58,26 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
 
   private void createOrder(CreateOrderSagaData sagaData) {
     log.info("Create order saga started for order id: {}", sagaData.getOrderId().toString());
-//    orderService.createOrder(sagaData.getOrder());
   }
 
   private void cancelOrder(CreateOrderSagaData data) {
-//    orderService.cancelOrder(sagaData.getOrder());
     log.info("CreateOrderSaga cancelled for order id: {}", data.getOrderId().toString());
     orderService.updateOrderStatus(data.getOrderId(), OrderStatus.CANCELLED);
+    orderService.setFailureMessages(data.getOrderId(), data.getFailureMessages());
   }
 
   private void confirmOrder(CreateOrderSagaData data) {
-    log.info("Order: {} was confirmed and approved.", data.getOrderId().toString());
+    log.info("Order: {} was confirmed and approved and kitchen ticket created.", data.getOrderId().toString());
     // TODO: maybe different status?
-    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.APPROVED);
+//    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.APPROVED);
   }
 
   private void handleOrderApproveFailed(CreateOrderSagaData data,
       OrderApproveFailed orderApproveFailed) {
-    log.info("Approve order by restaurant {} failed for order id: {}",
-        data.getRestaurantId().toString(), data.getOrderId().toString());
+    log.info("Approve order by restaurant {} failed for order id: {} with failure message: {}",
+        data.getRestaurantId().toString(), data.getOrderId().toString(),
+        orderApproveFailed.failureMessage());
+    data.getFailureMessages().add(orderApproveFailed.failureMessage());
     orderService.updateOrderStatus(data.getOrderId(), OrderStatus.CANCELLING);
   }
 
@@ -80,6 +86,22 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
     log.info("Approve order by restaurant {} succeeded for order id: {}",
         data.getRestaurantId().toString(), data.getOrderId().toString());
     orderService.updateOrderStatus(data.getOrderId(), OrderStatus.APPROVED);
+  }
+
+  private void handleCreateKitchenTicketSucceeded(CreateOrderSagaData data,
+      KitchenTicketCreated kitchenTicketCreated) {
+    data.setTicketId(kitchenTicketCreated.ticketId());
+    log.info("Kitchen ticket successfully created with id: {} for order id: {}",
+        kitchenTicketCreated.ticketId().toString(), data.getOrderId().toString());
+    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.KITCHEN_TICKET_CREATED);
+  }
+
+  private void handleCreateKitchenTicketFailed(CreateOrderSagaData data,
+      CreateKitchenTicketFailed kitchenTicketFailed) {
+    log.info("Kitchen ticket creation FAILED with for order id: {} with failure message: {}",
+        data.getOrderId().toString(), kitchenTicketFailed.failureMessage());
+    data.getFailureMessages().add(kitchenTicketFailed.failureMessage());
+    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.CANCELLING);
   }
 
   private void handleProcessPaymentSucceeded(CreateOrderSagaData data,
@@ -92,7 +114,9 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
 
   private void handleProcessPaymentFailed(CreateOrderSagaData data,
       ProcessPaymentFailed processPaymentFailed) {
-    log.info("Process payment failed for order id: {}", data.getOrderId().toString());
+    log.info("Process payment failed for order id: {} with failure message: {}",
+        data.getOrderId().toString(), processPaymentFailed.failureMessage());
+    data.getFailureMessages().add(processPaymentFailed.failureMessage());
     orderService.updateOrderStatus(data.getOrderId(), OrderStatus.CANCELLING);
   }
 
@@ -107,6 +131,13 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
     log.info("Process payment started for order id: {}", data.getOrderId().toString());
     return paymentServiceProxy.processPayment(data.getOrderId(), data.getCustomerId(),
         data.getTotalPrice(), data.getPaymentToken());
+  }
+
+  private CommandWithDestination createKitchenTicket(CreateOrderSagaData data) {
+    log.info("Create kitchen ticket saga step started for order id: {}",
+        data.getOrderId().toString());
+    return kitchenServiceProxy.createKitchenTicket(data.getOrderId(), data.getCustomerId(),
+        data.getRestaurantId(), data.getItems());
   }
 
   private CommandWithDestination approveOrderByRestaurant(CreateOrderSagaData data) {

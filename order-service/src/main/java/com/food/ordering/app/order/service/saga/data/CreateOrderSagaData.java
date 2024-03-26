@@ -1,7 +1,7 @@
 package com.food.ordering.app.order.service.saga.data;
 
+import com.food.ordering.app.common.model.Address;
 import com.food.ordering.app.common.model.OrderProduct;
-import com.food.ordering.app.order.service.entity.Address;
 import com.food.ordering.app.order.service.entity.OrderStatus;
 import io.eventuate.examples.common.money.Money;
 import java.util.ArrayList;
@@ -25,6 +25,8 @@ public class CreateOrderSagaData {
   private UUID restaurantId;
 
   private UUID paymentId;
+
+  private UUID ticketId;
 
   private OrderStatus orderStatus;
 

@@ -32,6 +32,7 @@ public interface OrderMapper {
   @Mappings({
       @Mapping(target = "orderId", source = "id"),
       @Mapping(target = "paymentId", ignore = true),
+      @Mapping(target = "ticketId", ignore = true),
       @Mapping(target = "totalPrice", source = "totalPrice"),
   })
   CreateOrderSagaData orderEntityToCreateOrderSagaData(Order order);

@@ -73,6 +73,21 @@ services:
       timeout: 5s
       retries: 5
 
+  kitchen-service-postgres:
+    image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
+    ports:
+      - "5436:5432"
+    restart: on-failure
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: kitchen_service
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d kitchen_service" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   keycloak:
     image: quay.io/keycloak/keycloak:20.0.3
     ports:
@@ -152,6 +167,8 @@ services:
         condition: service_healthy
       restaurant-service-postgres:
         condition: service_healthy
+      kitchen-service-postgres:
+        condition: service_healthy
       kafka:
         condition: service_started
     environment:
@@ -190,6 +207,16 @@ services:
       EVENTUATE_CDC_READER_READER3_OFFSETSTORAGETOPICNAME: db.history.common
       EVENTUATE_CDC_READER_READER3_OUTBOXID: 3
 
+      EVENTUATE_CDC_READER_READER4_TYPE: postgres-wal
+      EVENTUATE_CDC_READER_READER4_DATASOURCEURL: jdbc:postgresql://kitchen-service-postgres:5432/kitchen_service
+      EVENTUATE_CDC_READER_READER4_MONITORINGSCHEMA: public
+      EVENTUATE_CDC_READER_READER4_DATASOURCEUSERNAME: admin
+      EVENTUATE_CDC_READER_READER4_DATASOURCEPASSWORD: password
+      EVENTUATE_CDC_READER_READER4_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
+      EVENTUATE_CDC_READER_READER4_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/kitchen_service
+      EVENTUATE_CDC_READER_READER4_OFFSETSTORAGETOPICNAME: db.history.common
+      EVENTUATE_CDC_READER_READER4_OUTBOXID: 4
+
       EVENTUATE_CDC_PIPELINE_PIPELINE1_TYPE: eventuate-tram
       EVENTUATE_CDC_PIPELINE_PIPELINE1_READER: reader1
       EVENTUATE_CDC_PIPELINE_PIPELINE1_EVENTUATEDATABASESCHEMA: public
@@ -201,3 +228,7 @@ services:
       EVENTUATE_CDC_PIPELINE_PIPELINE3_TYPE: eventuate-tram
       EVENTUATE_CDC_PIPELINE_PIPELINE3_READER: reader3
       EVENTUATE_CDC_PIPELINE_PIPELINE3_EVENTUATEDATABASESCHEMA: public
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE4_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE4_READER: reader4
+      EVENTUATE_CDC_PIPELINE_PIPELINE4_EVENTUATEDATABASESCHEMA: public

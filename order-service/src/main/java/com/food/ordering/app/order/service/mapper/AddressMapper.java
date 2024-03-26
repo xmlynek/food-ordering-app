@@ -1,7 +1,7 @@
 package com.food.ordering.app.order.service.mapper;
 
+import com.food.ordering.app.common.model.Address;
 import com.food.ordering.app.order.service.dto.AddressRequest;
-import com.food.ordering.app.order.service.entity.Address;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
