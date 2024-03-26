@@ -1,5 +1,9 @@
 import {createContext, useState, ReactNode, useEffect, useMemo} from 'react';
-import {getBasketFromLocalStorage, saveBasketToLocalStorage} from "../utils/localStorageUtils.ts";
+import {
+  clearBasketFromLocalStorage,
+  getBasketFromLocalStorage,
+  saveBasketToLocalStorage
+} from "../utils/localStorageUtils.ts";
 import {message} from "antd";
 
 interface BasketContextType {
@@ -9,6 +13,7 @@ interface BasketContextType {
   addToBasket: (item: BasketItem) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   removeFromBasket: (itemId: string) => void;
+  clearBasket: () => void;
 }
 
 export const BasketContext = createContext<BasketContextType>({
@@ -20,6 +25,8 @@ export const BasketContext = createContext<BasketContextType>({
   updateQuantity: () => {
   },
   removeFromBasket: () => {
+  },
+  clearBasket: () => {
   },
 });
 
@@ -78,12 +85,18 @@ export const BasketProvider = ({children}: BasketProviderProps) => {
     return basket.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
+  const clearBasket = () => {
+    setBasket([]);
+    clearBasketFromLocalStorage();
+  }
+
   const value = useMemo(() => ({
     basket,
     calculateTotalPrice,
     addToBasket,
     removeFromBasket,
     updateQuantity,
+    clearBasket,
   }), [basket]);
 
   return (

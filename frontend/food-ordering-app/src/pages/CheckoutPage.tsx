@@ -3,18 +3,26 @@ import CheckoutForm from "../components/Checkout/CheckoutForm.tsx";
 import {Elements} from "@stripe/react-stripe-js";
 import {useBasket} from "../hooks/useBasketContext.tsx";
 import {postOrder} from "../client/ordersApiClient.ts";
-import {clearBasketFromLocalStorage} from "../utils/localStorageUtils.ts";
 import {CheckoutFormValues} from "../model/checkout.ts";
 import {useMutation} from "@tanstack/react-query";
 import {Token} from "@stripe/stripe-js";
 import keycloak from "../keycloak/keycloak.ts";
 import {stripePromise} from "../stripe/stripe.ts";
+import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 const {Title} = Typography;
 
 
 const CheckoutPage = () => {
-  const {calculateTotalPrice, basket} = useBasket();
+  const {calculateTotalPrice, basket, clearBasket} = useBasket();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (basket.length === 0) {
+      navigate('/');
+    }
+  }, [basket, navigate]);
 
   // TODO: do something after order is created
   const {mutateAsync, isLoading, isError, data, error} = useMutation({
@@ -23,7 +31,6 @@ const CheckoutPage = () => {
     onSuccess: async (data) => {
       // await queryClient.invalidateQueries({queryKey: ['order-tickets']});
       message.success(`Order ${data.id} created successfully`);
-      clearBasketFromLocalStorage();
     }
   });
 
@@ -37,6 +44,7 @@ const CheckoutPage = () => {
         street: token?.card?.address_line1 || values.addressLine,
         postalCode: token?.card?.address_zip || values.postalCode,
         city: token?.card?.address_city || values.city,
+        country: token?.card?.address_country || values.country,
       },
       totalPrice: calculateTotalPrice().toFixed(2),
       items: basket.map(item => ({
@@ -45,6 +53,7 @@ const CheckoutPage = () => {
         price: item.price.toFixed(2)
       }))
     });
+    clearBasket();
   };
 
 
