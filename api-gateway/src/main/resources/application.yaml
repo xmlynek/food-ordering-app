@@ -35,3 +35,10 @@ spring:
           filters:
             #            - TokenRelay
             - RewritePath=/restaurant-service(?<segment>.*), $\{segment}
+        - id: kitchen-service
+          uri: ${KITCHEN_SERVICE_URI}
+          predicates:
+            - Path=/kitchen-service/**
+          filters:
+            #            - TokenRelay
+            - RewritePath=/kitchen-service(?<segment>.*), $\{segment}
