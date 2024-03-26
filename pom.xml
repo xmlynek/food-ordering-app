@@ -26,6 +26,7 @@
     <module>account-service</module>
     <module>catalog-service</module>
     <module>api-gateway</module>
+    <module>kitchen-service</module>
   </modules>
 
   <properties>
