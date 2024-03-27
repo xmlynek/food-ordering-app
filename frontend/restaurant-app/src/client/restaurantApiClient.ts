@@ -1,13 +1,14 @@
 import {BasicRestaurantRestDto, Restaurant, RestaurantFormValues} from "../model/restaurant.ts";
 import {axiosInstance} from "./axiosInstance.ts";
+import {PageableRestApiResponse} from "../model/pageable.ts";
 
 export const fetchRestaurantById = async (restaurantId: string): Promise<Restaurant> => {
   const response = await axiosInstance.get(`${window.envVars.REACT_RESTAURANT_SERVICE_PATH}/${restaurantId}`);
   return response.data;
 };
 
-export const fetchRestaurants = async (): Promise<BasicRestaurantRestDto[]> => {
-  const response = await axiosInstance.get(`${window.envVars.REACT_RESTAURANT_SERVICE_PATH}`);
+export const fetchRestaurants = async (page: number = 0, size: number = 10): Promise<PageableRestApiResponse<BasicRestaurantRestDto>> => {
+  const response = await axiosInstance.get(`${window.envVars.REACT_RESTAURANT_SERVICE_PATH}?page=${page}&size=${size}`);
   return response.data;
 };
 

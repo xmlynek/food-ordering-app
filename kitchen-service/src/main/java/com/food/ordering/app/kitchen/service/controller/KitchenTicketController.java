@@ -4,10 +4,13 @@ import com.food.ordering.app.kitchen.service.dto.BasicKitchenTicketResponse;
 import com.food.ordering.app.kitchen.service.dto.KitchenTicketDetails;
 import com.food.ordering.app.kitchen.service.mapper.KitchenTicketMapper;
 import com.food.ordering.app.kitchen.service.service.KitchenTicketService;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +29,12 @@ public class KitchenTicketController {
   private final KitchenTicketMapper kitchenTicketMapper;
 
   @GetMapping
-  public ResponseEntity<List<BasicKitchenTicketResponse>> getRestaurantKitchenTickets(
-      @PathVariable(name = "restaurantId") UUID restaurantId) {
-    List<BasicKitchenTicketResponse> kitchenTicketResponses = kitchenTicketService.getAllKitchenTicketsByRestaurantId(
-            restaurantId).stream()
-        .map(kitchenTicketMapper::kitchenTicketEntityToBasicKitchenTicketResponse)
-        .collect(Collectors.toList());
+  public ResponseEntity<Page<BasicKitchenTicketResponse>> getRestaurantKitchenTickets(
+      @PathVariable(name = "restaurantId") UUID restaurantId,
+      @SortDefault(value = "createdAt", direction = Direction.DESC) @PageableDefault Pageable pageable) {
+    Page<BasicKitchenTicketResponse> kitchenTicketResponses = kitchenTicketService.getAllKitchenTicketsByRestaurantId(
+            restaurantId, pageable)
+        .map(kitchenTicketMapper::kitchenTicketEntityToBasicKitchenTicketResponse);
     return ResponseEntity.ok(kitchenTicketResponses);
   }
 

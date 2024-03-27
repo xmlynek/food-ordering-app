@@ -12,9 +12,10 @@ import com.food.ordering.app.restaurant.service.mapper.RestaurantMapper;
 import com.food.ordering.app.restaurant.service.repository.RestaurantRepository;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,10 +32,9 @@ public class RestaurantServiceImpl implements RestaurantService {
 
   @Transactional(readOnly = true)
   @Override
-  public List<Restaurant> getAllRestaurants() {
-    // TODO: add pagination?
+  public Page<Restaurant> getAllRestaurants(Pageable pageable) {
     return restaurantRepository.findAllByOwnerIdAndIsDeletedFalse(
-        SecurityContextHolder.getContext().getAuthentication().getName());
+        SecurityContextHolder.getContext().getAuthentication().getName(), pageable);
   }
 
   //  @Transactional(readOnly = true)

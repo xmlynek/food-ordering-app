@@ -26,6 +26,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,8 +42,8 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   private final KitchenDomainEventPublisher domainEventPublisher;
 
   @Override
-  public List<KitchenTicket> getAllKitchenTicketsByRestaurantId(UUID restaurantId) {
-    return kitchenTicketRepository.findAllByRestaurantId(restaurantId);
+  public Page<KitchenTicket> getAllKitchenTicketsByRestaurantId(UUID restaurantId, Pageable pageable) {
+    return kitchenTicketRepository.findAllByRestaurantId(restaurantId, pageable);
   }
 
   @Override

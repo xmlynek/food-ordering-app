@@ -1,6 +1,6 @@
 import {Layout, Menu} from "antd";
 import React from "react";
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import {CheckCircleOutlined, UnorderedListOutlined} from "@ant-design/icons";
 
 
@@ -11,6 +11,17 @@ interface RestaurantLayoutProps {
 }
 
 const RestaurantLayout: React.FC<RestaurantLayoutProps> = ({children}: RestaurantLayoutProps) => {
+
+  const location = useLocation();
+
+  const getSelectedKeys = () => {
+    const path = location.pathname;
+    if (path.includes('/menu/add')) return ['addMenu'];
+    if (path.includes('/menu')) return ['actualMenu'];
+    if (path.includes('/tickets')) return ['activeTickets'];
+    return ['actualMenu'];
+  };
+
   const menuItems = [
     {
       key: 'menu',
@@ -50,13 +61,13 @@ const RestaurantLayout: React.FC<RestaurantLayoutProps> = ({children}: Restauran
 
   return (
       <Layout
-          style={{padding: '24px 0'}}
+          style={{padding: '24px 0', marginTop: '2rem'}}
       >
         <Sider>
           <Menu
               theme="dark"
               mode="inline"
-              defaultSelectedKeys={['actualMenu']}
+              defaultSelectedKeys={getSelectedKeys()}
               defaultOpenKeys={['menu', 'tickets']}
               style={{height: '100%'}}
               items={menuItems}

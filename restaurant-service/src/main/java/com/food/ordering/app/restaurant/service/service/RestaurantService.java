@@ -2,12 +2,13 @@ package com.food.ordering.app.restaurant.service.service;
 
 import com.food.ordering.app.restaurant.service.dto.RestaurantUpdateRequest;
 import com.food.ordering.app.restaurant.service.entity.Restaurant;
-import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface RestaurantService {
 
-  List<Restaurant> getAllRestaurants();
+  Page<Restaurant> getAllRestaurants(Pageable pageable);
 
   Restaurant getRestaurantById(UUID restaurantId);
 

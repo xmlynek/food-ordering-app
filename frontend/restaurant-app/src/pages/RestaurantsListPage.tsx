@@ -1,24 +1,13 @@
 import {Button, Card, Space, Typography} from "antd";
-import {useQuery} from "@tanstack/react-query";
 import React from "react";
 import RestaurantList from "../components/Restaurant/RestaurantList.tsx";
 import {Outlet, useNavigate} from "react-router-dom";
-import {BasicRestaurantRestDto} from "../model/restaurant.ts";
-import {fetchRestaurants} from "../client/restaurantApiClient.ts";
 
 const {Title} = Typography;
 
 const RestaurantsListPage: React.FC = () => {
-
   const navigate = useNavigate();
 
-  const {
-    data: restaurants,
-    error,
-    isPending,
-  } = useQuery<BasicRestaurantRestDto[], Error>({queryKey: ['restaurants'], queryFn: fetchRestaurants});
-
-  if (error) return 'An error has occurred: ' + error.message
 
   return (
       <div style={{padding: '20px'}}>
@@ -33,7 +22,7 @@ const RestaurantsListPage: React.FC = () => {
             Create Restaurant
           </Button>
         }>
-          {<RestaurantList restaurants={restaurants} isPending={isPending}/>}
+          {<RestaurantList/>}
         </Card>
         <Outlet/>
       </div>

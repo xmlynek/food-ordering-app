@@ -1,21 +1,46 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Avatar, Button, List, Tag} from "antd";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
-import {MenuItem} from "../../model/restaurant.ts";
+import {useNavigate, useParams} from "react-router-dom";
+import {usePagination} from "../../hooks/usePagination.ts";
+import {PageableRestApiResponse} from "../../model/pageable.ts";
+import {fetchRestaurantMenuItems} from "../../client/restaurantMenuItemsApiClient.ts";
+import {MenuItem} from "../../model/menuItem.ts";
+
 import styles from './MenuList.module.css';
-import {useNavigate} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
+
 
 interface MenuListProps {
-  menus: Array<MenuItem>;
-  isPending: boolean;
   deleteHandler: (menuId: string) => void;
 }
 
-const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler, isPending}: MenuListProps) => {
+const MenuList: React.FC<MenuListProps> = ({deleteHandler}: MenuListProps) => {
   const navigate = useNavigate();
+  const params = useParams();
+  const {pageSize, currentPage, handlePageChange} = usePagination();
+
+  const restaurantId = params.id as string;
+
+  const {
+    data: menuItemsPage,
+    error,
+    isPending,
+    refetch,
+  } = useQuery<PageableRestApiResponse<MenuItem>, Error>({
+    queryKey: ['menus', restaurantId],
+    queryFn: fetchRestaurantMenuItems.bind(null, restaurantId, currentPage - 1, pageSize),
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [currentPage, pageSize]);
+
   const handleModify = (id: string) => {
     navigate(`${id}/edit`)
   };
+
+  if (error) return 'An error has occurred: ' + error.message
 
   return (
       <List
@@ -25,9 +50,18 @@ const MenuList: React.FC<MenuListProps> = ({menus, deleteHandler, isPending}: Me
           size="large"
           pagination={{
             position: 'bottom',
-            pageSize: 5,
+            align: 'start',
+            pageSize: pageSize,
+            current: currentPage,
+            total: menuItemsPage?.totalElements,
+            onChange: handlePageChange,
+            onShowSizeChange: handlePageChange,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+            responsive: true,
           }}
-          dataSource={menus}
+          dataSource={menuItemsPage?.content || []}
           renderItem={item => (
               <List.Item
                   key={item.id}

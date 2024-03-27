@@ -7,10 +7,12 @@ import com.food.ordering.app.restaurant.service.dto.RestaurantUpdateRequest;
 import com.food.ordering.app.restaurant.service.mapper.RestaurantMapper;
 import com.food.ordering.app.restaurant.service.service.RestaurantService;
 import jakarta.validation.Valid;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,10 +36,10 @@ public class RestaurantController {
 
 
   @GetMapping
-  public ResponseEntity<List<BasicRestaurantResponse>> getPrincipalRestaurants() {
-    List<BasicRestaurantResponse> response = restaurantService.getAllRestaurants().stream()
-        .map(restaurantMapper::restaurantEntityToBasicRestaurantResponse)
-        .collect(Collectors.toList());
+  public ResponseEntity<Page<BasicRestaurantResponse>> getPrincipalRestaurants(
+      @SortDefault(value = "name", caseSensitive = false) @PageableDefault Pageable pageable) {
+    Page<BasicRestaurantResponse> response = restaurantService.getAllRestaurants(pageable)
+        .map(restaurantMapper::restaurantEntityToBasicRestaurantResponse);
     return ResponseEntity.ok(response);
   }
 

@@ -3,13 +3,14 @@ package com.food.ordering.app.restaurant.service.service;
 import com.food.ordering.app.restaurant.service.dto.MenuItemUpdateRequest;
 import com.food.ordering.app.restaurant.service.entity.MenuItem;
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface RestaurantMenuItemService {
 
-  List<MenuItem> getWholeRestaurantMenu(UUID restaurantId);
+  Page<MenuItem> getWholeRestaurantMenu(UUID restaurantId, Pageable pageable);
 
   MenuItem getMenuItemById(UUID restaurantId, UUID menuItemId);
 

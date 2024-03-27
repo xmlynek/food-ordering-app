@@ -1,8 +1,9 @@
-import {MenuItem, MenuItemFormValues} from "../model/restaurant.ts";
 import {axiosInstance} from "./axiosInstance.ts";
+import {PageableRestApiResponse} from "../model/pageable.ts";
+import {MenuItem, MenuItemFormValues} from "../model/menuItem.ts";
 
-export const fetchRestaurantMenuItems = async (restaurantId: string): Promise<MenuItem[]> => {
-  const response = await axiosInstance.get(`${window.envVars.REACT_RESTAURANT_SERVICE_PATH}/${restaurantId}/menu`);
+export const fetchRestaurantMenuItems = async (restaurantId: string, page: number = 0, size: number = 10): Promise<PageableRestApiResponse<MenuItem>> => {
+  const response = await axiosInstance.get(`${window.envVars.REACT_RESTAURANT_SERVICE_PATH}/${restaurantId}/menu?page=${page}&size=${size}`);
   return response.data;
 };
 

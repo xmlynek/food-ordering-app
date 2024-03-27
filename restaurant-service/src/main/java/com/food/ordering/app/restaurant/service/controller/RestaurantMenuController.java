@@ -7,10 +7,12 @@ import com.food.ordering.app.restaurant.service.mapper.MenuItemMapper;
 import com.food.ordering.app.restaurant.service.service.RestaurantMenuItemService;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -36,11 +38,10 @@ public class RestaurantMenuController {
   private final MenuItemMapper menuItemMapper;
 
   @GetMapping
-  public ResponseEntity<List<MenuItemResponse>> getRestaurantMenu(
-      @PathVariable UUID restaurantId) {
-    List<MenuItemResponse> menuItems = menuItemService.getWholeRestaurantMenu(restaurantId).stream()
-        .map(menuItemMapper::menuItemToMenuItemResponse)
-        .collect(Collectors.toList());
+  public ResponseEntity<Page<MenuItemResponse>> getRestaurantMenu(@PathVariable UUID restaurantId,
+      @SortDefault(value = "name", caseSensitive = false) @PageableDefault Pageable pageable) {
+    Page<MenuItemResponse> menuItems = menuItemService.getWholeRestaurantMenu(restaurantId, pageable)
+        .map(menuItemMapper::menuItemToMenuItemResponse);
     return ResponseEntity.ok(menuItems);
   }
 
@@ -67,8 +68,7 @@ public class RestaurantMenuController {
 
   @PutMapping("/{menuId}")
   public ResponseEntity<MenuItemResponse> updateRestaurantMenu(@PathVariable UUID restaurantId,
-      @PathVariable UUID menuId,
-      @Valid @RequestBody MenuItemUpdateRequest menuItemUpdateRequest) {
+      @PathVariable UUID menuId, @Valid @RequestBody MenuItemUpdateRequest menuItemUpdateRequest) {
     MenuItemResponse updatedMenuItem = menuItemMapper.menuItemToMenuItemResponse(
         menuItemService.updateMenuItem(restaurantId, menuId, menuItemUpdateRequest));
     return ResponseEntity.ok(updatedMenuItem);

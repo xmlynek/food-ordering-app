@@ -15,9 +15,11 @@ import com.food.ordering.app.restaurant.service.repository.RestaurantRepository;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,8 +36,9 @@ public class RestaurantMenuItemServiceImpl implements
   private final MenuItemMapper menuItemMapper;
 
   @Override
-  public List<MenuItem> getWholeRestaurantMenu(UUID restaurantId) {
-    return menuItemRepository.findByRestaurantIdAndIsDeletedFalse(restaurantId);
+  public Page<MenuItem> getWholeRestaurantMenu(UUID restaurantId, Pageable pageable) {
+    return menuItemRepository.findAllByRestaurantIdAndRestaurantOwnerIdAndIsDeletedFalse(
+        restaurantId, SecurityContextHolder.getContext().getAuthentication().getName(), pageable);
   }
 
   @Override
@@ -77,7 +80,8 @@ public class RestaurantMenuItemServiceImpl implements
   @Transactional
   public MenuItem updateMenuItem(UUID restaurantId, UUID menuItemId,
       MenuItemUpdateRequest menuItemRequest) {
-    MenuItem menuItem = menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalse(menuItemId, restaurantId)
+    MenuItem menuItem = menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalse(menuItemId,
+            restaurantId)
         .orElseThrow(() -> new MenuItemNotFoundException(menuItemId));
 
     menuItem.setName(menuItemRequest.name());
@@ -100,7 +104,8 @@ public class RestaurantMenuItemServiceImpl implements
   @Override
   @Transactional
   public void deleteMenuItem(UUID restaurantId, UUID menuItemId) {
-    MenuItem menuItem = menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalse(menuItemId, restaurantId)
+    MenuItem menuItem = menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalse(menuItemId,
+            restaurantId)
         .orElseThrow(() -> new MenuItemNotFoundException(menuItemId));
     menuItem.setIsDeleted(true);
     menuItem.setIsAvailable(false);
