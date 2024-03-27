@@ -6,5 +6,6 @@ interface Window {
     REACT_KEYCLOAK_CLIENT_ID: string,
     REACT_API_GATEWAY_URL: string,
     REACT_RESTAURANT_SERVICE_PATH: string,
+    REACT_KITCHEN_SERVICE_PATH: string,
   }
 }

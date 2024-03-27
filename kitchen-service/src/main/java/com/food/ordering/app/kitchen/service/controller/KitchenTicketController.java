@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,7 @@ public class KitchenTicketController {
   private final KitchenTicketMapper kitchenTicketMapper;
 
   @GetMapping
-  public ResponseEntity<List<BasicKitchenTicketResponse>> getRestaurantOrderTickets(
+  public ResponseEntity<List<BasicKitchenTicketResponse>> getRestaurantKitchenTickets(
       @PathVariable(name = "restaurantId") UUID restaurantId) {
     List<BasicKitchenTicketResponse> kitchenTicketResponses = kitchenTicketService.getAllKitchenTicketsByRestaurantId(
             restaurantId).stream()
@@ -35,11 +36,19 @@ public class KitchenTicketController {
   }
 
   @GetMapping("/{ticketId}")
-  public ResponseEntity<KitchenTicketDetails> getRestaurantOrderTicketByOrderId(
+  public ResponseEntity<KitchenTicketDetails> getRestaurantKitchenTicketByKitchenId(
       @PathVariable(name = "restaurantId") UUID restaurantId,
       @PathVariable(name = "ticketId") UUID kitchenTicketId) {
     KitchenTicketDetails restaurantOrderTicketResponse = kitchenTicketMapper.kitchenTicketDetailsViewToKitchenTicketDetails(
         kitchenTicketService.getKitchenTicketDetails(restaurantId, kitchenTicketId));
     return ResponseEntity.ok(restaurantOrderTicketResponse);
+  }
+
+  @PostMapping("/{ticketId}/complete")
+  public ResponseEntity<Void> completeKitchenTicket(
+      @PathVariable(name = "restaurantId") UUID restaurantId,
+      @PathVariable(name = "ticketId") UUID kitchenTicketId) {
+    kitchenTicketService.completeKitchenTicket(restaurantId, kitchenTicketId);
+    return ResponseEntity.noContent().build();
   }
 }

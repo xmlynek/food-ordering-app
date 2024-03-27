@@ -27,7 +27,8 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
 
   private final SagaDefinition<CreateOrderSagaData> sagaDefinition =
       step()
-        .invokeLocal(this::createOrder).withCompensation(this::cancelOrder)
+        .invokeLocal(this::createOrder)
+        .withCompensation(this::cancelOrder)
       .step()
         .invokeParticipant(this::processPayment)
         .onReply(ProcessPaymentSucceeded.class, this::handleProcessPaymentSucceeded)
@@ -70,6 +71,7 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
     log.info("Kitchen ticket successfully created with id: {} for order id: {}",
         kitchenTicketCreated.ticketId().toString(), data.getOrderId().toString());
     orderService.updateOrderStatus(data.getOrderId(), OrderStatus.APPROVED);
+    orderService.setTicketId(data.getOrderId(), kitchenTicketCreated.ticketId());
   }
 
   private void handleCreateKitchenTicketFailed(CreateOrderSagaData data,

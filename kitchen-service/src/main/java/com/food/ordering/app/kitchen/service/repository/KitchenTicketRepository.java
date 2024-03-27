@@ -1,7 +1,6 @@
 package com.food.ordering.app.kitchen.service.repository;
 
 import com.food.ordering.app.kitchen.service.entity.KitchenTicket;
-import com.food.ordering.app.kitchen.service.repository.projection.KitchenTicketDetailsView;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,5 +15,5 @@ public interface KitchenTicketRepository extends JpaRepository<KitchenTicket, UU
 
 //  @PostAuthorize("isFullyAuthenticated() and (returnObject.isEmpty() or returnObject.get().restaurant.ownerId == authentication.name)")
   @NonNull
-  Optional<KitchenTicketDetailsView> findByIdAndRestaurantId(@NonNull UUID id, @NonNull UUID restaurantId);
+  <T> Optional<T> findByIdAndRestaurantId(@NonNull UUID id, @NonNull UUID restaurantId, Class<T> type);
 }

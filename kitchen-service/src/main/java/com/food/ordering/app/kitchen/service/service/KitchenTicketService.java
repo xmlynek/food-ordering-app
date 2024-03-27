@@ -13,4 +13,6 @@ public interface KitchenTicketService {
   List<KitchenTicket> getAllKitchenTicketsByRestaurantId(UUID restaurantId);
 
   KitchenTicketDetailsView getKitchenTicketDetails(UUID restaurantId, UUID ticketId);
+
+  void completeKitchenTicket(UUID restaurantId, UUID ticketId);
 }

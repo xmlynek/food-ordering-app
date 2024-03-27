@@ -1,5 +1,6 @@
 package com.food.ordering.app.order.service.service;
 
+import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.entity.OrderStatus;
 import com.food.ordering.app.order.service.exception.OrderNotFoundException;
@@ -53,5 +54,21 @@ public class OrderServiceImpl implements OrderService {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new OrderNotFoundException(orderId));
     order.getFailureMessages().addAll(failureMessages);
+  }
+
+  @Override
+  @Transactional
+  public void updateKitchenTicketStatus(UUID ticketId, KitchenTicketStatus kitchenTicketStatus) {
+    Order order = orderRepository.findByKitchenTicketId(ticketId)
+        .orElseThrow(() -> new OrderNotFoundException(ticketId));
+    order.setKitchenTicketStatus(kitchenTicketStatus);
+  }
+
+  @Override
+  @Transactional
+  public void setTicketId(UUID orderId, UUID ticketId) {
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new OrderNotFoundException(orderId));
+    order.setKitchenTicketId(ticketId);
   }
 }

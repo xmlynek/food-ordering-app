@@ -2,6 +2,7 @@ package com.food.ordering.app.kitchen.service.service;
 
 import com.food.ordering.app.common.command.CreateKitchenTicketCommand;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
+import com.food.ordering.app.common.event.KitchenTicketStatusChangedEvent;
 import com.food.ordering.app.common.exception.InvalidPriceValueException;
 import com.food.ordering.app.common.exception.RestaurantNotFoundException;
 import com.food.ordering.app.common.model.OrderProduct;
@@ -10,6 +11,7 @@ import com.food.ordering.app.kitchen.service.entity.KitchenTicket;
 import com.food.ordering.app.kitchen.service.entity.KitchenTicketItem;
 import com.food.ordering.app.kitchen.service.entity.MenuItem;
 import com.food.ordering.app.kitchen.service.entity.Restaurant;
+import com.food.ordering.app.kitchen.service.event.publisher.KitchenDomainEventPublisher;
 import com.food.ordering.app.kitchen.service.exception.KitchenTicketNotFoundException;
 import com.food.ordering.app.kitchen.service.exception.MenuItemNotAvailableException;
 import com.food.ordering.app.kitchen.service.repository.KitchenTicketRepository;
@@ -18,12 +20,14 @@ import com.food.ordering.app.kitchen.service.repository.RestaurantRepository;
 import com.food.ordering.app.kitchen.service.repository.projection.KitchenTicketDetailsView;
 import io.eventuate.examples.common.money.Money;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -33,6 +37,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   private final RestaurantMenuItemRepository menuItemRepository;
   private final RestaurantRepository restaurantRepository;
   private final KitchenTicketRepository kitchenTicketRepository;
+  private final KitchenDomainEventPublisher domainEventPublisher;
 
   @Override
   public List<KitchenTicket> getAllKitchenTicketsByRestaurantId(UUID restaurantId) {
@@ -42,7 +47,21 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   @Override
   public KitchenTicketDetailsView getKitchenTicketDetails(UUID restaurantId, UUID ticketId) {
     return kitchenTicketRepository.findByIdAndRestaurantId(ticketId,
-        restaurantId).orElseThrow(() -> new KitchenTicketNotFoundException(restaurantId, ticketId));
+            restaurantId, KitchenTicketDetailsView.class)
+        .orElseThrow(() -> new KitchenTicketNotFoundException(restaurantId, ticketId));
+  }
+
+  @Override
+  @Transactional
+  public void completeKitchenTicket(UUID restaurantId, UUID ticketId) {
+    KitchenTicket kitchenTicket = kitchenTicketRepository.findByIdAndRestaurantId(ticketId,
+            restaurantId, KitchenTicket.class)
+        .orElseThrow(() -> new KitchenTicketNotFoundException(restaurantId, ticketId));
+    kitchenTicket.setStatus(KitchenTicketStatus.READY_FOR_DELIVERY);
+    kitchenTicketRepository.save(kitchenTicket);
+
+    domainEventPublisher.publish(kitchenTicket, Collections.singletonList(
+        new KitchenTicketStatusChangedEvent(kitchenTicket.getId(), kitchenTicket.getStatus())));
   }
 
   @Override
@@ -56,7 +75,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
         .status(KitchenTicketStatus.PREPARING).build();
 
     kitchenTicket.setTicketItems(
-        createOrderTicketItems(command.products(), command.restaurantId(), kitchenTicket));
+        createKitchenTicketItems(command.products(), command.restaurantId(), kitchenTicket));
 
     kitchenTicket.setTotalPrice(kitchenTicket.getTicketItems().stream()
         .map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity())))
@@ -66,7 +85,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   }
 
 
-  private List<KitchenTicketItem> createOrderTicketItems(List<OrderProduct> products,
+  private List<KitchenTicketItem> createKitchenTicketItems(List<OrderProduct> products,
       UUID restaurantId, KitchenTicket kitchenTicket) {
     return products.stream().map(product -> {
       MenuItem menuItemById = menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalseAndIsAvailableTrue(

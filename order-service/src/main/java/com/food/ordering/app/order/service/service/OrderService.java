@@ -1,5 +1,6 @@
 package com.food.ordering.app.order.service.service;
 
+import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.entity.OrderStatus;
 import com.food.ordering.app.order.service.exception.OrderNotFoundException;
@@ -43,5 +44,9 @@ public interface OrderService {
   void updateOrderStatus(UUID orderId, OrderStatus orderStatus);
 
   void setFailureMessages(UUID orderId, List<String> failureMessages);
+
+  void updateKitchenTicketStatus(UUID ticketId, KitchenTicketStatus kitchenTicketStatus);
+
+  void setTicketId(UUID orderId, UUID ticketId);
 
 }

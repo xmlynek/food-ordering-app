@@ -17,4 +17,6 @@ window.envVars = {
       'frontend'),
   REACT_RESTAURANT_SERVICE_PATH: getDefault('${REACT_RESTAURANT_SERVICE_PATH}',
       '/restaurant-service/api/restaurants'),
+  REACT_KITCHEN_SERVICE_PATH: getDefault('${REACT_KITCHEN_SERVICE_PATH}',
+      '/kitchen-service/api/kitchen/restaurants'),
 };

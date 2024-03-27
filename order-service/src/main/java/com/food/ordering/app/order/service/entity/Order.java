@@ -1,8 +1,10 @@
 package com.food.ordering.app.order.service.entity;
 
+import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.common.model.Address;
 import io.eventuate.examples.common.money.Money;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -41,23 +43,33 @@ public class Order {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
+  private UUID kitchenTicketId;
+
+  @Column(nullable = false, updatable = false)
   private UUID customerId;
 
+  @Column(nullable = false, updatable = false)
   private UUID restaurantId;
 
   @CurrentTimestamp
   private LocalDateTime createdAt;
 
   @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
   private OrderStatus orderStatus;
+
+  @Enumerated(EnumType.STRING)
+  private KitchenTicketStatus kitchenTicketStatus;
 
   @Transient
   private String paymentToken;
 
   @Embedded
+  @Column(nullable = false, updatable = false)
   private Money totalPrice;
 
   @Embedded
+  @Column(nullable = false, updatable = false)
   private Address address;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")

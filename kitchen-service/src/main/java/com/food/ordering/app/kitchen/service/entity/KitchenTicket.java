@@ -56,4 +56,8 @@ public class KitchenTicket {
 
   @Column(nullable = false, updatable = false)
   private BigDecimal totalPrice;
+
+  public String getStringId() {
+    return id.toString();
+  }
 }

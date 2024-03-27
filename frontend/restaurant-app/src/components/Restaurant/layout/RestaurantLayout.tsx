@@ -32,13 +32,13 @@ const RestaurantLayout: React.FC<RestaurantLayoutProps> = ({children}: Restauran
       ],
     },
     {
-      key: 'orders',
+      key: 'tickets',
       icon: <UnorderedListOutlined/>,
-      label: 'Orders',
+      label: 'Tickets',
       children: [
         {
-          key: 'activeOrders',
-          label: <Link to="orders" className="text-decoration-none">Orders</Link>,
+          key: 'activeTickets',
+          label: <Link to="tickets" className="text-decoration-none">Tickets</Link>,
         },
         // {
         //   key: 'finishedOrders',
@@ -57,7 +57,7 @@ const RestaurantLayout: React.FC<RestaurantLayoutProps> = ({children}: Restauran
               theme="dark"
               mode="inline"
               defaultSelectedKeys={['actualMenu']}
-              defaultOpenKeys={['menu', 'orders']}
+              defaultOpenKeys={['menu', 'tickets']}
               style={{height: '100%'}}
               items={menuItems}
           />
