@@ -1,4 +1,4 @@
-import {Affix, Badge, Layout, Menu, Tooltip} from "antd";
+import {Affix, Layout, Menu} from "antd";
 import {
   AppstoreOutlined, HistoryOutlined,
   HomeOutlined, LogoutOutlined,
@@ -7,25 +7,13 @@ import {
 } from "@ant-design/icons";
 import {Link, useLocation} from "react-router-dom";
 import {performLogout} from "../../keycloak/keycloak.ts";
+import BasketTooltipBadge from "../../components/UI/BasketTooltipBadge.tsx";
 
 import styles from './Navigation.module.css';
-import {useBasket} from "../../hooks/useBasketContext.tsx";
-import {animated, useSpring} from "react-spring";
 
 
 const Navbar = () => {
-
-  const {calculateTotalPrice, totalItems} = useBasket();
   const location = useLocation();
-
-  const AnimatedBadge = animated(Badge);
-
-  const springProps = useSpring({
-    to: {transform: 'scale(1.1)'},
-    from: {transform: 'scale(1)'},
-    reset: true,
-    reverse: false,
-  });
 
   const getSelectedKeys = () => {
     const path = location.pathname;
@@ -52,14 +40,7 @@ const Navbar = () => {
       icon: <ShoppingCartOutlined style={{fontSize: '1rem'}}/>,
       label:
           <Link to="/basket">Basket
-            <Tooltip
-                title={`Total: $${calculateTotalPrice().toFixed(2)}`}>
-              <AnimatedBadge
-                  offset={[7, -5]}
-                  count={totalItems}
-                  overflowCount={99}
-                  style={{backgroundColor: '#52c41a', ...springProps}}/>
-            </Tooltip>
+            <BasketTooltipBadge/>
           </Link>,
       className: styles.separateMenuItems,
     },
