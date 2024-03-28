@@ -4,7 +4,7 @@ import {
   FormInstance, Input,
   InputNumber
 } from "antd";
-import {MenuItemFormValues} from "../../model/restaurant.ts";
+import {MenuItemFormValues} from "../../model/menuItem.ts";
 
 interface CreateMenuFormProps {
   form: FormInstance;
@@ -14,9 +14,9 @@ interface CreateMenuFormProps {
 
 
 const MenuItemFormSkeleton: React.FC<CreateMenuFormProps> = ({
-                                                       form,
-                                                       initialValues, children
-                                                     }: CreateMenuFormProps) => {
+                                                               form,
+                                                               initialValues, children
+                                                             }: CreateMenuFormProps) => {
 
   return (
       <Form initialValues={initialValues ? initialValues : {}} form={form} layout="vertical"
@@ -26,14 +26,15 @@ const MenuItemFormSkeleton: React.FC<CreateMenuFormProps> = ({
             label="Name"
             rules={[{required: true, message: 'Please input the menu name!'}]}
         >
-          <Input/>
+          <Input placeholder="Menu name"/>
         </Form.Item>
         <Form.Item
             name="description"
             label="Description"
             rules={[{required: true, message: 'Please input the menu description!'}]}
         >
-          <Input.TextArea rows={4}/>
+          <Input.TextArea count={{show: true, max: 255}} rows={4} maxLength={255}
+                          placeholder="Describe the menu"/>
         </Form.Item>
         <Form.Item
             name="price"

@@ -4,7 +4,7 @@ import {
   Typography
 } from "antd";
 import {useNavigate, useParams} from "react-router-dom";
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {KitchenTicketDetailsRestDTO} from "../model/kitchenTicket.ts";
 import {
   completeKitchenTicket,
@@ -15,6 +15,7 @@ import KitchenTicketDetails from "../components/Ticket/KitchenTicketDetails.tsx"
 const {Title} = Typography;
 
 const KitchenTicketDetailsPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const params = useParams()
   const navigate = useNavigate();
 
@@ -29,7 +30,10 @@ const KitchenTicketDetailsPage: React.FC = () => {
 
   const {mutateAsync, isPending: mutationPending, error: mutationError} = useMutation({
     mutationKey: ["complete-kitchen-ticket", restaurantId, ticketId],
-    mutationFn: completeKitchenTicket.bind(null, restaurantId, ticketId)
+    mutationFn: completeKitchenTicket.bind(null, restaurantId, ticketId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({queryKey: ['kitchen-tickets', restaurantId]});
+    }
   });
 
   const handleOnClose = () => {
