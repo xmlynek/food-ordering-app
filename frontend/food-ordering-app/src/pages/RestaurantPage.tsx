@@ -1,4 +1,4 @@
-import {Card, Layout, Space, Typography} from "antd";
+import {Card, Space, Typography} from "antd";
 import React from "react";
 import {useParams} from "react-router-dom";
 import RestaurantDetails from "../components/Restaurant/RestaurantDetails.tsx";
@@ -9,7 +9,6 @@ import {FullRestaurantRestDTO} from "../model/restApiDto.ts";
 
 const {Title} = Typography;
 
-const {Content} = Layout;
 
 const RestaurantPage: React.FC = () => {
   const params = useParams();
@@ -29,7 +28,7 @@ const RestaurantPage: React.FC = () => {
   if (isPending) return 'Loading...'
 
   return (
-      <Content style={{padding: '24px'}}>
+      <div>
         <div style={{marginBottom: '24px', textAlign: 'center'}}>
           <Title level={1}>{restaurant.name}</Title>
         </div>
@@ -45,7 +44,7 @@ const RestaurantPage: React.FC = () => {
             <RestaurantMenuList/>
           </Card>
         </Space>
-      </Content>
+      </div>
   );
 };
 

@@ -19,7 +19,7 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <ReactKeycloakProvider authClient={keycloak}
                            initOptions={{onLoad: 'login-required', pkceMethod: "S256"}}
-                           autoRefreshToken={false}
+                           autoRefreshToken={true}
                            LoadingComponent={<Spin fullscreen tip={"Loading..."} spinning={true}/>}>
       <React.StrictMode>
         <QueryClientProvider client={queryClient}>

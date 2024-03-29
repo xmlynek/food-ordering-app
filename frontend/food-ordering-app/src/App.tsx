@@ -1,8 +1,7 @@
-import {Layout, Result, Spin} from "antd";
-import Navbar from "./layout/navbar/Navigation.tsx";
+import {Result, Spin} from "antd";
 import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
 import {lazy, Suspense} from "react";
-import AppFooter from "./layout/footer/AppFooter.tsx";
+import LayoutWrapper from "./layout/LayoutWrapper/LayoutWrapper.tsx";
 
 const HomePage = lazy(() => import("./pages/HomePage.tsx"));
 const RestaurantsListPage = lazy(() => import("./pages/RestaurantsListPage.tsx"));
@@ -11,41 +10,33 @@ const BasketPage = lazy(() => import("./pages/BasketPage.tsx"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage.tsx"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage.tsx"));
 const OrderHistoryPage = lazy(() => import("./pages/OrderHistoryPage.tsx"));
+const OrderDetailsPage = lazy(() => import("./pages/OrderDetailsPage.tsx"));
 
 function App() {
 
   return (
       <BrowserRouter>
-        <Layout style={{
-          overflow: 'auto',
-          minHeight: '100vh',
-          width: '100%',
-          left: 0,
-        }}>
-          <Navbar/>
-          <Layout>
-            <Suspense fallback={<Spin fullscreen spinning={true}/>}>
-              <Routes>
-                <Route path="/" element={<HomePage/>}/>
-                <Route path="/restaurants" element={<RestaurantsListPage/>}/>
-                <Route path="/restaurants/:id" element={<RestaurantPage/>}/>
-                <Route path="/basket" element={<BasketPage/>}/>
-                <Route path="/checkout" element={<CheckoutPage/>}/>
-                <Route path="/profile" element={<ProfilePage/>}/>
-                <Route path="/order-history" element={<OrderHistoryPage/>}/>
-                <Route path="*" element={<Result
-                    status="404"
-                    title="404"
-                    subTitle="Sorry, the page you visited does not exist."
-                    extra={<Link to={"/"}>Back Home</Link>}
-                />}/>
-              </Routes>
-            </Suspense>
-          </Layout>
-          <AppFooter/>
-        </Layout>
+        <LayoutWrapper>
+          <Suspense fallback={<Spin fullscreen spinning={true}/>}>
+            <Routes>
+              <Route path="/" element={<HomePage/>}/>
+              <Route path="/restaurants" element={<RestaurantsListPage/>}/>
+              <Route path="/restaurants/:id" element={<RestaurantPage/>}/>
+              <Route path="/basket" element={<BasketPage/>}/>
+              <Route path="/checkout" element={<CheckoutPage/>}/>
+              <Route path="/profile" element={<ProfilePage/>}/>
+              <Route path="/order-history" element={<OrderHistoryPage/>}/>
+              <Route path="/order-history/:orderId" element={<OrderDetailsPage/>}/>
+              <Route path="*" element={<Result
+                  status="404"
+                  title="404"
+                  subTitle="Sorry, the page you visited does not exist."
+                  extra={<Link to={"/"}>Back Home</Link>}
+              />}/>
+            </Routes>
+          </Suspense>
+        </LayoutWrapper>
       </BrowserRouter>
-
   )
 }
 

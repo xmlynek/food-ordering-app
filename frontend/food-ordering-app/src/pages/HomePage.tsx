@@ -16,7 +16,7 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-      <div style={{padding: '20px'}}>
+      <div>
         <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
           <Title level={1}>Food ordering application</Title>
         </Space>

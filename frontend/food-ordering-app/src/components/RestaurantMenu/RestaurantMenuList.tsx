@@ -71,7 +71,7 @@ const RestaurantMenuList: React.FC<MenuListProps> = ({}: MenuListProps) => {
                   ]}
               >
                 <List.Item.Meta
-                    avatar={<Image src={item.imageUrl} height={96} width={96} className={styles.imageIcon}/>}
+                    avatar={<Image src={item.imageUrl} style={{ width: '150px', height: '150px', objectFit: 'cover' }} />}
                     title={<p>{item.name}</p>}
                     description={item.description}
                 />

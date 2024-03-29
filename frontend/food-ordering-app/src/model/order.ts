@@ -21,4 +21,19 @@ export interface OrderHistoryDto {
   totalPrice: number;
   orderStatus: string;
   createdAt: string;
+  kitchenTicketStatus: string;
+  failureMessage: string;
+}
+
+export interface OrderDetailsDto extends OrderHistoryDto {
+  items: OrderItemDetailsDto[];
+}
+
+export interface OrderItemDetailsDto {
+  productId: string;
+  name: string;
+  description: string;
+  quantity: number;
+  price: number;
+  imageUrl: string;
 }

@@ -25,7 +25,7 @@ const BasketPage: React.FC = () => {
   };
 
   return (
-      <Content style={{padding: '24px'}}>
+      <Content>
         <Row justify="center" style={{marginBottom: '12px'}}>
           <Title level={1}>Your Basket</Title>
         </Row>
