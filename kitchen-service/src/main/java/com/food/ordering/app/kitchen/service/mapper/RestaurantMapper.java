@@ -17,8 +17,4 @@ public interface RestaurantMapper {
   })
   Restaurant restaurantCreatedEventToRestaurant(UUID id,
       RestaurantCreatedEvent restaurantCreatedEvent);
-
-//  BasicRestaurantDto restaurantToBasicRestaurantDto(Restaurant restaurant);
-
-//  FullRestaurantDto restaurantToFullRestaurantDto(Restaurant restaurant);
 }

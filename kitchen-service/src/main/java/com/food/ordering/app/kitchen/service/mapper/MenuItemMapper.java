@@ -18,6 +18,4 @@ public interface MenuItemMapper {
   })
   MenuItem restaurantMenuItemCreatedEvent(UUID menuItemId, RestaurantMenuItemCreatedEvent event);
 
-
-//  MenuItemDto menuItemToMenuItemDto(MenuItem menuItem);
 }
