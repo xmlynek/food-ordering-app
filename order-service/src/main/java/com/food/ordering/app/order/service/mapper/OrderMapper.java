@@ -28,6 +28,7 @@ public interface OrderMapper {
 
   @Mappings({
       @Mapping(target = "totalPrice", expression = "java(order.getTotalPrice().getAmount())"),
+      @Mapping(target = "failureMessage", expression = "java(String.join(\".\\n\", order.getFailureMessages()))"),
   })
   OrderDto orderEntityToOrderDto(Order order);
 

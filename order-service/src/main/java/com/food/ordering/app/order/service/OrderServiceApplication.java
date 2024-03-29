@@ -1,5 +1,6 @@
 package com.food.ordering.app.order.service;
 
+import com.food.ordering.app.common.config.JsonObjectMapperJavaTimeModuleConfiguration;
 import io.eventuate.tram.spring.flyway.EventuateTramFlywayMigrationConfiguration;
 import io.eventuate.tram.spring.optimisticlocking.OptimisticLockingDecoratorConfiguration;
 import jakarta.servlet.FilterChain;
@@ -18,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @SpringBootApplication
 @Import({
     OptimisticLockingDecoratorConfiguration.class,
+    JsonObjectMapperJavaTimeModuleConfiguration.class,
     EventuateTramFlywayMigrationConfiguration.class
 })
 public class OrderServiceApplication {

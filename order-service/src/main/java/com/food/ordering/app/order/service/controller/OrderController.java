@@ -1,6 +1,7 @@
 package com.food.ordering.app.order.service.controller;
 
 import com.food.ordering.app.order.service.dto.OrderCreatedResponse;
+import com.food.ordering.app.order.service.dto.OrderDetails;
 import com.food.ordering.app.order.service.dto.OrderDto;
 import com.food.ordering.app.order.service.dto.OrderRequest;
 import com.food.ordering.app.order.service.entity.Order;
@@ -49,10 +50,9 @@ public class OrderController {
     return new ResponseEntity<>(orderCreatedResponse, HttpStatus.CREATED);
   }
 
-  // FIXME: replace with dto
   @GetMapping("/{orderId}")
-  public Order getOrderById(@PathVariable("orderId") UUID orderId) {
-    return orderService.findByOrderId(orderId);
+  public ResponseEntity<OrderDetails> getOrderDetails(@PathVariable("orderId") UUID orderId) {
+    return ResponseEntity.ok(orderService. getOrderDetailsById(orderId));
   }
 
   @GetMapping("/customer/{customerId}")
@@ -64,12 +64,4 @@ public class OrderController {
         .map(orderMapper::orderEntityToOrderDto);
     return ResponseEntity.ok(orders);
   }
-
-//  @GetMapping("/{orderId}")
-//  public OrderCreatedResponse findOrderByOrderIdAndCustomerId(
-//      @PathVariable("orderId") UUID orderId) {
-//    return orderMapper.orderEntityToOrderCreatedResponse(
-//        orderService.findByOrderId(orderId));
-//  }
-
 }

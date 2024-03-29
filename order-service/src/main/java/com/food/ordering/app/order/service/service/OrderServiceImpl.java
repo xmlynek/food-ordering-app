@@ -1,15 +1,22 @@
 package com.food.ordering.app.order.service.service;
 
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
+import com.food.ordering.app.common.exception.MenuItemNotFoundException;
+import com.food.ordering.app.order.service.dto.OrderDetails;
+import com.food.ordering.app.order.service.dto.OrderItemDetails;
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.entity.OrderStatus;
 import com.food.ordering.app.order.service.exception.OrderNotFoundException;
+import com.food.ordering.app.order.service.mapper.OrderDetailsMapper;
 import com.food.ordering.app.order.service.repository.OrderRepository;
+import com.food.ordering.app.order.service.repository.RestaurantMenuItemRepository;
+import com.food.ordering.app.order.service.repository.projection.OrderMenuItemDetailsView;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderServiceImpl implements OrderService {
 
   private final OrderRepository orderRepository;
+  private final RestaurantMenuItemRepository restaurantMenuItemRepository;
+  private final OrderDetailsMapper orderDetailsMapper;
 
   @Override
   @Transactional
@@ -30,9 +39,22 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public Order findByOrderId(UUID orderId) {
-    return orderRepository.findById(orderId)
-        .orElseThrow(() -> new RuntimeException("Order not found"));
+  public OrderDetails getOrderDetailsById(UUID orderId) {
+    Order order = orderRepository.findByIdAndCustomerId(orderId,
+            UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()))
+        .orElseThrow(() -> new OrderNotFoundException(orderId));
+
+    List<OrderItemDetails> orderItemDetails = order.getItems().stream()
+        .map(orderItem -> {
+          OrderMenuItemDetailsView menuItemDetailsView = restaurantMenuItemRepository
+              .findById(orderItem.getProductId(), OrderMenuItemDetailsView.class)
+              .orElseThrow(() -> new MenuItemNotFoundException(orderItem.getProductId()));
+
+          return orderDetailsMapper.toOrderItemDetails(orderItem, menuItemDetailsView);
+        })
+        .toList();
+
+    return orderDetailsMapper.toOrderDetails(order, orderItemDetails);
   }
 
   @Override
