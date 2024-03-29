@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 public interface RestaurantMenuItemQueryService {
 
-  Mono<Page<MenuItem>> findAllMenuItems(String restaurantId, Pageable pageable);
+  Mono<Page<MenuItem>> findAllAvailableMenuItems(String restaurantId, Pageable pageable);
 
   Mono<MenuItemDto> findMenuItemById(String restaurantId, String menuItemId);
 }

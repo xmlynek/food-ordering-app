@@ -29,7 +29,7 @@ public class RestaurantMenuItemQueryController {
       @RequestParam(value = "page", defaultValue = "0") int page,
       @RequestParam(value = "size", defaultValue = "10") int size) {
     log.info("Fetching menu items for restaurantId: {}", restaurantId);
-    return menuItemQueryService.findAllMenuItems(restaurantId,
+    return menuItemQueryService.findAllAvailableMenuItems(restaurantId,
         Pageable.ofSize(size).withPage(page));
   }
 

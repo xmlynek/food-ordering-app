@@ -26,10 +26,12 @@ public class RestaurantMenuItemQueryServiceImpl implements RestaurantMenuItemQue
   private final MenuItemMapper menuItemMapper;
 
   @Override
-  public Mono<Page<MenuItem>> findAllMenuItems(String restaurantId, Pageable pageable) {
+  public Mono<Page<MenuItem>> findAllAvailableMenuItems(String restaurantId, Pageable pageable) {
     return restaurantRepository.findByIdAndIsAvailableTrue(restaurantId)
         .flatMap(restaurant -> {
-          List<MenuItem> menuItems = restaurant.getMenuItems();
+          List<MenuItem> menuItems = restaurant.getMenuItems().stream()
+              .filter(MenuItem::getIsAvailable)
+              .toList();
           int totalItems = menuItems.size();
 
           int start = (int) pageable.getOffset();
