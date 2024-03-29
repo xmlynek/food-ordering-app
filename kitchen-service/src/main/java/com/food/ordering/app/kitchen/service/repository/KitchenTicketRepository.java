@@ -11,10 +11,10 @@ import org.springframework.lang.NonNull;
 public interface KitchenTicketRepository extends JpaRepository<KitchenTicket, UUID> {
 
   @NonNull
-//  @PostFilter("isFullyAuthenticated() and filterObject.restaurant.ownerId == authentication.name")
-  Page<KitchenTicket> findAllByRestaurantId(@NonNull UUID restaurantId, Pageable pageable);
+  Page<KitchenTicket> findAllByRestaurantIdAndRestaurantOwnerId(@NonNull UUID restaurantId,
+      @NonNull String ownerId, Pageable pageable);
 
-//  @PostAuthorize("isFullyAuthenticated() and (returnObject.isEmpty() or returnObject.get().restaurant.ownerId == authentication.name)")
   @NonNull
-  <T> Optional<T> findByIdAndRestaurantId(@NonNull UUID id, @NonNull UUID restaurantId, Class<T> type);
+  <T> Optional<T> findByIdAndRestaurantIdAndRestaurantOwnerId(@NonNull UUID id,
+      @NonNull UUID restaurantId, @NonNull String ownerId, Class<T> type);
 }

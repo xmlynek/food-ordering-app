@@ -1,6 +1,6 @@
 SERVER_PORT: 8088
 DATASOURCE_URL: jdbc:postgresql://localhost:5436/kitchen_service
-#OAUTH2_ISSUER_URI: http://localhost:8083/realms/restaurant
+OAUTH2_ISSUER_URI: http://localhost:8083/realms/restaurant
 
 logging:
   level:

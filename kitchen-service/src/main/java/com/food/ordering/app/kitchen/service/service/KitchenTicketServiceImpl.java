@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,22 +43,26 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   private final KitchenDomainEventPublisher domainEventPublisher;
 
   @Override
-  public Page<KitchenTicket> getAllKitchenTicketsByRestaurantId(UUID restaurantId, Pageable pageable) {
-    return kitchenTicketRepository.findAllByRestaurantId(restaurantId, pageable);
+  public Page<KitchenTicket> getAllKitchenTicketsByRestaurantId(UUID restaurantId,
+      Pageable pageable) {
+    return kitchenTicketRepository.findAllByRestaurantIdAndRestaurantOwnerId(restaurantId,
+        SecurityContextHolder.getContext().getAuthentication().getName(), pageable);
   }
 
   @Override
   public KitchenTicketDetailsView getKitchenTicketDetails(UUID restaurantId, UUID ticketId) {
-    return kitchenTicketRepository.findByIdAndRestaurantId(ticketId,
-            restaurantId, KitchenTicketDetailsView.class)
+    return kitchenTicketRepository.findByIdAndRestaurantIdAndRestaurantOwnerId(ticketId,
+            restaurantId, SecurityContextHolder.getContext().getAuthentication().getName(),
+            KitchenTicketDetailsView.class)
         .orElseThrow(() -> new KitchenTicketNotFoundException(restaurantId, ticketId));
   }
 
   @Override
   @Transactional
   public void completeKitchenTicket(UUID restaurantId, UUID ticketId) {
-    KitchenTicket kitchenTicket = kitchenTicketRepository.findByIdAndRestaurantId(ticketId,
-            restaurantId, KitchenTicket.class)
+    KitchenTicket kitchenTicket = kitchenTicketRepository.findByIdAndRestaurantIdAndRestaurantOwnerId(
+            ticketId, restaurantId, SecurityContextHolder.getContext().getAuthentication().getName(),
+            KitchenTicket.class)
         .orElseThrow(() -> new KitchenTicketNotFoundException(restaurantId, ticketId));
     kitchenTicket.setStatus(KitchenTicketStatus.READY_FOR_DELIVERY);
     kitchenTicketRepository.save(kitchenTicket);

@@ -37,6 +37,10 @@
       <artifactId>postgresql</artifactId>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>io.eventuate.tram.core</groupId>
@@ -57,10 +61,6 @@
     <dependency>
       <groupId>io.eventuate.tram.core</groupId>
       <artifactId>eventuate-tram-spring-jdbc-kafka</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.eventuate.tram.core</groupId>
-      <artifactId>eventuate-tram-spring-flyway</artifactId>
     </dependency>
     <dependency>
       <groupId>io.eventuate.tram.core</groupId>
