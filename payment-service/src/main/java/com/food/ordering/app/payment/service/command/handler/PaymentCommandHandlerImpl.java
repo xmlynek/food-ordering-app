@@ -79,11 +79,7 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
       return CommandHandlerReplyBuilder.withSuccess();
     } catch (Exception e) {
       log.error("Payment compensation failed. {}", e.getMessage());
-//      return CommandHandlerReplyBuilder.withFailure(
-//          new ProcessPaymentFailed(command.orderId(), command.customerId(), e.getMessage()));
       return CommandHandlerReplyBuilder.withFailure();
     }
-//    return CommandHandlerReplyBuilder.withSuccess();
-//    return null;
   }
 }
