@@ -30,6 +30,7 @@ public class RestaurantServiceImpl implements RestaurantService {
           restaurant.setIsAvailable(restaurantRevisedEvent.isAvailable());
           restaurant.setName(restaurantRevisedEvent.name());
           restaurant.setLastModifiedAt(restaurantRevisedEvent.lastModifiedAt());
+          restaurant.setAddress(restaurantRevisedEvent.address());
           return restaurantRepository.save(restaurant);
         }).switchIfEmpty(
             Mono.error(new RestaurantNotFoundException(restaurantId)));
