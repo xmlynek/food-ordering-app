@@ -11,9 +11,9 @@ public class EventHandlerConfig {
 
   @Bean
   public DomainEventDispatcher restaurantDomainEventDispatcher(
-      DomainEventDispatcherFactory reactiveDomainEventDispatcherFactory,
+      DomainEventDispatcherFactory domainEventDispatcherFactory,
       OrderServiceEventHandler orderServiceEventHandler) {
-    return reactiveDomainEventDispatcherFactory.make("orderServiceEvents",
+    return domainEventDispatcherFactory.make("orderServiceEvents",
         orderServiceEventHandler.domainEventHandlers());
   }
 

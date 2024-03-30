@@ -6,6 +6,7 @@ import com.food.ordering.app.common.response.payment.ProcessPaymentFailed;
 import com.food.ordering.app.common.response.payment.ProcessPaymentSucceeded;
 import com.food.ordering.app.order.service.entity.OrderStatus;
 import com.food.ordering.app.order.service.saga.data.CreateOrderSagaData;
+import com.food.ordering.app.order.service.saga.proxy.DeliveryServiceProxy;
 import com.food.ordering.app.order.service.saga.proxy.KitchenServiceProxy;
 import com.food.ordering.app.order.service.saga.proxy.PaymentServiceProxy;
 import com.food.ordering.app.order.service.service.OrderService;
@@ -24,6 +25,7 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
   private final OrderService orderService;
   private final PaymentServiceProxy paymentServiceProxy;
   private final KitchenServiceProxy kitchenServiceProxy;
+  private final DeliveryServiceProxy deliveryServiceProxy;
 
   private final SagaDefinition<CreateOrderSagaData> sagaDefinition =
       step()
@@ -38,6 +40,8 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
         .invokeParticipant(this::createKitchenTicket)
         .onReply(KitchenTicketCreated.class, this::handleCreateKitchenTicketSucceeded)
         .onReply(CreateKitchenTicketFailed.class, this::handleCreateKitchenTicketFailed)
+      .step()
+          .notifyParticipant(this::notifyDeliveryService)
       .step()
         .invokeLocal(this::confirmOrder)
       .build();
@@ -116,6 +120,12 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
         data.getOrderId().toString());
     return kitchenServiceProxy.createKitchenTicket(data.getOrderId(), data.getCustomerId(),
         data.getRestaurantId(), data.getItems());
+  }
+
+  private CommandWithDestination notifyDeliveryService(CreateOrderSagaData data) {
+    log.info("Notifying delivery service with order id: {}", data.getOrderId().toString());
+    return deliveryServiceProxy.notifyDeliveryService(data.getOrderId(), data.getCustomerId(),
+        data.getRestaurantId(), data.getAddress());
   }
 
 }

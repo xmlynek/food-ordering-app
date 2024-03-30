@@ -41,6 +41,7 @@ app:
       destination:
         kitchen-service: ${KITCHEN_SERVICE_COMMAND_DESTINATION:kitchen-service}
         payment-service: ${PAYMENT_SERVICE_COMMAND_DESTINATION:payment-service}
+        delivery-service: ${DELIVERY_SERVICE_COMMAND_DESTINATION:payment-service}
 
 logging:
   level:

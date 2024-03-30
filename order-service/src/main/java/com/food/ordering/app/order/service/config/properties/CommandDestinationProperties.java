@@ -14,4 +14,6 @@ public class CommandDestinationProperties {
   private final String kitchenService;
 
   private final String paymentService;
+
+  private final String deliveryService;
 }
