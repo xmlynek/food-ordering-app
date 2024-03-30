@@ -8,4 +8,7 @@ export default defineConfig({
   })],
   publicDir: './public',
   envDir: './',
+  server: {
+    port: 5173,
+  }
 })
