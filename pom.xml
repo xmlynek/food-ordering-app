@@ -21,12 +21,11 @@
     <module>order-service</module>
     <module>payment-service</module>
     <module>restaurant-service</module>
-    <module>customer-service</module>
     <module>common</module>
-    <module>account-service</module>
     <module>catalog-service</module>
     <module>api-gateway</module>
     <module>kitchen-service</module>
+    <module>delivery-service</module>
   </modules>
 
   <properties>
