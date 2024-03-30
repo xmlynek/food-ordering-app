@@ -40,7 +40,6 @@ public class RestaurantServiceImpl implements RestaurantService {
   //  @Transactional(readOnly = true)
   @Override
   public Restaurant getRestaurantById(UUID restaurantId) {
-    // TODO: projection?
     return restaurantRepository.findByIdAndIsDeletedFalse(restaurantId)
         .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
   }

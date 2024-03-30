@@ -18,8 +18,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @Slf4j
 public class ExceptionAdviceController {
 
-  // TODO: move to a separate submodule within common module
-
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
