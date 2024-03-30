@@ -1,6 +1,7 @@
 package com.food.ordering.app.order.service;
 
 import com.food.ordering.app.common.config.JsonObjectMapperJavaTimeModuleConfiguration;
+import com.food.ordering.app.order.service.config.properties.CommandDestinationProperties;
 import io.eventuate.tram.spring.flyway.EventuateTramFlywayMigrationConfiguration;
 import io.eventuate.tram.spring.optimisticlocking.OptimisticLockingDecoratorConfiguration;
 import jakarta.servlet.FilterChain;
@@ -12,11 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @SpringBootApplication
+@EnableConfigurationProperties(value = {CommandDestinationProperties.class})
 @Import({
     OptimisticLockingDecoratorConfiguration.class,
     JsonObjectMapperJavaTimeModuleConfiguration.class,

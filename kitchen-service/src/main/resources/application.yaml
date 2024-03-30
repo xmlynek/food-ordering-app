@@ -38,6 +38,13 @@ eventuate:
   database:
     schema: ${EVENTUATE_DATABASE_SCHEMA:public}
 
+app:
+  properties:
+    saga:
+      command:
+        handler:
+          channel: ${SAGA_COMMAND_HANDLER_CHANNEL:kitchen-service}
+
 
 logging:
   level:

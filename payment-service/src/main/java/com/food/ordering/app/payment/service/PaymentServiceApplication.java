@@ -1,6 +1,7 @@
 package com.food.ordering.app.payment.service;
 
-import com.food.ordering.app.payment.service.config.AppConfigurationProperties;
+import com.food.ordering.app.payment.service.config.properties.AppConfigurationProperties;
+import com.food.ordering.app.payment.service.config.properties.SagaCommandHandlerProperties;
 import io.eventuate.tram.spring.flyway.EventuateTramFlywayMigrationConfiguration;
 import io.eventuate.tram.spring.optimisticlocking.OptimisticLockingDecoratorConfiguration;
 import jakarta.servlet.FilterChain;
@@ -18,7 +19,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @SpringBootApplication
-@EnableConfigurationProperties(AppConfigurationProperties.class)
+@EnableConfigurationProperties({AppConfigurationProperties.class,
+    SagaCommandHandlerProperties.class})
 @Import({
     OptimisticLockingDecoratorConfiguration.class,
     EventuateTramFlywayMigrationConfiguration.class

@@ -33,6 +33,10 @@ eventuate:
 app:
   properties:
     stripe-api-key: ${STRIPE_API_KEY}
+    saga:
+      command:
+        handler:
+          channel: ${SAGA_COMMAND_HANDLER_CHANNEL:payment-service}
 
 logging:
   level:

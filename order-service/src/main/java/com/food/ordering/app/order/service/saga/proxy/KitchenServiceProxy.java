@@ -4,18 +4,23 @@ import static io.eventuate.tram.commands.consumer.CommandWithDestinationBuilder.
 
 import com.food.ordering.app.common.command.CreateKitchenTicketCommand;
 import com.food.ordering.app.common.model.OrderProduct;
+import com.food.ordering.app.order.service.config.properties.CommandDestinationProperties;
 import io.eventuate.tram.commands.consumer.CommandWithDestination;
 import java.util.List;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class KitchenServiceProxy {
 
-  public CommandWithDestination createKitchenTicket(UUID orderId, UUID customerId, UUID restaurantId,
-      List<OrderProduct> products) {
+  private final CommandDestinationProperties commandDestinationProperties;
+
+  public CommandWithDestination createKitchenTicket(UUID orderId, UUID customerId,
+      UUID restaurantId, List<OrderProduct> products) {
     return send(new CreateKitchenTicketCommand(orderId, customerId, restaurantId, products))
-        // TODO: add to config
-        .to("kitchen-service").build();
+        .to(commandDestinationProperties.getKitchenService())
+        .build();
   }
 }

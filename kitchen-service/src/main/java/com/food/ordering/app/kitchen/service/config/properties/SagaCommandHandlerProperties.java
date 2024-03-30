@@ -1,4 +1,4 @@
-package com.food.ordering.app.payment.service.config;
+package com.food.ordering.app.kitchen.service.config.properties;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,10 +7,9 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesBindin
 
 @Getter
 @AllArgsConstructor
+@ConfigurationProperties(prefix = "app.properties.saga.command.handler")
 @ConfigurationPropertiesBinding
-@ConfigurationProperties(prefix = "app.properties")
-public class AppConfigurationProperties {
+public class SagaCommandHandlerProperties {
 
-  private final String stripeApiKey;
-
+  private final String channel;
 }

@@ -5,6 +5,7 @@ import com.food.ordering.app.common.command.ProcessPaymentCommand;
 import com.food.ordering.app.common.enums.PaymentStatus;
 import com.food.ordering.app.common.response.payment.ProcessPaymentFailed;
 import com.food.ordering.app.common.response.payment.ProcessPaymentSucceeded;
+import com.food.ordering.app.payment.service.config.properties.SagaCommandHandlerProperties;
 import com.food.ordering.app.payment.service.entity.Payment;
 import com.food.ordering.app.payment.service.mapper.PaymentMapper;
 import com.food.ordering.app.payment.service.payment.model.dto.PaymentRequest;
@@ -16,13 +17,11 @@ import com.food.ordering.app.payment.service.service.PaymentService;
 import io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder;
 import io.eventuate.tram.commands.consumer.CommandMessage;
 import io.eventuate.tram.messaging.common.Message;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
 
@@ -30,6 +29,13 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
   private final PaymentMapper paymentMapper;
   private final PaymentStrategy paymentStrategy;
 
+  public PaymentCommandHandlerImpl(SagaCommandHandlerProperties sagaCommandHandlerProperties,
+      PaymentService paymentService, PaymentMapper paymentMapper, PaymentStrategy paymentStrategy) {
+    super(sagaCommandHandlerProperties);
+    this.paymentService = paymentService;
+    this.paymentMapper = paymentMapper;
+    this.paymentStrategy = paymentStrategy;
+  }
 
   @Override
   @Transactional
@@ -42,8 +48,8 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
           paymentMapper.paymentRequestToPaymentEntity(command));
 
       PaymentResult paymentResult = paymentStrategy.processPayment(
-          new PaymentRequest(Currency.EUR, command.amount(),
-              "Food ordering app test payment", command.paymentToken()));
+          new PaymentRequest(Currency.EUR, command.amount(), "Food ordering app test payment",
+              command.paymentToken()));
 
       payment.setChargeId(paymentResult.paymentId());
       payment.setPaymentStatus(PaymentStatus.COMPLETED);
