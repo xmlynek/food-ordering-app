@@ -7,6 +7,7 @@ import java.util.UUID;
 public record DeliveryResponse(UUID id,
                                UUID customerId,
                                UUID restaurantId,
+                               UUID courierId,
                                String restaurantName,
                                DeliveryStatus deliveryStatus,
                                LocalDateTime lastModifiedAt,

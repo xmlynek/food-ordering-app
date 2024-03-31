@@ -18,6 +18,7 @@ public interface DeliveryMapper {
       @Mapping(target = "lastModifiedAt", expression = "java(java.time.LocalDateTime.now())"),
       @Mapping(target = "deliveryStatus", ignore = true),
       @Mapping(target = "restaurant", ignore = true),
+      @Mapping(target = "courierId", ignore = true),
   })
   Delivery prepareOrderDeliveryCommandToDelivery(PrepareOrderDeliveryCommand command);
 

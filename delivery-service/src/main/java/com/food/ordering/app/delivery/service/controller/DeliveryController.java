@@ -3,9 +3,13 @@ package com.food.ordering.app.delivery.service.controller;
 import com.food.ordering.app.delivery.service.dto.DeliveryResponse;
 import com.food.ordering.app.delivery.service.mapper.DeliveryMapper;
 import com.food.ordering.app.delivery.service.service.DeliveryService;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +28,10 @@ public class DeliveryController {
   private final DeliveryMapper deliveryMapper;
 
   @GetMapping
-  public ResponseEntity<List<DeliveryResponse>> getAllDeliveries() {
-    List<DeliveryResponse> deliveryResponses = deliveryService.getAllDeliveryDetailsViews().stream()
-        .map(deliveryMapper::deliveryDetailsViewToDeliveryResponse).toList();
+  public ResponseEntity<Page<DeliveryResponse>> getAllDeliveries(
+      @SortDefault(value = "createdAt", direction = Direction.DESC) @PageableDefault Pageable pageable) {
+    Page<DeliveryResponse> deliveryResponses = deliveryService.getAllDeliveryDetailsViews(pageable)
+        .map(deliveryMapper::deliveryDetailsViewToDeliveryResponse);
 
     return ResponseEntity.ok(deliveryResponses);
   }

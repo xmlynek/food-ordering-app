@@ -41,6 +41,8 @@ public class Delivery {
 
   private UUID orderId;
 
+  private UUID courierId;
+
   private UUID customerId;
 
   @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})

@@ -10,9 +10,10 @@ import com.food.ordering.app.delivery.service.mapper.DeliveryMapper;
 import com.food.ordering.app.delivery.service.repository.DeliveryRepository;
 import com.food.ordering.app.delivery.service.repository.RestaurantRepository;
 import com.food.ordering.app.delivery.service.repository.projection.DeliveryDetailsView;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,8 +39,8 @@ public class DeliveryServiceImpl implements DeliveryService {
   }
 
   @Override
-  public List<DeliveryDetailsView> getAllDeliveryDetailsViews() {
-    return deliveryRepository.findAllBy(DeliveryDetailsView.class);
+  public Page<DeliveryDetailsView> getAllDeliveryDetailsViews(Pageable pageable) {
+    return deliveryRepository.findAllBy(pageable, DeliveryDetailsView.class);
   }
 
   @Override
