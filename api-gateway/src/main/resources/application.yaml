@@ -19,26 +19,28 @@ spring:
           predicates:
             - Path=/catalog-service/**
           filters:
-#            - TokenRelay
             - RewritePath=/catalog-service(?<segment>.*), $\{segment}
         - id: order-service
           uri: ${ORDER_SERVICE_URI}
           predicates:
             - Path=/order-service/**
           filters:
-            #            - TokenRelay
             - RewritePath=/order-service(?<segment>.*), $\{segment}
         - id: restaurant-service
           uri: ${RESTAURANT_SERVICE_URI}
           predicates:
             - Path=/restaurant-service/**
           filters:
-            #            - TokenRelay
             - RewritePath=/restaurant-service(?<segment>.*), $\{segment}
         - id: kitchen-service
           uri: ${KITCHEN_SERVICE_URI}
           predicates:
             - Path=/kitchen-service/**
           filters:
-            #            - TokenRelay
             - RewritePath=/kitchen-service(?<segment>.*), $\{segment}
+        - id: delivery-service
+          uri: ${DELIVERY_SERVICE_URI}
+          predicates:
+            - Path=/delivery-service/**
+          filters:
+            - RewritePath=/delivery-service(?<segment>.*), $\{segment}
