@@ -1,9 +1,14 @@
-import {Card, Layout, Space, Spin, Typography} from "antd";
+import {Card, Layout, message, Space, Spin, Typography} from "antd";
 import React from "react";
 import {useParams} from "react-router-dom";
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {Delivery} from "../model/delivery.ts";
-import {fetchDeliveryById} from "../client/deliveryApiClient.ts";
+import {
+  assignDelivery,
+  completeDelivery,
+  fetchDeliveryById,
+  pickUpDelivery
+} from "../client/deliveryApiClient.ts";
 import DeliveryDetails from "../components/Delivery/DeliveryDetails.tsx";
 
 const {Title} = Typography;
@@ -23,36 +28,46 @@ const DeliveryDetailsPage: React.FC = () => {
     queryFn: fetchDeliveryById.bind(null, deliveryId)
   });
 
-  // const {mutateAsync: deleteRestaurantMutation} = useMutation({
-  //   mutationFn: deleteRestaurant.bind(null, restaurantId), onSuccess: async () => {
-  //     await message.success('Restaurant deleted successfully!');
-  //     navigate('/restaurants');
-  //   },
-  //   onError: async (error) => {
-  //     await message.error('Restaurant deletion failed: ' + error.message);
-  //   }
-  // });
+  const {mutateAsync: assignDeliveryMutation} = useMutation({
+    mutationFn: assignDelivery.bind(null, deliveryId),
+    onSuccess: async () => {
+      await message.success('Delivery assigned successfully!');
+    },
+    onError: async (error) => {
+      await message.error('Delivery assign failed: ' + error.message);
+    }
+  });
 
-  // const showDeleteConfirm = async () => {
-  //   Modal.confirm({
-  //     title: 'Do you really want to delete this restaurant?',
-  //     content: 'This action cannot be undone',
-  //     okText: 'Yes, delete it',
-  //     okType: 'danger',
-  //     cancelText: 'No',
-  //     maskClosable: true,
-  //     onOk: async () => {
-  //       await deleteRestaurantMutation();
-  //     },
-  //   });
-  // };
+  const {mutateAsync: pickUpDeliveryMutation} = useMutation({
+    mutationFn: pickUpDelivery.bind(null, deliveryId),
+    onSuccess: async () => {
+      await message.success('Delivery picked up successfully!');
+    },
+    onError: async (error) => {
+      await message.error('Delivery pick up failed: ' + error.message);
+    }
+  });
 
-  const handleCompleteDelivery = async () => {
-
-  }
+  const {mutateAsync: completeDeliveryMutation} = useMutation({
+    mutationFn: completeDelivery.bind(null, deliveryId),
+    onSuccess: async () => {
+      await message.success('Delivery completed successfully!');
+    },
+    onError: async (error) => {
+      await message.error('Delivery completion failed: ' + error.message);
+    }
+  });
 
   const handleAssignDelivery = async () => {
+    await assignDeliveryMutation();
+  }
 
+  const handlePickUpDelivery = async () => {
+    await pickUpDeliveryMutation();
+  }
+
+  const handleCompleteDelivery = async () => {
+    await completeDeliveryMutation();
   }
 
   return (
@@ -68,6 +83,7 @@ const DeliveryDetailsPage: React.FC = () => {
             {!isPending && !error && deliveryDetails &&
                 <DeliveryDetails deliveryDetails={deliveryDetails}
                                  onAssignDelivery={handleAssignDelivery}
+                                 onPickUpDelivery={handlePickUpDelivery}
                                  onCompleteDelivery={handleCompleteDelivery}/>}
           </Card>
         </Space>

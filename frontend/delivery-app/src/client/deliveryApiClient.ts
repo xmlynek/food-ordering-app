@@ -12,17 +12,17 @@ export const fetchDeliveries = async (page: number = 0, size: number = 10): Prom
   return response.data;
 };
 
-// export const createRestaurant = async (restaurantData: RestaurantFormValues): Promise<BasicRestaurantRestDto> => {
-//   const response = await axiosInstance.post(`${window.envVars.REACT_DELIVERY_SERVICE_PATH}`, restaurantData);
-//   return response.data;
-// };
-//
-// export const deleteRestaurant = async (restaurantId: string): Promise<void> => {
-//   const response = await axiosInstance.delete(`${window.envVars.REACT_DELIVERY_SERVICE_PATH}/${restaurantId}`);
-//   return response.data;
-// };
-//
-// export const updateRestaurant = async (restaurantId: string, restaurantData: RestaurantFormValues): Promise<BasicRestaurantRestDto> => {
-//   const response = await axiosInstance.put(`${window.envVars.REACT_DELIVERY_SERVICE_PATH}/${restaurantId}`, restaurantData);
-//   return response.data;
-// };
+export const assignDelivery = async (deliveryId: string): Promise<void> => {
+  const response = await axiosInstance.post(`${window.envVars.REACT_DELIVERY_SERVICE_PATH}/${deliveryId}/assign`);
+  return response.data;
+};
+
+export const pickUpDelivery = async (deliveryId: string): Promise<void> => {
+  const response = await axiosInstance.post(`${window.envVars.REACT_DELIVERY_SERVICE_PATH}/${deliveryId}/pick-up`);
+  return response.data;
+};
+
+export const completeDelivery = async (deliveryId: string): Promise<void> => {
+  const response = await axiosInstance.post(`${window.envVars.REACT_DELIVERY_SERVICE_PATH}/${deliveryId}/complete`);
+  return response.data;
+};

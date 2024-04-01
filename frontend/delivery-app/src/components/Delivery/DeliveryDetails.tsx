@@ -1,25 +1,44 @@
 import React from "react";
 import {Button, Card, Space, Typography} from "antd";
-import {Delivery, DeliveryStatus} from "../../model/delivery.ts";
+import {Delivery, DeliveryStatus, KitchenTicketStatus} from "../../model/delivery.ts";
 import {getAddressAsString} from "../../model/address.ts";
-import {CheckCircleOutlined, ScheduleOutlined} from "@ant-design/icons";
+import {CheckCircleOutlined, ScheduleOutlined, TruckOutlined} from "@ant-design/icons";
 
 import styles from "./Delivery.module.css";
+import keycloak from "../../keycloak/keycloak.ts";
 
 const {Paragraph} = Typography;
 
 interface OrderListProps {
   deliveryDetails: Delivery;
   onAssignDelivery: () => void;
+  onPickUpDelivery: () => void;
   onCompleteDelivery: () => void;
 }
 
 const DeliveryDetails: React.FC<OrderListProps> = ({
                                                      deliveryDetails,
                                                      onAssignDelivery,
+                                                     onPickUpDelivery,
                                                      onCompleteDelivery,
                                                    }: OrderListProps) => {
 
+  const isAssignable = (): boolean => {
+    return deliveryDetails.deliveryStatus === DeliveryStatus.WAITING_FOR_KITCHEN &&
+        (deliveryDetails.kitchenTicketStatus === KitchenTicketStatus.PREPARING ||
+            deliveryDetails.kitchenTicketStatus === KitchenTicketStatus.READY_FOR_DELIVERY);
+  }
+
+  const isPickUpAble = (): boolean => {
+    return deliveryDetails.deliveryStatus === DeliveryStatus.WAITING_FOR_KITCHEN &&
+        deliveryDetails.kitchenTicketStatus === KitchenTicketStatus.READY_FOR_DELIVERY &&
+        deliveryDetails.courierId === keycloak.subject;
+  }
+
+  const isCompletable = (): boolean => {
+    return deliveryDetails.deliveryStatus === DeliveryStatus.AT_DELIVERY &&
+        deliveryDetails.courierId === keycloak.subject;
+  }
 
   return (
       <Card
@@ -54,12 +73,17 @@ const DeliveryDetails: React.FC<OrderListProps> = ({
         </div>
         <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
 
-          {(deliveryDetails.deliveryStatus === DeliveryStatus.READY_FOR_DELIVERY || deliveryDetails.deliveryStatus === DeliveryStatus.WAITING_FOR_KITCHEN) && (
+          {isAssignable() && (
               <Button type="dashed" style={{backgroundColor: 'orange'}} icon={<ScheduleOutlined/>}
                       size={"large"}
                       onClick={onAssignDelivery}>Assign delivery</Button>)}
 
-          {deliveryDetails.deliveryStatus === DeliveryStatus.AT_DELIVERY && (
+          {isPickUpAble() && (
+              <Button type="dashed" style={{backgroundColor: 'orange'}} icon={<TruckOutlined />}
+                      size={"large"}
+                      onClick={onPickUpDelivery}>Pick up delivery</Button>)}
+
+          {isCompletable() && (
               <Button type="primary" className={styles.completeButton}
                       icon={<CheckCircleOutlined/>} size={"large"}
                       onClick={onCompleteDelivery}>Mark Completed</Button>)}
