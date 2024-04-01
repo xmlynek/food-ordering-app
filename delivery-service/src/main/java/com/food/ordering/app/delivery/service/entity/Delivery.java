@@ -1,6 +1,7 @@
 package com.food.ordering.app.delivery.service.entity;
 
 import com.food.ordering.app.common.enums.DeliveryStatus;
+import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.common.model.Address;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -41,6 +42,8 @@ public class Delivery {
 
   private UUID orderId;
 
+  private UUID kitchenTicketId;
+
   private UUID courierId;
 
   private UUID customerId;
@@ -69,6 +72,14 @@ public class Delivery {
   @Enumerated(EnumType.STRING)
   private DeliveryStatus deliveryStatus;
 
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private KitchenTicketStatus kitchenTicketStatus;
+
   @Version
   private Long version;
+
+  public String getStringId() {
+    return id.toString();
+  }
 }

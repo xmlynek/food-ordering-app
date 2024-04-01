@@ -1,6 +1,9 @@
 package com.food.ordering.app.delivery.service.mapper;
 
 import com.food.ordering.app.common.command.PrepareOrderDeliveryCommand;
+import com.food.ordering.app.common.event.DeliveryAssignedToCourierEvent;
+import com.food.ordering.app.common.event.DeliveryPickedUpEvent;
+import com.food.ordering.app.common.event.DeliveryCompletedEvent;
 import com.food.ordering.app.delivery.service.dto.DeliveryResponse;
 import com.food.ordering.app.delivery.service.entity.Delivery;
 import com.food.ordering.app.delivery.service.repository.projection.DeliveryDetailsView;
@@ -29,4 +32,25 @@ public interface DeliveryMapper {
       @Mapping(target = "restaurantAddress", source = "restaurant.address"),
   })
   DeliveryResponse deliveryDetailsViewToDeliveryResponse(DeliveryDetailsView view);
+
+  @Mappings({
+      @Mapping(target = "status", source = "deliveryStatus"),
+      @Mapping(target = "deliveryId", source = "id"),
+      @Mapping(target = "assignedAt", expression = "java(java.time.LocalDateTime.now())"),
+  })
+  DeliveryAssignedToCourierEvent deliveryToDeliveryAssignedToCourierEvent(Delivery delivery);
+
+  @Mappings({
+      @Mapping(target = "status", source = "deliveryStatus"),
+      @Mapping(target = "deliveryId", source = "id"),
+      @Mapping(target = "pickedUpAt", expression = "java(java.time.LocalDateTime.now())"),
+  })
+  DeliveryPickedUpEvent deliveryToDeliveryPickedUpEvent(Delivery delivery);
+
+  @Mappings({
+      @Mapping(target = "status", source = "deliveryStatus"),
+      @Mapping(target = "deliveryId", source = "id"),
+      @Mapping(target = "completedAt", expression = "java(java.time.LocalDateTime.now())"),
+  })
+  DeliveryCompletedEvent deliverySuccessfullyDeliveredEvent(Delivery delivery);
 }

@@ -33,11 +33,9 @@ public class DeliveryServiceCommandHandlerImpl extends DeliveryServiceCommandHan
       log.info("Order delivery initialized with id {} for order {} in restaurant {}",
           delivery.getId(), command.orderId(), command.restaurantId());
 
-//      return CommandHandlerReplyBuilder.withSuccess();
     } catch (Exception e) {
       log.error("Order delivery creation FAILED for order {} in restaurant {}, :{}",
           command.orderId(), command.restaurantId(), e.getMessage(), e);
-//      return CommandHandlerReplyBuilder.withFailure();
     }
   }
 }

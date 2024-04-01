@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,12 +44,25 @@ public class DeliveryController {
     return ResponseEntity.ok(deliveryResponse);
   }
 
-  @PutMapping("/{deliveryId}")
-  public ResponseEntity<DeliveryResponse> updateDeliveryStatusById(@PathVariable UUID deliveryId) {
-    DeliveryResponse deliveryResponse = deliveryMapper.deliveryDetailsViewToDeliveryResponse(
-        deliveryService.getDeliveryDetailsViewById(deliveryId));
+  @PostMapping("/{deliveryId}/assign")
+  public ResponseEntity<Void> assignDeliveryToCourier(@PathVariable UUID deliveryId) {
+    deliveryService.assignDeliveryToCourier(deliveryId);
 
-    return ResponseEntity.ok(deliveryResponse);
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/{deliveryId}/pick-up")
+  public ResponseEntity<Void> pickUpDelivery(@PathVariable UUID deliveryId) {
+    deliveryService.pickUpDelivery(deliveryId);
+
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/{deliveryId}/complete")
+  public ResponseEntity<Void> completeDelivery(@PathVariable UUID deliveryId) {
+    deliveryService.completeDelivery(deliveryId);
+
+    return ResponseEntity.ok().build();
   }
 
 }
