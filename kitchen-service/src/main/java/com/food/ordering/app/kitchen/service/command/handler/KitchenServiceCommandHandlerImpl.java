@@ -5,7 +5,6 @@ import com.food.ordering.app.common.command.CreateKitchenTicketCommand;
 import com.food.ordering.app.common.response.kitchen.CreateKitchenTicketFailed;
 import com.food.ordering.app.common.response.kitchen.KitchenTicketCreated;
 import com.food.ordering.app.kitchen.service.config.properties.SagaCommandHandlerProperties;
-import com.food.ordering.app.kitchen.service.entity.KitchenTicket;
 import com.food.ordering.app.kitchen.service.service.KitchenTicketService;
 import io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder;
 import io.eventuate.tram.commands.consumer.CommandMessage;
@@ -31,11 +30,11 @@ public class KitchenServiceCommandHandlerImpl extends KitchenServiceCommandHandl
     log.info("Create kitchen ticket started for order {} and restaurant {}", command.orderId(),
         command.restaurantId());
     try {
-      KitchenTicket orderTicket = kitchenTicketService.createKitchenTicket(command);
-      log.info("Kitchen ticket created for order {} and restaurant {}", orderTicket.getId(),
-          orderTicket.getRestaurant().getId());
+      KitchenTicketCreated kitchenTicketCreated = kitchenTicketService.createKitchenTicket(command);
+      log.info("Kitchen ticket created with ticket id: {} for order {} and restaurant {}",
+          kitchenTicketCreated.ticketId(), command.orderId(), command.restaurantId());
 
-      return CommandHandlerReplyBuilder.withSuccess(new KitchenTicketCreated(orderTicket.getId()));
+      return CommandHandlerReplyBuilder.withSuccess(kitchenTicketCreated);
     } catch (Exception e) {
       log.error("Kitchen ticket creation failed for order {} and restaurant {}, :{}",
           command.orderId(), command.restaurantId(), e.getMessage(), e);

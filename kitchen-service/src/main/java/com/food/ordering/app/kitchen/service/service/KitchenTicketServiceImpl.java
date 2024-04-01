@@ -6,6 +6,7 @@ import com.food.ordering.app.common.event.KitchenTicketStatusChangedEvent;
 import com.food.ordering.app.common.exception.InvalidPriceValueException;
 import com.food.ordering.app.common.exception.RestaurantNotFoundException;
 import com.food.ordering.app.common.model.OrderProduct;
+import com.food.ordering.app.common.response.kitchen.KitchenTicketCreated;
 import com.food.ordering.app.common.utils.ValidateOrderUtils;
 import com.food.ordering.app.kitchen.service.entity.KitchenTicket;
 import com.food.ordering.app.kitchen.service.entity.KitchenTicketItem;
@@ -72,7 +73,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   }
 
   @Override
-  public KitchenTicket createKitchenTicket(CreateKitchenTicketCommand command) {
+  public KitchenTicketCreated createKitchenTicket(CreateKitchenTicketCommand command) {
     Restaurant restaurant = restaurantRepository.findByIdAndIsDeletedFalseAndIsAvailableTrue(
             command.restaurantId())
         .orElseThrow(() -> new RestaurantNotFoundException(command.restaurantId()));
@@ -88,7 +89,8 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
         .map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity())))
         .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-    return kitchenTicketRepository.save(kitchenTicket);
+    KitchenTicket createdTicket = kitchenTicketRepository.save(kitchenTicket);
+    return new KitchenTicketCreated(createdTicket.getId(), createdTicket.getStatus());
   }
 
 
