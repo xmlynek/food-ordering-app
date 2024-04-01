@@ -41,6 +41,6 @@ public interface OrderService {
 
   void updateKitchenTicketStatus(UUID ticketId, KitchenTicketStatus kitchenTicketStatus);
 
-  void setTicketId(UUID orderId, UUID ticketId);
+  void updateKitchenTicketData(UUID orderId, UUID ticketId, KitchenTicketStatus kitchenTicketStatus);
 
 }

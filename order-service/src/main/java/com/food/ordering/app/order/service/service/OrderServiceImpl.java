@@ -88,9 +88,10 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   @Transactional
-  public void setTicketId(UUID orderId, UUID ticketId) {
+  public void updateKitchenTicketData(UUID orderId, UUID ticketId, KitchenTicketStatus kitchenTicketStatus) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new OrderNotFoundException(orderId));
     order.setKitchenTicketId(ticketId);
+    order.setKitchenTicketStatus(kitchenTicketStatus);
   }
 }

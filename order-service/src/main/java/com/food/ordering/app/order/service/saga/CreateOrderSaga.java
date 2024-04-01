@@ -64,7 +64,8 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
   }
 
   private void confirmOrder(CreateOrderSagaData data) {
-    log.info("Order: {} was confirmed and approved and kitchen ticket created.", data.getOrderId().toString());
+    log.info("Order: {} was confirmed and approved and kitchen ticket created.",
+        data.getOrderId().toString());
     // TODO: maybe different status?
 //    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.APPROVED);
   }
@@ -72,10 +73,13 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
   private void handleCreateKitchenTicketSucceeded(CreateOrderSagaData data,
       KitchenTicketCreated kitchenTicketCreated) {
     data.setTicketId(kitchenTicketCreated.ticketId());
-    log.info("Kitchen ticket successfully created with id: {} for order id: {}",
-        kitchenTicketCreated.ticketId().toString(), data.getOrderId().toString());
+    data.setKitchenTicketStatus(kitchenTicketCreated.status());
+    log.info("Kitchen ticket successfully created with id: {} and status: {} for order id: {}",
+        kitchenTicketCreated.ticketId().toString(), kitchenTicketCreated.status(),
+        data.getOrderId().toString());
     orderService.updateOrderStatus(data.getOrderId(), OrderStatus.APPROVED);
-    orderService.setTicketId(data.getOrderId(), kitchenTicketCreated.ticketId());
+    orderService.updateKitchenTicketData(data.getOrderId(), kitchenTicketCreated.ticketId(),
+        kitchenTicketCreated.status());
   }
 
   private void handleCreateKitchenTicketFailed(CreateOrderSagaData data,
@@ -125,7 +129,8 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
   private CommandWithDestination notifyDeliveryService(CreateOrderSagaData data) {
     log.info("Notifying delivery service with order id: {}", data.getOrderId().toString());
     return deliveryServiceProxy.notifyDeliveryService(data.getOrderId(), data.getCustomerId(),
-        data.getRestaurantId(), data.getAddress());
+        data.getRestaurantId(), data.getTicketId(), data.getKitchenTicketStatus(),
+        data.getAddress());
   }
 
 }
