@@ -1,7 +1,6 @@
 package com.food.ordering.app.catalog.service.config;
 
-import com.food.ordering.app.catalog.service.event.handler.RestaurantCatalogEventHandler;
-import com.food.ordering.app.catalog.service.event.handler.RestaurantMenuItemCatalogEventHandler;
+import com.food.ordering.app.catalog.service.event.handler.CatalogServiceEventHandler;
 import io.eventuate.tram.reactive.events.subscriber.ReactiveDomainEventDispatcher;
 import io.eventuate.tram.reactive.events.subscriber.ReactiveDomainEventDispatcherFactory;
 import org.springframework.context.annotation.Bean;
@@ -13,17 +12,8 @@ public class EventHandlerConfig {
   @Bean
   public ReactiveDomainEventDispatcher restaurantDomainEventDispatcher(
       ReactiveDomainEventDispatcherFactory reactiveDomainEventDispatcherFactory,
-      RestaurantCatalogEventHandler restaurantCatalogEventHandler) {
-    return reactiveDomainEventDispatcherFactory.make("restaurantCatalogServiceEvents",
-        restaurantCatalogEventHandler.domainEventHandlers());
+      CatalogServiceEventHandler catalogServiceEventHandler) {
+    return reactiveDomainEventDispatcherFactory.make("CatalogServiceEvents",
+        catalogServiceEventHandler.domainEventHandlers());
   }
-
-  @Bean
-  public ReactiveDomainEventDispatcher restaurantMenuItemDomainEventDispatcher(
-      ReactiveDomainEventDispatcherFactory reactiveDomainEventDispatcherFactory,
-      RestaurantMenuItemCatalogEventHandler restaurantMenuItemCatalogEventHandler) {
-    return reactiveDomainEventDispatcherFactory.make("restaurantMenuItemCatalogServiceEvents",
-        restaurantMenuItemCatalogEventHandler.domainEventHandlers());
-  }
-
 }
