@@ -66,8 +66,7 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
   private void confirmOrder(CreateOrderSagaData data) {
     log.info("Order: {} was confirmed and approved and kitchen ticket created.",
         data.getOrderId().toString());
-    // TODO: maybe different status?
-//    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.APPROVED);
+    // TODO: maybe set different status?
   }
 
   private void handleCreateKitchenTicketSucceeded(CreateOrderSagaData data,
@@ -93,6 +92,7 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
   private void handleProcessPaymentSucceeded(CreateOrderSagaData data,
       ProcessPaymentSucceeded response) {
     data.setPaymentId(response.paymentId());
+    data.setPaymentStatus(response.paymentStatus());
     log.info("Process payment succeeded with for order id: {}, with payment id: {}",
         data.getOrderId().toString(), response.paymentId().toString());
     orderService.updateOrderStatus(data.getOrderId(), OrderStatus.PAID);
@@ -103,6 +103,7 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
     log.info("Process payment failed for order id: {} with failure message: {}",
         data.getOrderId().toString(), processPaymentFailed.failureMessage());
     data.getFailureMessages().add(processPaymentFailed.failureMessage());
+    data.setPaymentStatus(processPaymentFailed.paymentStatus());
     orderService.updateOrderStatus(data.getOrderId(), OrderStatus.CANCELLING);
   }
 

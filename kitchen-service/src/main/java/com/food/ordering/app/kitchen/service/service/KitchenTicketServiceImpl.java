@@ -1,7 +1,10 @@
 package com.food.ordering.app.kitchen.service.service;
 
 import com.food.ordering.app.common.command.CreateKitchenTicketCommand;
+import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
+import com.food.ordering.app.common.event.DeliveryAssignedToCourierEvent;
+import com.food.ordering.app.common.event.DeliveryStatusChangedEvent;
 import com.food.ordering.app.common.event.KitchenTicketStatusChangedEvent;
 import com.food.ordering.app.common.exception.InvalidPriceValueException;
 import com.food.ordering.app.common.exception.RestaurantNotFoundException;
@@ -70,6 +73,38 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
 
     domainEventPublisher.publish(kitchenTicket, Collections.singletonList(
         new KitchenTicketStatusChangedEvent(kitchenTicket.getId(), kitchenTicket.getStatus())));
+  }
+
+  @Override
+  public void assignDeliveryDetails(DeliveryAssignedToCourierEvent event) {
+    UUID ticketId = event.kitchenTicketId();
+
+    KitchenTicket kitchenTicket = kitchenTicketRepository.findById(ticketId)
+        .orElseThrow(() -> new KitchenTicketNotFoundException(ticketId));
+
+    kitchenTicket.setDeliveryId(event.deliveryId());
+    kitchenTicket.setDeliveryStatus(event.status());
+
+    kitchenTicketRepository.save(kitchenTicket);
+  }
+
+  @Override
+  public void updateDeliveryStatus(DeliveryStatusChangedEvent event) {
+    UUID ticketId = event.kitchenTicketId();
+
+    KitchenTicket kitchenTicket = kitchenTicketRepository.findByIdAndDeliveryId(ticketId,
+            event.deliveryId())
+        .orElseThrow(() -> new KitchenTicketNotFoundException(ticketId));
+
+    kitchenTicket.setDeliveryStatus(event.status());
+
+    if (event.status() == DeliveryStatus.AT_DELIVERY) {
+      kitchenTicket.setStatus(KitchenTicketStatus.FINISHED);
+
+      domainEventPublisher.publish(kitchenTicket, Collections.singletonList(
+          new KitchenTicketStatusChangedEvent(kitchenTicket.getId(), kitchenTicket.getStatus())));
+    }
+    kitchenTicketRepository.save(kitchenTicket);
   }
 
   @Override

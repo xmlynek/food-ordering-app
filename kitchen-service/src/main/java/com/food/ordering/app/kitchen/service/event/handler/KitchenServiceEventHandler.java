@@ -1,5 +1,8 @@
 package com.food.ordering.app.kitchen.service.event.handler;
 
+import com.food.ordering.app.common.enums.DeliveryStatus;
+import com.food.ordering.app.common.event.DeliveryAssignedToCourierEvent;
+import com.food.ordering.app.common.event.DeliveryStatusChangedEvent;
 import com.food.ordering.app.common.event.RestaurantCreatedEvent;
 import com.food.ordering.app.common.event.RestaurantDeletedEvent;
 import com.food.ordering.app.common.event.RestaurantMenuItemCreatedEvent;
@@ -10,6 +13,7 @@ import com.food.ordering.app.kitchen.service.entity.MenuItem;
 import com.food.ordering.app.kitchen.service.entity.Restaurant;
 import com.food.ordering.app.kitchen.service.mapper.MenuItemMapper;
 import com.food.ordering.app.kitchen.service.mapper.RestaurantMapper;
+import com.food.ordering.app.kitchen.service.service.KitchenTicketService;
 import com.food.ordering.app.kitchen.service.service.RestaurantMenuItemService;
 import com.food.ordering.app.kitchen.service.service.RestaurantService;
 import io.eventuate.tram.events.subscriber.DomainEventEnvelope;
@@ -29,6 +33,7 @@ public class KitchenServiceEventHandler {
   private final MenuItemMapper menuItemMapper;
   private final RestaurantService restaurantService;
   private final RestaurantMenuItemService menuItemService;
+  private final KitchenTicketService kitchenTicketService;
 
 
   public DomainEventHandlers domainEventHandlers() {
@@ -40,7 +45,11 @@ public class KitchenServiceEventHandler {
         .andForAggregateType("com.food.ordering.app.restaurant.service.entity.MenuItem")
         .onEvent(RestaurantMenuItemCreatedEvent.class, this::createMenuItem)
         .onEvent(RestaurantMenuItemRevisedEvent.class, this::reviseMenuItem)
-        .onEvent(RestaurantMenuItemDeletedEvent.class, this::deleteMenuItem).build();
+        .onEvent(RestaurantMenuItemDeletedEvent.class, this::deleteMenuItem)
+        .andForAggregateType("com.food.ordering.app.delivery.service.entity.Delivery")
+        .onEvent(DeliveryAssignedToCourierEvent.class, this::handleDeliveryAssigned)
+        .onEvent(DeliveryStatusChangedEvent.class, this::handleDeliveryStatusChanged)
+        .build();
   }
 
 
@@ -129,8 +138,8 @@ public class KitchenServiceEventHandler {
   }
 
   private void deleteMenuItem(DomainEventEnvelope<RestaurantMenuItemDeletedEvent> de) {
-      UUID menuItemId = UUID.fromString(de.getAggregateId());
-      String restaurantId = de.getEvent().restaurantId();
+    UUID menuItemId = UUID.fromString(de.getAggregateId());
+    String restaurantId = de.getEvent().restaurantId();
     try {
       log.info(
           "Handling RestaurantMenuItemDeletedEvent for menu item with ID {} in restaurant with ID {}",
@@ -142,6 +151,52 @@ public class KitchenServiceEventHandler {
     } catch (Exception e) {
       log.error("Error deleting menu item with ID {} in restaurant with ID {}: {}", menuItemId,
           restaurantId, e.getMessage(), e);
+//      throw e;
+    }
+  }
+
+  private void handleDeliveryAssigned(DomainEventEnvelope<DeliveryAssignedToCourierEvent> de) {
+    UUID deliveryId = null;
+    UUID orderId = null;
+    try {
+      deliveryId = UUID.fromString(de.getAggregateId());
+      DeliveryAssignedToCourierEvent event = de.getEvent();
+      orderId = event.orderId();
+
+      log.info(
+          "Handling DeliveryAssignedToCourierEvent for delivery with ID {} for order with ID {}",
+          deliveryId, orderId);
+
+      kitchenTicketService.assignDeliveryDetails(event);
+
+      log.info("Successfully updated order with ID {} with delivery data for delivery ID {}",
+          orderId, deliveryId);
+    } catch (Exception e) {
+      log.error(
+          "Error handling DeliveryAssignedToCourierEvent for delivery ID {} and order ID {}: {}",
+          deliveryId, orderId, e.getMessage(), e);
+//      throw e;
+    }
+  }
+
+  private void handleDeliveryStatusChanged(DomainEventEnvelope<DeliveryStatusChangedEvent> de) {
+    UUID deliveryId = null;
+    UUID orderId = null;
+    try {
+      deliveryId = UUID.fromString(de.getAggregateId());
+      DeliveryStatusChangedEvent event = de.getEvent();
+      orderId = event.orderId();
+      DeliveryStatus status = event.status();
+
+      log.info("Handling DeliveryStatusChangedEvent for delivery with ID {} for order with ID {}",
+          deliveryId, orderId);
+
+      kitchenTicketService.updateDeliveryStatus(event);
+
+      log.info("Successfully updated the status for delivery ID {} to {}", deliveryId, status);
+    } catch (Exception e) {
+      log.error("Error handling DeliveryStatusChangedEvent for delivery ID {} and order ID {}: {}",
+          deliveryId, orderId, e.getMessage(), e);
 //      throw e;
     }
   }

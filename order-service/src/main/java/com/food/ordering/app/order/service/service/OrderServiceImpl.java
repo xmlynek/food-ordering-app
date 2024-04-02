@@ -1,5 +1,6 @@
 package com.food.ordering.app.order.service.service;
 
+import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.common.exception.MenuItemNotFoundException;
 import com.food.ordering.app.order.service.dto.OrderDetails;
@@ -82,16 +83,42 @@ public class OrderServiceImpl implements OrderService {
   @Transactional
   public void updateKitchenTicketStatus(UUID ticketId, KitchenTicketStatus kitchenTicketStatus) {
     Order order = orderRepository.findByKitchenTicketId(ticketId)
-        .orElseThrow(() -> new OrderNotFoundException(ticketId));
+        .orElseThrow(() -> new OrderNotFoundException(
+            String.format("Order not found with kitchen ticket id %s", ticketId.toString())));
     order.setKitchenTicketStatus(kitchenTicketStatus);
   }
 
   @Override
   @Transactional
-  public void updateKitchenTicketData(UUID orderId, UUID ticketId, KitchenTicketStatus kitchenTicketStatus) {
+  public void updateKitchenTicketData(UUID orderId, UUID ticketId,
+      KitchenTicketStatus kitchenTicketStatus) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new OrderNotFoundException(orderId));
     order.setKitchenTicketId(ticketId);
     order.setKitchenTicketStatus(kitchenTicketStatus);
+  }
+
+  @Override
+  public void updateOrderDeliveryData(UUID orderId, UUID deliveryId,
+      DeliveryStatus deliveryStatus) {
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new OrderNotFoundException(orderId));
+    order.setDeliveryId(deliveryId);
+    order.setDeliveryStatus(deliveryStatus);
+    orderRepository.save(order);
+  }
+
+  @Override
+  public void updateDeliveryStatus(UUID deliveryId, DeliveryStatus deliveryStatus) {
+    Order order = orderRepository.findByDeliveryId(deliveryId)
+        .orElseThrow(() -> new OrderNotFoundException(
+            String.format("Order not found with delivery id %s", deliveryId.toString())));
+
+    if (deliveryStatus == DeliveryStatus.DELIVERED) {
+      order.setOrderStatus(OrderStatus.COMPLETED);
+    }
+
+    order.setDeliveryStatus(deliveryStatus);
+    orderRepository.save(order);
   }
 }

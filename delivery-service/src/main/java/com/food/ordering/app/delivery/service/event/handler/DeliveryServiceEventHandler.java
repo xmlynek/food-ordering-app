@@ -7,6 +7,7 @@ import com.food.ordering.app.common.event.RestaurantDeletedEvent;
 import com.food.ordering.app.common.event.RestaurantRevisedEvent;
 import com.food.ordering.app.delivery.service.entity.Restaurant;
 import com.food.ordering.app.delivery.service.mapper.RestaurantMapper;
+import com.food.ordering.app.delivery.service.service.DeliveryService;
 import com.food.ordering.app.delivery.service.service.RestaurantService;
 import io.eventuate.tram.events.subscriber.DomainEventEnvelope;
 import io.eventuate.tram.events.subscriber.DomainEventHandlers;
@@ -23,17 +24,17 @@ public class DeliveryServiceEventHandler {
 
   private final RestaurantMapper restaurantMapper;
   private final RestaurantService restaurantService;
+  private final DeliveryService deliveryService;
 
 
   public DomainEventHandlers domainEventHandlers() {
     return DomainEventHandlersBuilder.forAggregateType(
             "com.food.ordering.app.kitchen.service.entity.KitchenTicket")
-//        .onEvent(KitchenTicketStatusChangedEvent.class, this::handleKitchenTicketStatusChangedEvent)
+        .onEvent(KitchenTicketStatusChangedEvent.class, this::handleKitchenTicketStatusChangedEvent)
         .andForAggregateType("com.food.ordering.app.restaurant.service.entity.Restaurant")
         .onEvent(RestaurantCreatedEvent.class, this::createRestaurant)
         .onEvent(RestaurantRevisedEvent.class, this::reviseRestaurant)
-        .onEvent(RestaurantDeletedEvent.class, this::deleteRestaurant)
-        .build();
+        .onEvent(RestaurantDeletedEvent.class, this::deleteRestaurant).build();
   }
 
 
@@ -46,8 +47,8 @@ public class DeliveryServiceEventHandler {
       log.info(
           "Handling KitchenTicketStatusChangedEvent with status {} for order with ticket ID {}",
           status, ticketId);
-// TODO: update
-//      orderService.updateKitchenTicketStatus(ticketId, status);
+
+      deliveryService.updateKitchenTicketStatus(ticketId, status);
 
       log.info(
           "Successfully handled KitchenTicketStatusChangedEvent for order with ticket ID {} and status {}",

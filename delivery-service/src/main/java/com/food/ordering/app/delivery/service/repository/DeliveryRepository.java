@@ -21,7 +21,6 @@ public interface DeliveryRepository extends JpaRepository<Delivery, UUID> {
   @PreAuthorize("isFullyAuthenticated() and #courierId.toString() == authentication.name")
   Optional<Delivery> findByIdAndCourierId(@NonNull UUID id, @NonNull UUID courierId);
 
-  @PreAuthorize("isFullyAuthenticated() and #delivery.courierId.toString() == authentication.name")
-  Delivery updateDeliveryById(UUID id, @NonNull Delivery delivery);
-
+  @NonNull
+  Optional<Delivery> findByKitchenTicketId(@NonNull UUID kitchenTicketId);
 }

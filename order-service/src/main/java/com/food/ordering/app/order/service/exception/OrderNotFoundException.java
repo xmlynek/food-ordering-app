@@ -20,4 +20,8 @@ public class OrderNotFoundException extends RuntimeException {
   public OrderNotFoundException(UUID id) {
     super(String.format(ORDER_NOT_FOUND_EXCEPTION_MESSAGE, id));
   }
+
+  public OrderNotFoundException(String message) {
+    super(message);
+  }
 }

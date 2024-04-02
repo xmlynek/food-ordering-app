@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CurrentTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "deliveries")
@@ -65,6 +66,7 @@ public class Delivery {
   @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
+  @UpdateTimestamp
   @Column(nullable = false)
   private LocalDateTime lastModifiedAt;
 

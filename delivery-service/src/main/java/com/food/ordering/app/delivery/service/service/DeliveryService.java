@@ -1,6 +1,7 @@
 package com.food.ordering.app.delivery.service.service;
 
 import com.food.ordering.app.common.command.PrepareOrderDeliveryCommand;
+import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.delivery.service.entity.Delivery;
 import com.food.ordering.app.delivery.service.repository.projection.DeliveryDetailsView;
 import java.util.UUID;
@@ -20,4 +21,6 @@ public interface DeliveryService {
   void pickUpDelivery(UUID deliveryId);
 
   void completeDelivery(UUID deliveryId);
+
+  void updateKitchenTicketStatus(UUID kitchenTicketId, KitchenTicketStatus kitchenTicketStatus);
 }

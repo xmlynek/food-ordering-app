@@ -1,5 +1,6 @@
 package com.food.ordering.app.order.service.service;
 
+import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.order.service.dto.OrderDetails;
 import com.food.ordering.app.order.service.entity.Order;
@@ -42,5 +43,9 @@ public interface OrderService {
   void updateKitchenTicketStatus(UUID ticketId, KitchenTicketStatus kitchenTicketStatus);
 
   void updateKitchenTicketData(UUID orderId, UUID ticketId, KitchenTicketStatus kitchenTicketStatus);
+
+  void updateOrderDeliveryData(UUID orderId, UUID deliveryId, DeliveryStatus deliveryStatus);
+
+  void updateDeliveryStatus(UUID deliveryId, DeliveryStatus deliveryStatus);
 
 }

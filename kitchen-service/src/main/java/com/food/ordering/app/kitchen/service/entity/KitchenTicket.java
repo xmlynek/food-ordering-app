@@ -1,5 +1,6 @@
 package com.food.ordering.app.kitchen.service.entity;
 
+import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -23,6 +24,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "kitchen_tickets")
@@ -39,6 +41,8 @@ public class KitchenTicket {
   @Column(nullable = false, updatable = false)
   private UUID customerId;
 
+  private UUID deliveryId;
+
   @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
   @JoinColumn(name = "restaurant_id", updatable = false, nullable = false)
   private Restaurant restaurant;
@@ -50,9 +54,15 @@ public class KitchenTicket {
   @CurrentTimestamp
   private LocalDateTime createdAt;
 
+  @UpdateTimestamp
+  private LocalDateTime lastModifiedAt;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private KitchenTicketStatus status;
+
+  @Enumerated(EnumType.STRING)
+  private DeliveryStatus deliveryStatus;
 
   @Column(nullable = false, updatable = false)
   private BigDecimal totalPrice;

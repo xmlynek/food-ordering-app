@@ -1,5 +1,6 @@
 package com.food.ordering.app.order.service.entity;
 
+import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.common.model.Address;
 import io.eventuate.examples.common.money.Money;
@@ -29,6 +30,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "orders")
@@ -45,6 +47,8 @@ public class Order {
 
   private UUID kitchenTicketId;
 
+  private UUID deliveryId;
+
   @Column(nullable = false, updatable = false)
   private UUID customerId;
 
@@ -54,12 +58,18 @@ public class Order {
   @CurrentTimestamp
   private LocalDateTime createdAt;
 
+  @UpdateTimestamp
+  private LocalDateTime lastModifiedAt;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private OrderStatus orderStatus;
 
   @Enumerated(EnumType.STRING)
   private KitchenTicketStatus kitchenTicketStatus;
+
+  @Enumerated(EnumType.STRING)
+  private DeliveryStatus deliveryStatus;
 
   @Transient
   private String paymentToken;

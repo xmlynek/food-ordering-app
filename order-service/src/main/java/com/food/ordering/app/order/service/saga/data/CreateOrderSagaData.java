@@ -1,6 +1,7 @@
 package com.food.ordering.app.order.service.saga.data;
 
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
+import com.food.ordering.app.common.enums.PaymentStatus;
 import com.food.ordering.app.common.model.Address;
 import com.food.ordering.app.common.model.OrderProduct;
 import com.food.ordering.app.order.service.entity.OrderStatus;
@@ -32,6 +33,8 @@ public class CreateOrderSagaData {
   private OrderStatus orderStatus;
 
   private KitchenTicketStatus kitchenTicketStatus;
+
+  private PaymentStatus paymentStatus;
 
   private String paymentToken;
 

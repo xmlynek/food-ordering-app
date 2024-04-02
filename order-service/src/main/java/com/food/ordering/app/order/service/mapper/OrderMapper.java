@@ -1,7 +1,7 @@
 package com.food.ordering.app.order.service.mapper;
 
+import com.food.ordering.app.order.service.dto.BasicOrderResponse;
 import com.food.ordering.app.order.service.dto.OrderCreatedResponse;
-import com.food.ordering.app.order.service.dto.OrderDto;
 import com.food.ordering.app.order.service.dto.OrderRequest;
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.saga.data.CreateOrderSagaData;
@@ -20,6 +20,9 @@ public interface OrderMapper {
       @Mapping(target = "version", ignore = true),
       @Mapping(target = "kitchenTicketId", ignore = true),
       @Mapping(target = "kitchenTicketStatus", ignore = true),
+      @Mapping(target = "deliveryId", ignore = true),
+      @Mapping(target = "lastModifiedAt", ignore = true),
+      @Mapping(target = "deliveryStatus", ignore = true),
       @Mapping(target = "totalPrice", expression = "java(new io.eventuate.examples.common.money.Money(orderRequest.totalPrice()))")
   })
   Order orderRequestToOrderEntity(OrderRequest orderRequest);
@@ -30,7 +33,7 @@ public interface OrderMapper {
       @Mapping(target = "totalPrice", expression = "java(order.getTotalPrice().getAmount())"),
       @Mapping(target = "failureMessage", expression = "java(String.join(\".\\n\", order.getFailureMessages()))"),
   })
-  OrderDto orderEntityToOrderDto(Order order);
+  BasicOrderResponse orderEntityToOrderDto(Order order);
 
   @Mappings({
       @Mapping(target = "orderId", source = "id"),

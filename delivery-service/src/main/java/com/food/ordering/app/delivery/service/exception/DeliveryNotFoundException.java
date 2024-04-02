@@ -10,4 +10,8 @@ public class DeliveryNotFoundException extends RuntimeException {
     super(String.format(DELIVERY_NOT_FOUND_EXCEPTION_MESSAGE, id.toString()));
   }
 
+  public DeliveryNotFoundException(String message) {
+    super(message);
+  }
+
 }
