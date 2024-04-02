@@ -8,11 +8,13 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms192m -Xmx192m"
     ports:
       - "9200:9200"
-    volumes:
-      - ./volumes/elasticsearch/esdata1:/usr/share/elasticsearch/data
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   catalog-service-postgres:
     image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
@@ -23,6 +25,10 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: catalog_service
+    deploy:
+      resources:
+        limits:
+          memory: 128M
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U admin -d catalog_service" ]
       interval: 10s
@@ -38,6 +44,10 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: order_service
+    deploy:
+      resources:
+        limits:
+          memory: 128M
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U admin -d order_service" ]
       interval: 10s
@@ -53,6 +63,10 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: payment_service
+    deploy:
+      resources:
+        limits:
+          memory: 128M
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U admin -d payment_service" ]
       interval: 10s
@@ -68,6 +82,10 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: restaurant_service
+    deploy:
+      resources:
+        limits:
+          memory: 128M
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U admin -d restaurant_service" ]
       interval: 10s
@@ -83,6 +101,10 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: kitchen_service
+    deploy:
+      resources:
+        limits:
+          memory: 128M
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U admin -d kitchen_service" ]
       interval: 10s
@@ -98,25 +120,35 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: delivery_service
+    deploy:
+      resources:
+        limits:
+          memory: 128M
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U admin -d delivery_service" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  pgadmin:
-    image: dpage/pgadmin4
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0.3
     ports:
-      - "5050:80"
+      - "8083:8080"
     restart: on-failure
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    depends_on:
-      - order-service-postgres
-      - payment-service-postgres
-      - restaurant-service-postgres
+      KEYCLOAK_USER: user
+      KEYCLOAK_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    command:
+      - start-dev
+      - --import-realm
+    volumes:
+      - ./volumes/keycloak/export:/opt/keycloak/data/import
 
   zookeeper:
     image: eventuateio/eventuate-zookeeper:0.18.0.RELEASE
@@ -126,6 +158,10 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       KAFKA_HEAP_OPTS: -Xmx64m
+    deploy:
+      resources:
+        limits:
+          memory: 128M
     healthcheck:
       test: [ "CMD", "echo", "ruok", "|", "nc", "localhost", "2181", "|", "grep", "imok" ]
       interval: 10s
@@ -148,17 +184,29 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_HEAP_OPTS: -Xmx192m
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   zipkin:
     image: 'openzipkin/zipkin:latest'
     ports:
       - '9411:9411'
     restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 128M
 
   cdcservice:
     image: eventuateio/eventuate-cdc-service:0.16.0.RELEASE
     ports:
       - "8099:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     restart: on-failure
     depends_on:
       order-service-postgres:
