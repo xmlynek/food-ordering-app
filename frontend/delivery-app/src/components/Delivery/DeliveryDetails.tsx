@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Space, Typography} from "antd";
+import {Button, Card, Space, Spin, Typography} from "antd";
 import {Delivery, DeliveryStatus, KitchenTicketStatus} from "../../model/delivery.ts";
 import {getAddressAsString} from "../../model/address.ts";
 import {CheckCircleOutlined, ScheduleOutlined, TruckOutlined} from "@ant-design/icons";
@@ -14,6 +14,7 @@ interface OrderListProps {
   onAssignDelivery: () => void;
   onPickUpDelivery: () => void;
   onCompleteDelivery: () => void;
+  isLoading: boolean;
 }
 
 const DeliveryDetails: React.FC<OrderListProps> = ({
@@ -21,10 +22,12 @@ const DeliveryDetails: React.FC<OrderListProps> = ({
                                                      onAssignDelivery,
                                                      onPickUpDelivery,
                                                      onCompleteDelivery,
+                                                     isLoading,
                                                    }: OrderListProps) => {
 
   const isAssignable = (): boolean => {
     return deliveryDetails.deliveryStatus === DeliveryStatus.WAITING_FOR_KITCHEN &&
+        deliveryDetails.courierId === null &&
         (deliveryDetails.kitchenTicketStatus === KitchenTicketStatus.PREPARING ||
             deliveryDetails.kitchenTicketStatus === KitchenTicketStatus.READY_FOR_DELIVERY);
   }
@@ -45,14 +48,8 @@ const DeliveryDetails: React.FC<OrderListProps> = ({
           styles={{body: {padding: '0px 24px 24px 24px'}}}
           title={`Delivery ${deliveryDetails.id}`}
       >
+        {isLoading && <Spin fullscreen={true} size={"large"} tip={<p>Loading...</p>}/>}
         <div className={styles.cardContent}>
-          <Paragraph>
-            <strong>Last
-              update:</strong> {`${new Date(deliveryDetails.lastModifiedAt).toLocaleString()}`}
-          </Paragraph>
-          <Paragraph>
-            <strong>Delivery status:</strong> {`${deliveryDetails.deliveryStatus}`}
-          </Paragraph>
           <Paragraph>
             <strong>Restaurant name:</strong> {deliveryDetails.restaurantName}
           </Paragraph>
@@ -65,11 +62,24 @@ const DeliveryDetails: React.FC<OrderListProps> = ({
               address:</strong> {getAddressAsString(deliveryDetails.deliveryAddress)}
           </Paragraph>
           <Paragraph>
+            <strong>Kitchen status:</strong> {`${deliveryDetails.kitchenTicketStatus}`}
+          </Paragraph>
+          <Paragraph>
+            <strong>Delivery status:</strong> {`${deliveryDetails.deliveryStatus}`}
+          </Paragraph>
+          <Paragraph>
+            <strong>Last
+              update:</strong> {`${new Date(deliveryDetails.lastModifiedAt).toLocaleString()}`}
+          </Paragraph>
+          <Paragraph>
             <strong>Restaurant ID:</strong> {deliveryDetails.restaurantId}
           </Paragraph>
           <Paragraph>
             <strong>Customer ID:</strong> {deliveryDetails.customerId}
           </Paragraph>
+          {deliveryDetails.courierId && (<Paragraph>
+            <strong>Courier ID:</strong> {deliveryDetails.courierId}
+          </Paragraph>)}
         </div>
         <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
 
@@ -77,11 +87,13 @@ const DeliveryDetails: React.FC<OrderListProps> = ({
               <Button type="dashed" style={{backgroundColor: 'orange'}} icon={<ScheduleOutlined/>}
                       size={"large"}
                       onClick={onAssignDelivery}>Assign delivery</Button>)}
-
-          {isPickUpAble() && (
-              <Button type="dashed" style={{backgroundColor: 'orange'}} icon={<TruckOutlined />}
+          {!isAssignable() && !isCompletable() && deliveryDetails.deliveryStatus !== DeliveryStatus.DELIVERED && (
+              <Button type="dashed" disabled={!isPickUpAble()}
+                      style={{backgroundColor: 'yellowgreen'}}
+                      icon={<TruckOutlined/>}
                       size={"large"}
-                      onClick={onPickUpDelivery}>Pick up delivery</Button>)}
+                      onClick={onPickUpDelivery}>Pick up
+                delivery</Button>)}
 
           {isCompletable() && (
               <Button type="primary" className={styles.completeButton}

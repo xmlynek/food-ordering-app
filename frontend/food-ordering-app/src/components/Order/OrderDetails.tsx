@@ -1,8 +1,9 @@
 import {Badge, Card, Col, Image, List, Row, Typography} from "antd";
 import React from "react";
+import {OrderDetailsDto} from "../../model/order.ts";
+import {DeliveryStatus, KitchenTicketStatus, OrderStatus} from "../../model/enum.ts";
 
 const {Title} = Typography;
-import {OrderDetailsDto} from "../../model/order.ts";
 
 
 interface OrderDetailsProps {
@@ -12,14 +13,48 @@ interface OrderDetailsProps {
 const OrderDetails: React.FC<OrderDetailsProps> = ({orderDetails}: OrderDetailsProps) => {
 
   // TODO: update this function to return the correct color based on the order status
-  const getStatusColor = (status: string) => {
+  const getOrderStatusColor = (status: OrderStatus) => {
     switch (status) {
-      case 'APPROVED':
+      case OrderStatus.PENDING:
+        return 'processing';
+      case OrderStatus.PAID:
+        return 'processing';
+      case OrderStatus.APPROVED:
+        return 'processing';
+      case OrderStatus.COMPLETED:
         return 'success';
-      case 'pending':
+      case OrderStatus.CANCELLING:
         return 'warning';
-      case 'CANCELLED':
+      case OrderStatus.CANCELLED:
         return 'error';
+      default:
+        return 'default';
+    }
+  };
+
+  const getKitchenStatusColor = (status: KitchenTicketStatus) => {
+    switch (status) {
+      case KitchenTicketStatus.PREPARING:
+        return 'processing';
+      case KitchenTicketStatus.READY_FOR_DELIVERY:
+        return 'processing';
+      case KitchenTicketStatus.FINISHED:
+        return 'success';
+      case KitchenTicketStatus.REJECTED:
+        return 'error';
+      default:
+        return 'default';
+    }
+  };
+
+  const getDeliveryStatusColor = (status: DeliveryStatus) => {
+    switch (status) {
+      case DeliveryStatus.WAITING_FOR_KITCHEN:
+        return 'default';
+      case DeliveryStatus.AT_DELIVERY:
+        return 'processing';
+      case DeliveryStatus.DELIVERED:
+        return 'success';
       default:
         return 'default';
     }
@@ -27,7 +62,8 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({orderDetails}: OrderDetailsP
 
   return (
       <Card
-          title={<Title ellipsis={true} style={{marginTop: '0px'}} level={4}>Order {orderDetails.id}</Title>}
+          title={<Title ellipsis={true} style={{marginTop: '0px'}}
+                        level={4}>Order {orderDetails.id}</Title>}
           style={{width: '100%'}}
           headStyle={{background: '#f0f2f5'}}
       >
@@ -37,35 +73,39 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({orderDetails}: OrderDetailsP
               At:</Typography.Text> {new Date(orderDetails.createdAt).toLocaleString()}
           </Col>
           <Col xs={24} sm={12}>
-            <Typography.Text strong>Restaurant ID:</Typography.Text> {orderDetails.restaurantId}
+            <Typography.Text strong>Updated
+              At:</Typography.Text> {new Date(orderDetails.lastModifiedAt || orderDetails.createdAt).toLocaleString()}
           </Col>
           <Col xs={24} sm={12}>
             <Typography.Text strong>Total
               Price:</Typography.Text> ${orderDetails.totalPrice.toFixed(2)}
           </Col>
           <Col xs={24} sm={12}>
+            <Typography.Text strong>Restaurant ID:</Typography.Text> {orderDetails.restaurantId}
+          </Col>
+          <Col xs={24} sm={12}>
             <Typography.Text strong>Order Status: </Typography.Text>
-            <Badge status={getStatusColor(orderDetails.orderStatus)}
+            <Badge status={getOrderStatusColor(orderDetails.orderStatus)}
                    text={orderDetails.orderStatus}/>
           </Col>
-        </Row>
+          {orderDetails.kitchenTicketStatus && (<Col xs={24} sm={12}>
+            <Typography.Text strong>Kitchen Status: </Typography.Text>
+            <Badge status={getKitchenStatusColor(orderDetails.kitchenTicketStatus)}
+                   text={orderDetails.kitchenTicketStatus}/>
+          </Col>)}
+          {orderDetails.deliveryStatus && (<Col xs={24} sm={12}>
+            <Typography.Text strong>Delivery Status: </Typography.Text>
+            <Badge status={getDeliveryStatusColor(orderDetails.deliveryStatus)}
+                   text={orderDetails.deliveryStatus}/>
+          </Col>)}
 
-        {orderDetails.orderStatus === 'CANCELLED' &&
-            <Row gutter={[16, 16]} style={{marginTop: '10px'}}>
+
+          {(orderDetails.orderStatus === OrderStatus.CANCELLED || orderDetails.orderStatus === OrderStatus.CANCELLING) && (
               <Col xs={24}>
                 <Typography.Text strong>Error
                   Message:</Typography.Text> {orderDetails.failureMessage}
-              </Col>
-            </Row>}
-
-        {orderDetails.orderStatus === 'APPROVED' &&
-            <Row gutter={[16, 16]} style={{marginTop: '10px'}}>
-              <Col xs={24}>
-                <Typography.Text strong>Kitchen Ticket Status: </Typography.Text>
-                <Badge status="error" text={orderDetails.kitchenTicketStatus}/>
-              </Col>
-            </Row>}
-
+              </Col>)}
+        </Row>
 
         <List
             header={<Title level={4} style={{marginBottom: '20px'}}>Order Items</Title>}

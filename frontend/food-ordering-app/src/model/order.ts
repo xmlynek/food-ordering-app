@@ -1,4 +1,5 @@
 import {Address} from "./address.ts";
+import {DeliveryStatus, KitchenTicketStatus, OrderStatus} from "./enum.ts";
 
 export interface CreateOrderDto {
   customerId: string;
@@ -19,14 +20,16 @@ export interface OrderHistoryDto {
   id: string;
   restaurantId: string;
   totalPrice: number;
-  orderStatus: string;
   createdAt: string;
-  kitchenTicketStatus: string;
+  orderStatus: OrderStatus;
+  kitchenTicketStatus: KitchenTicketStatus;
+  deliveryStatus: DeliveryStatus;
   failureMessage: string;
 }
 
 export interface OrderDetailsDto extends OrderHistoryDto {
   items: OrderItemDetailsDto[];
+  lastModifiedAt: string;
 }
 
 export interface OrderItemDetailsDto {

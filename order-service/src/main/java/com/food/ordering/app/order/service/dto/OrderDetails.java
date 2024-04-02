@@ -1,5 +1,6 @@
 package com.food.ordering.app.order.service.dto;
 
+import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.order.service.entity.OrderStatus;
 import java.math.BigDecimal;
@@ -12,8 +13,10 @@ import lombok.Builder;
 public record OrderDetails(UUID id,
                            UUID restaurantId,
                            LocalDateTime createdAt,
+                           LocalDateTime lastModifiedAt,
                            OrderStatus orderStatus,
                            KitchenTicketStatus kitchenTicketStatus,
+                           DeliveryStatus deliveryStatus,
                            BigDecimal totalPrice,
                            String failureMessage,
                            List<OrderItemDetails> items) {

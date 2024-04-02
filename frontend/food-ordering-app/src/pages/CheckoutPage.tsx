@@ -31,6 +31,9 @@ const CheckoutPage = () => {
     onSuccess: async (data) => {
       // await queryClient.invalidateQueries({queryKey: ['order-tickets']});
       message.success(`Order ${data.id} created successfully`);
+    },
+    onError: async (error) => {
+      message.error('An error occurred while creating the order: ' + error.message);
     }
   });
 

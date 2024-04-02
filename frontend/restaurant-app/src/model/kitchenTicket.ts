@@ -1,7 +1,11 @@
+import {DeliveryStatus, KitchenTicketStatus} from "./enum.ts";
+
 export interface BasicKitchenTicketRestDTO {
   id: string;
   createdAt: string;
-  status: String; // TODO: make as enum
+  lastModifiedAt: string;
+  status: KitchenTicketStatus;
+  deliveryStatus: DeliveryStatus;
   totalPrice: number;
 }
 

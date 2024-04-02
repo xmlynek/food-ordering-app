@@ -5,6 +5,8 @@ import {performLogout} from "../../keycloak/keycloak.ts";
 
 import classes from './Navigation.module.css';
 
+import logo from '../../assets/logo.webp';
+
 
 const Navbar = () => {
   const location = useLocation();
@@ -44,7 +46,7 @@ const Navbar = () => {
   return (
       <Layout.Header>
         <div className={classes.logo}>
-          {/*<img src={logo} alt="logo"/>*/}
+          <img src={logo} alt="logo" className={classes.logoImage}/>
         </div>
         <Menu theme="dark" mode="horizontal" items={menuItems} selectedKeys={getSelectedKeys()} />
       </Layout.Header>

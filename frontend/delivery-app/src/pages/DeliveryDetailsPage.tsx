@@ -23,12 +23,13 @@ const DeliveryDetailsPage: React.FC = () => {
     data: deliveryDetails,
     error,
     isPending,
+    refetch
   } = useQuery<Delivery, Error>({
     queryKey: ['delivery-details', deliveryId],
     queryFn: fetchDeliveryById.bind(null, deliveryId)
   });
 
-  const {mutateAsync: assignDeliveryMutation} = useMutation({
+  const {mutateAsync: assignDeliveryMutation, isPending: isAssignPending} = useMutation({
     mutationFn: assignDelivery.bind(null, deliveryId),
     onSuccess: async () => {
       await message.success('Delivery assigned successfully!');
@@ -38,7 +39,7 @@ const DeliveryDetailsPage: React.FC = () => {
     }
   });
 
-  const {mutateAsync: pickUpDeliveryMutation} = useMutation({
+  const {mutateAsync: pickUpDeliveryMutation, isPending: isPickUpPending} = useMutation({
     mutationFn: pickUpDelivery.bind(null, deliveryId),
     onSuccess: async () => {
       await message.success('Delivery picked up successfully!');
@@ -48,7 +49,7 @@ const DeliveryDetailsPage: React.FC = () => {
     }
   });
 
-  const {mutateAsync: completeDeliveryMutation} = useMutation({
+  const {mutateAsync: completeDeliveryMutation, isPending: isCompletePending} = useMutation({
     mutationFn: completeDelivery.bind(null, deliveryId),
     onSuccess: async () => {
       await message.success('Delivery completed successfully!');
@@ -60,14 +61,17 @@ const DeliveryDetailsPage: React.FC = () => {
 
   const handleAssignDelivery = async () => {
     await assignDeliveryMutation();
+    await refetch();
   }
 
   const handlePickUpDelivery = async () => {
     await pickUpDeliveryMutation();
+    await refetch();
   }
 
   const handleCompleteDelivery = async () => {
     await completeDeliveryMutation();
+    await refetch();
   }
 
   return (
@@ -82,6 +86,7 @@ const DeliveryDetailsPage: React.FC = () => {
             {error && <p>Error: {error.message}</p>}
             {!isPending && !error && deliveryDetails &&
                 <DeliveryDetails deliveryDetails={deliveryDetails}
+                                 isLoading={isPending || isAssignPending || isPickUpPending || isCompletePending}
                                  onAssignDelivery={handleAssignDelivery}
                                  onPickUpDelivery={handlePickUpDelivery}
                                  onCompleteDelivery={handleCompleteDelivery}/>}

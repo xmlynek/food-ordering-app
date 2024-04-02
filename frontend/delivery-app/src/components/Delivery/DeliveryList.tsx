@@ -74,13 +74,16 @@ const DeliveryList: React.FC<OrderListProps> = ({}: OrderListProps) => {
                 >
                   <div className={styles.cardContent}>
                     <Paragraph>
-                      <strong>Last update:</strong> {`${new Date(delivery.lastModifiedAt).toLocaleString()}`}
+                      <strong>Restaurant name:</strong> {delivery.restaurantName}
+                    </Paragraph>
+                    <Paragraph>
+                      <strong>Kitchen status:</strong> {`${delivery.kitchenTicketStatus}`}
                     </Paragraph>
                     <Paragraph>
                       <strong>Delivery status:</strong> {`${delivery.deliveryStatus}`}
                     </Paragraph>
                     <Paragraph>
-                      <strong>Restaurant name:</strong> {delivery.restaurantName}
+                      <strong>Last update:</strong> {`${new Date(delivery.lastModifiedAt).toLocaleString()}`}
                     </Paragraph>
                     <Paragraph>
                       <strong>Restaurant address:</strong> {getAddressAsString(delivery.restaurantAddress)}

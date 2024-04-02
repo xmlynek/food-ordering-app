@@ -1,8 +1,8 @@
 package com.food.ordering.app.order.service.controller;
 
+import com.food.ordering.app.order.service.dto.BasicOrderResponse;
 import com.food.ordering.app.order.service.dto.OrderCreatedResponse;
 import com.food.ordering.app.order.service.dto.OrderDetails;
-import com.food.ordering.app.order.service.dto.OrderDto;
 import com.food.ordering.app.order.service.dto.OrderRequest;
 import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.mapper.OrderMapper;
@@ -57,10 +57,10 @@ public class OrderController {
 
   @GetMapping("/customer/{customerId}")
   @PreAuthorize("isFullyAuthenticated() && #customerId == authentication.name")
-  public ResponseEntity<Page<OrderDto>> findAllOrdersByCustomerId(
+  public ResponseEntity<Page<BasicOrderResponse>> findAllOrdersByCustomerId(
       @PathVariable("customerId") String customerId,
       @SortDefault(value = "createdAt", direction = Direction.DESC) Pageable pageable) {
-    Page<OrderDto> orders = orderService.findAllByCustomerId(UUID.fromString(customerId), pageable)
+    Page<BasicOrderResponse> orders = orderService.findAllByCustomerId(UUID.fromString(customerId), pageable)
         .map(orderMapper::orderEntityToOrderDto);
     return ResponseEntity.ok(orders);
   }

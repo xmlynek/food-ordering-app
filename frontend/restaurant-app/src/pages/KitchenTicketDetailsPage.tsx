@@ -23,7 +23,12 @@ const KitchenTicketDetailsPage: React.FC = () => {
   const ticketId = params.ticketId as string;
 
 
-  const {data: ticketDetails, refetch, isPending, error} = useQuery<KitchenTicketDetailsRestDTO, Error>({
+  const {
+    data: ticketDetails,
+    refetch,
+    isPending,
+    error
+  } = useQuery<KitchenTicketDetailsRestDTO, Error>({
     queryKey: ["kitchen-ticket-details", restaurantId, ticketId],
     queryFn: fetchKitchenTicketDetailsById.bind(null, restaurantId, ticketId)
   });
@@ -46,10 +51,6 @@ const KitchenTicketDetailsPage: React.FC = () => {
   }
 
 
-  if (error) {
-    return <p>Error: {error.message}</p>;
-  }
-
   return (
       <Drawer
           title={<Title level={4} style={{margin: 0}}>Kitchen Ticket Details</Title>}
@@ -57,8 +58,13 @@ const KitchenTicketDetailsPage: React.FC = () => {
           onClose={handleOnClose}
           open={true}
       >
-        <Spin size={"large"} fullscreen={true} spinning={isPending || mutationPending} tip="Loading..." />
-        <KitchenTicketDetails ticketDetails={ticketDetails} onCompleteTicket={handleCompleteTicket} isPending={isPending}/>
+
+        {isPending && <Spin size={"large"} fullscreen={true} spinning={true} tip="Loading..."/>}
+        {error && <p>Error: {error.message}</p>}
+        {!isPending && !error && ticketDetails &&
+            <KitchenTicketDetails ticketDetails={ticketDetails}
+                                  onCompleteTicket={handleCompleteTicket} isPending={isPending}/>}
+
       </Drawer>
   );
 };

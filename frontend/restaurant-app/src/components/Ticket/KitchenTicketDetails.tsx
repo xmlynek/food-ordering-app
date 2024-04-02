@@ -6,28 +6,35 @@ import {CheckCircleOutlined} from "@ant-design/icons";
 const {Title} = Typography;
 
 interface OrderListProps {
-  ticketDetails: KitchenTicketDetailsRestDTO | undefined;
+  ticketDetails: KitchenTicketDetailsRestDTO;
   isPending: boolean;
   onCompleteTicket: () => void;
 }
 
-const KitchenTicketDetails: React.FC<OrderListProps> = ({ticketDetails, isPending, onCompleteTicket}: OrderListProps) => {
+const KitchenTicketDetails: React.FC<OrderListProps> = ({
+                                                          ticketDetails,
+                                                          isPending,
+                                                          onCompleteTicket
+                                                        }: OrderListProps) => {
 
 
   return (
       <>
         <div style={{marginBottom: '20px'}}>
-          <Title level={5} style={{marginBottom: '5px'}}>Ticket ID: {ticketDetails?.id}</Title>
-          <Title level={5} style={{marginBottom: '5px'}}>Status: {ticketDetails?.status}</Title>
+          <Title level={5} style={{marginBottom: '5px'}}>Ticket ID: {ticketDetails.id}</Title>
+          <Title level={5} style={{marginBottom: '5px'}}>Status: {ticketDetails.status}</Title>
           <Title level={5} style={{marginBottom: '5px'}}>Total Price:
-            €{ticketDetails?.totalPrice.toFixed(2)}</Title>
+            €{ticketDetails.totalPrice.toFixed(2)}</Title>
+          {ticketDetails.deliveryStatus && <Title level={5} style={{marginBottom: '5px'}}>Delivery
+            Status: {ticketDetails.deliveryStatus}</Title>}
+
         </div>
 
         <List
             header={<Title level={5}>Products</Title>}
             itemLayout="horizontal"
             loading={isPending}
-            dataSource={ticketDetails?.ticketItems || []}
+            dataSource={ticketDetails.ticketItems || []}
             renderItem={item => (
                 <List.Item>
                   <Card
@@ -44,7 +51,8 @@ const KitchenTicketDetails: React.FC<OrderListProps> = ({ticketDetails, isPendin
         />
         {ticketDetails?.status === "PREPARING" && (
             <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-              <Button type="primary" size={"large"} icon={<CheckCircleOutlined/>} onClick={onCompleteTicket}
+              <Button type="primary" size={"large"} icon={<CheckCircleOutlined/>}
+                      onClick={onCompleteTicket}
                       style={{backgroundColor: '#52c41a', borderColor: '#52c41a'}}>
                 Mark as ready
               </Button>
