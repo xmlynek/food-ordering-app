@@ -7,12 +7,6 @@ import com.food.ordering.app.common.response.payment.ProcessPaymentFailed;
 import com.food.ordering.app.common.response.payment.ProcessPaymentSucceeded;
 import com.food.ordering.app.payment.service.config.properties.SagaCommandHandlerProperties;
 import com.food.ordering.app.payment.service.entity.Payment;
-import com.food.ordering.app.payment.service.mapper.PaymentMapper;
-import com.food.ordering.app.payment.service.payment.model.dto.PaymentRequest;
-import com.food.ordering.app.payment.service.payment.model.dto.PaymentResult;
-import com.food.ordering.app.payment.service.payment.model.dto.RefundResult;
-import com.food.ordering.app.payment.service.payment.model.enums.Currency;
-import com.food.ordering.app.payment.service.payment.strategy.PaymentStrategy;
 import com.food.ordering.app.payment.service.service.PaymentService;
 import io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder;
 import io.eventuate.tram.commands.consumer.CommandMessage;
@@ -26,15 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
 
   private final PaymentService paymentService;
-  private final PaymentMapper paymentMapper;
-  private final PaymentStrategy paymentStrategy;
 
   public PaymentCommandHandlerImpl(SagaCommandHandlerProperties sagaCommandHandlerProperties,
-      PaymentService paymentService, PaymentMapper paymentMapper, PaymentStrategy paymentStrategy) {
+      PaymentService paymentService) {
     super(sagaCommandHandlerProperties);
     this.paymentService = paymentService;
-    this.paymentMapper = paymentMapper;
-    this.paymentStrategy = paymentStrategy;
   }
 
   @Override
@@ -42,28 +32,24 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
   public Message processPayment(CommandMessage<ProcessPaymentCommand> cm) {
     ProcessPaymentCommand command = cm.getCommand();
     log.info("Process payment started for order id {}", command.orderId().toString());
+    Payment payment = null;
 
     try {
-      Payment payment = paymentService.savePayment(
-          paymentMapper.paymentRequestToPaymentEntity(command));
+      payment = paymentService.processPayment(command);
 
-      PaymentResult paymentResult = paymentStrategy.processPayment(
-          new PaymentRequest(Currency.EUR, command.amount(), "Food ordering app test payment",
-              command.paymentToken()));
-
-      payment.setChargeId(paymentResult.paymentId());
-      payment.setPaymentStatus(PaymentStatus.COMPLETED);
-      payment = paymentService.savePayment(payment);
-
-      log.info("Payment {} finished with status {}, chargeID {}", payment.getId().toString(),
-          paymentResult.status(), paymentResult.paymentId());
+      log.info("Payment {} was processed and finished with status {}", payment.getId().toString(),
+          payment.getPaymentStatus().toString());
 
       return CommandHandlerReplyBuilder.withSuccess(
-          new ProcessPaymentSucceeded(payment.getId(), command.orderId()));
+          new ProcessPaymentSucceeded(payment.getId(), command.orderId(),
+              payment.getPaymentStatus()));
     } catch (Exception e) {
       log.error("Creation of payment failed. {}", e.getMessage());
+      payment = paymentService.saveFailedPayment(payment);
+      log.error("Failed payment was saved with {} status", payment.getPaymentStatus().toString());
       return CommandHandlerReplyBuilder.withFailure(
-          new ProcessPaymentFailed(command.orderId(), command.customerId(), e.getMessage()));
+          new ProcessPaymentFailed(command.orderId(), command.customerId(), PaymentStatus.FAILED,
+              e.getMessage()));
     }
   }
 
@@ -75,13 +61,10 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
         command.paymentId().toString(), command.orderId().toString());
 
     try {
-      Payment payment = paymentService.getPaymentById(command.paymentId());
+      Payment payment = paymentService.refundPayment(command);
 
-      RefundResult refundResult = paymentStrategy.refundPayment(payment.getChargeId());
-
-      paymentService.updateStatus(command.paymentId(), PaymentStatus.CANCELLED);
-      log.info("Payment with id {} was cancelled and refunded with id {} and status: {}",
-          command.paymentId(), refundResult.refundId(), refundResult.status());
+      log.info("Payment with id {} was cancelled and refunded with status: {}", command.paymentId(),
+          payment.getPaymentStatus());
       return CommandHandlerReplyBuilder.withSuccess();
     } catch (Exception e) {
       log.error("Payment compensation failed. {}", e.getMessage());

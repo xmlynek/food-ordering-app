@@ -15,7 +15,9 @@ public interface PaymentMapper {
       @Mapping(target = "createdAt", ignore = true),
       @Mapping(target = "paymentStatus", ignore = true),
       @Mapping(target = "version", ignore = true),
-      @Mapping(target = "chargeId", ignore = true)
+      @Mapping(target = "chargeId", ignore = true),
+      @Mapping(target = "lastModifiedAt", ignore = true),
+      @Mapping(target = "refundId", ignore = true)
   })
   Payment paymentRequestToPaymentEntity(ProcessPaymentCommand command);
 }

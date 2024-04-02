@@ -1,15 +1,14 @@
 package com.food.ordering.app.payment.service.service;
 
-import com.food.ordering.app.common.enums.PaymentStatus;
+import com.food.ordering.app.common.command.CancelPaymentCommand;
+import com.food.ordering.app.common.command.ProcessPaymentCommand;
 import com.food.ordering.app.payment.service.entity.Payment;
-import java.util.UUID;
 
 public interface PaymentService {
 
-  Payment savePayment(Payment payment);
+  Payment saveFailedPayment(Payment payment);
 
-  Payment getPaymentById(UUID paymentId);
+  Payment processPayment(ProcessPaymentCommand command) throws Exception;
 
-  void updateStatus(UUID paymentId, PaymentStatus paymentStatus);
-
+  Payment refundPayment(CancelPaymentCommand command) throws Exception;
 }

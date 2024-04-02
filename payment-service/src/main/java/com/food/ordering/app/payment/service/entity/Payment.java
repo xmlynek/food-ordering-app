@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CurrentTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "payments")
@@ -40,7 +41,12 @@ public class Payment {
   @CurrentTimestamp
   private LocalDateTime createdAt;
 
+  @UpdateTimestamp
+  private LocalDateTime lastModifiedAt;
+
   private String chargeId;
+
+  private String refundId;
 
   @Embedded
   private Money amount;
