@@ -5,7 +5,7 @@ import {performLogout} from "../../keycloak/keycloak.ts";
 
 import classes from './Navigation.module.css';
 
-import logo from '../../assets/logo.webp';
+import logo from '../../assets/logo.png';
 
 
 const Navbar = () => {

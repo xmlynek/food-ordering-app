@@ -1,0 +1,18 @@
+.layout {
+  min-height: 100vh;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0;
+  margin: 30px;
+}
+
+.contentInner {
+  max-width: 1280px;
+  width: 100%;
+  padding: 0 24px;
+  box-sizing: border-box;
+}

@@ -6,6 +6,13 @@
   float: left;
 }
 
+.logoImage {
+  object-fit: cover;
+  margin-bottom: 10px;
+  width: 120px;
+  height: 31px;
+}
+
 .separateMenuItems {
   margin-left: auto !important;
 }

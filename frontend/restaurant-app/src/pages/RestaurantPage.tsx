@@ -68,7 +68,7 @@ const RestaurantPage: React.FC = () => {
 
 
   return (
-      <Content style={{padding: '0 48px'}}>
+      <Content>
         <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
           <Title level={1}>{restaurant.name}</Title>
         </Space>

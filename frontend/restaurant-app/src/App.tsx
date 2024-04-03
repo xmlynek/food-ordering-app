@@ -1,12 +1,11 @@
-import {Layout, Result, Spin} from "antd";
-import Navbar from "./layout/navbar/Navigation.tsx";
+import {Result, Spin} from "antd";
 import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
 import {lazy, Suspense} from "react";
-import AppFooter from "./layout/footer/AppFooter.tsx";
 import ModifyMenuPage from "./pages/ModifyMenuPage.tsx";
 import CreateMenuPage from "./pages/CreateMenuPage.tsx";
 import CreateRestaurantPage from "./pages/CreateRestaurantPage.tsx";
 import KitchenTicketDetailsPage from "./pages/KitchenTicketDetailsPage.tsx";
+import LayoutWrapper from "./layout/LayoutWrapper/LayoutWrapper.tsx";
 
 const HomePage = lazy(() => import("./pages/HomePage.tsx"));
 const RestaurantsListPage = lazy(() => import("./pages/RestaurantsListPage.tsx"));
@@ -20,14 +19,7 @@ function App() {
 
   return (
       <BrowserRouter>
-        <Layout style={{
-          overflow: 'auto',
-          minHeight: '100vh',
-          width: '100%',
-          left: 0,
-        }}>
-          <Navbar/>
-          <Layout>
+        <LayoutWrapper>
             <Suspense fallback={<Spin fullscreen spinning={true}/>}>
               <Routes>
                 <Route path="/" element={<HomePage/>}/>
@@ -52,9 +44,7 @@ function App() {
                 />}/>
               </Routes>
             </Suspense>
-          </Layout>
-          <AppFooter/>
-        </Layout>
+        </LayoutWrapper>
       </BrowserRouter>
 
   )

@@ -11,6 +11,8 @@ import BasketTooltipBadge from "../../components/UI/BasketTooltipBadge.tsx";
 
 import styles from './Navigation.module.css';
 
+import logo from '../../assets/app-logo.png';
+
 
 const Navbar = () => {
   const location = useLocation();
@@ -66,7 +68,7 @@ const Navbar = () => {
       <Affix offsetTop={0}>
         <Layout.Header>
           <div className={styles.logo}>
-            {/*<img src={logo} alt="logo"/>*/}
+            <img src={logo} alt="logo" className={styles.logoImage}/>
           </div>
           <Menu theme="dark" mode="horizontal" defaultSelectedKeys={getSelectedKeys()}
                 items={menuItems}/>

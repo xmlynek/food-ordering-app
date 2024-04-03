@@ -1,8 +1,8 @@
 import {Affix, Layout, Menu} from "antd";
 import {
-  AppstoreOutlined, HistoryOutlined,
+  HistoryOutlined,
   HomeOutlined, LogoutOutlined,
-  UserOutlined
+  UserOutlined, TruckOutlined,
 } from "@ant-design/icons";
 import {Link, useLocation} from "react-router-dom";
 import {performLogout} from "../../keycloak/keycloak.ts";
@@ -17,9 +17,9 @@ const Navbar = () => {
 
   const getSelectedKeys = () => {
     const path = location.pathname;
+    if (path.includes('/delivery-history')) return ['delivery-history'];
     if (path.includes('/delivery')) return ['delivery'];
     if (path.includes('/profile')) return ['profile'];
-    if (path.includes('/delivery-history')) return ['delivery-history'];
     if (path.includes('/basket')) return ['basket'];
     return ['home'];
   };
@@ -32,7 +32,7 @@ const Navbar = () => {
     },
     {
       key: 'delivery',
-      icon: <AppstoreOutlined/>,
+      icon: <TruckOutlined/>,
       label: <Link to="/delivery">Orders Delivery</Link>,
     },
     {

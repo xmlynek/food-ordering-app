@@ -1,8 +1,10 @@
-import {Menu, Space, Typography} from "antd";
-import {MailOutlined} from "@ant-design/icons";
+import {Image, Menu, Space, Typography} from "antd";
+import {MailOutlined, UserOutlined} from "@ant-design/icons";
 import {Link} from "react-router-dom";
 
 const {Title} = Typography;
+
+import image from '../assets/restaurant-homepage.webp';
 
 const HomePage = () => {
 
@@ -12,14 +14,20 @@ const HomePage = () => {
       icon: <MailOutlined/>,
       label: <Link to="/restaurants">Restaurants</Link>,
     },
+    {
+      key: 'profile',
+      icon: <UserOutlined/>,
+      label: <Link to="/profile">Profile</Link>,
+    },
   ];
 
   return (
-      <div style={{padding: '20px'}}>
+      <div>
         <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
-          <Title level={1}>Restaurant Management System</Title>
+          <Title level={1} style={{marginTop: 0}}>Restaurant Management System</Title>
         </ Space>
         <Menu mode="horizontal" items={menuItems}/>
+        <Image preview={false} src={image} />
       </div>
   );
 };
