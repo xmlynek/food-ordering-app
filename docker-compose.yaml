@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   catalog-service-elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.18
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION:-7.17.18}
     restart: on-failure
     environment:
       - discovery.type=single-node
@@ -17,13 +17,13 @@ services:
           memory: 512M
 
   catalog-service-postgres:
-    image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
     ports:
       - "5435:5432"
     restart: on-failure
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
       POSTGRES_DB: catalog_service
     deploy:
       resources:
@@ -36,13 +36,13 @@ services:
       retries: 5
 
   order-service-postgres:
-    image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
     ports:
       - "5432:5432"
     restart: on-failure
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
       POSTGRES_DB: order_service
     deploy:
       resources:
@@ -55,13 +55,13 @@ services:
       retries: 5
 
   payment-service-postgres:
-    image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
     ports:
       - "5433:5432"
     restart: on-failure
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
       POSTGRES_DB: payment_service
     deploy:
       resources:
@@ -74,13 +74,13 @@ services:
       retries: 5
 
   restaurant-service-postgres:
-    image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
     ports:
       - "5434:5432"
     restart: on-failure
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
       POSTGRES_DB: restaurant_service
     deploy:
       resources:
@@ -93,13 +93,13 @@ services:
       retries: 5
 
   kitchen-service-postgres:
-    image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
     ports:
       - "5436:5432"
     restart: on-failure
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
       POSTGRES_DB: kitchen_service
     deploy:
       resources:
@@ -112,13 +112,13 @@ services:
       retries: 5
 
   delivery-service-postgres:
-    image: eventuateio/eventuate-vanilla-postgres:0.18.0.RELEASE
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
     ports:
       - "5437:5432"
     restart: on-failure
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
       POSTGRES_DB: delivery_service
     deploy:
       resources:
@@ -131,15 +131,13 @@ services:
       retries: 5
 
   keycloak:
-    image: quay.io/keycloak/keycloak:20.0.3
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-20.0.3}
     ports:
       - "8083:8080"
     restart: on-failure
     environment:
-      KEYCLOAK_USER: user
-      KEYCLOAK_PASSWORD: password
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
     deploy:
       resources:
         limits:
@@ -151,7 +149,7 @@ services:
       - ./volumes/keycloak/export:/opt/keycloak/data/import
 
   zookeeper:
-    image: eventuateio/eventuate-zookeeper:0.18.0.RELEASE
+    image: eventuateio/eventuate-zookeeper:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
     ports:
       - "2181:2181"
     restart: on-failure
@@ -169,7 +167,7 @@ services:
       retries: 10
 
   kafka:
-    image: eventuateio/eventuate-kafka:0.18.0.RELEASE
+    image: eventuateio/eventuate-kafka:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
     ports:
       - "9092:9092"
     depends_on:
@@ -190,7 +188,7 @@ services:
           memory: 512M
 
   zipkin:
-    image: 'openzipkin/zipkin:latest'
+    image: openzipkin/zipkin:${ZIPKIN_VERSION:-latest}
     ports:
       - '9411:9411'
     restart: on-failure
@@ -200,7 +198,7 @@ services:
           memory: 128M
 
   cdcservice:
-    image: eventuateio/eventuate-cdc-service:0.16.0.RELEASE
+    image: eventuateio/eventuate-cdc-service:${EVENTUATE_CDC_VERSION:-0.16.0.RELEASE}
     ports:
       - "8099:8080"
     deploy:
