@@ -1,6 +1,6 @@
 SERVER_PORT: 8092
 DATASOURCE_URL: jdbc:postgresql://localhost:5437/delivery_service
-OAUTH2_ISSUER_URI: http://localhost:8083/realms/delivery
+OAUTH2_JWK_SET_URI: http://localhost:8083/realms/delivery/protocol/openid-connect/certs
 
 logging:
   level:

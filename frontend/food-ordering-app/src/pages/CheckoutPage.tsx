@@ -25,7 +25,7 @@ const CheckoutPage = () => {
   }, [basket, navigate]);
 
   // TODO: do something after order is created
-  const {mutateAsync, isLoading, isError, data, error} = useMutation({
+  const {mutateAsync} = useMutation({
     mutationKey: ['postOrder'],
     mutationFn: postOrder,
     onSuccess: async (data) => {

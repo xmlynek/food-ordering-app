@@ -26,6 +26,7 @@ const MenusPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     console.log(`Deleting item with id: ${id}`);
 
+    // @ts-ignore
     deleteMenu(id);
   };
 

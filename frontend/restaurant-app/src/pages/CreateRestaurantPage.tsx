@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import RestaurantForm from "../components/Restaurant/RestaurantForm.tsx";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {createRestaurant} from "../client/restaurantApiClient.ts";
-import {BasicRestaurantRestDto, RestaurantFormValues} from "../model/restaurant.ts";
+import {RestaurantFormValues} from "../model/restaurant.ts";
 
 
 const CreateRestaurantPage: React.FC = () => {
@@ -13,7 +13,7 @@ const CreateRestaurantPage: React.FC = () => {
   const navigate = useNavigate();
 
 
-  const {mutateAsync, isPending, error} = useMutation<BasicRestaurantRestDto, Error>({
+  const {mutateAsync, isPending} = useMutation({
     mutationFn: createRestaurant, onSuccess: async (data) => {
       await queryClient.invalidateQueries({queryKey: ['restaurants']});
       await message.success(`Restaurant ${data.name} created successfully`);

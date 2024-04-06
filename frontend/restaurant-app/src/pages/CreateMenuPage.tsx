@@ -29,6 +29,7 @@ const CreateMenuPage: React.FC = () => {
       const values = await form.validateFields();
       console.log('Form Values:', values);
 
+      // @ts-ignore
       await mutateAsync(values);
 
       form.resetFields();

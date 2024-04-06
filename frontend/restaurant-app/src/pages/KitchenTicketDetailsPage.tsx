@@ -33,7 +33,7 @@ const KitchenTicketDetailsPage: React.FC = () => {
     queryFn: fetchKitchenTicketDetailsById.bind(null, restaurantId, ticketId)
   });
 
-  const {mutateAsync, isPending: mutationPending, error: mutationError} = useMutation({
+  const {mutateAsync} = useMutation({
     mutationKey: ["complete-kitchen-ticket", restaurantId, ticketId],
     mutationFn: completeKitchenTicket.bind(null, restaurantId, ticketId),
     onSuccess: async () => {

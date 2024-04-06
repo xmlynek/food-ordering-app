@@ -26,6 +26,7 @@
     <module>api-gateway</module>
     <module>kitchen-service</module>
     <module>delivery-service</module>
+    <module>frontend</module>
   </modules>
 
   <properties>
@@ -39,6 +40,10 @@
     <com.food.ordering.app.common.version>${project.version}</com.food.ordering.app.common.version>
     <spring.cloud.gcp.dependencies.version>5.0.4</spring.cloud.gcp.dependencies.version>
     <spring-cloud.version>2023.0.0</spring-cloud.version>
+    <docker.image.name>${project.groupId}/${project.name}</docker.image.name>
+    <docker.image.tag>${project.version}</docker.image.tag>
+    <docker.repo.username>xmlynek</docker.repo.username>
+    <jib.maven.plugin.version>3.4.2</jib.maven.plugin.version>
   </properties>
 
   <dependencyManagement>
@@ -143,6 +148,50 @@
               </path>
             </annotationProcessorPaths>
           </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>com.google.cloud.tools</groupId>
+          <artifactId>jib-maven-plugin</artifactId>
+          <version>${jib.maven.plugin.version}</version>
+          <configuration>
+            <from>
+              <image>openjdk:21</image>
+            </from>
+            <container>
+              <ports>
+                <port>8080</port>
+              </ports>
+              <format>OCI</format>
+              <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+            </container>
+          </configuration>
+          <executions>
+            <execution>
+              <id>push-current-version-tag</id>
+              <phase>package</phase>
+              <configuration>
+                <to>
+                  <image>${docker.repo.username}/${docker.image.name}:${docker.image.tag}</image>
+                </to>
+              </configuration>
+              <goals>
+                <goal>dockerBuild</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>push-latest-tag</id>
+              <phase>package</phase>
+              <configuration>
+                <to>
+                  <image>${docker.repo.username}/${docker.image.name}:latest</image>
+                </to>
+              </configuration>
+              <goals>
+                <goal>dockerBuild</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

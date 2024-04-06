@@ -2,7 +2,6 @@ import {Form, message, Modal} from "antd";
 import React, {useEffect} from "react";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {
-  BasicRestaurantRestDto,
   Restaurant, RestaurantFormValues
 } from "../../model/restaurant.ts";
 import {updateRestaurant} from "../../client/restaurantApiClient.ts";
@@ -26,11 +25,10 @@ const ModifyRestaurantModal: React.FC<ModifyRestaurantModalProps> = ({
   const {
     mutateAsync: updateRestaurantMutation,
     isPending: isUpdatePending,
-    error
-  } = useMutation<BasicRestaurantRestDto, Error>({
+  } = useMutation({
     mutationFn: updateRestaurant.bind(null, restaurant.id), onSuccess: async () => {
       await message.success('Restaurant updated successfully!');
-      await queryClient.refetchQueries(['restaurantById', restaurant.id]);
+      await queryClient.refetchQueries({queryKey: ['restaurantById', restaurant.id]});
     },
     onError: async (error) => {
       await message.error('Restaurant update failed: ' + error.message);
@@ -56,6 +54,7 @@ const ModifyRestaurantModal: React.FC<ModifyRestaurantModalProps> = ({
   const handleModalOk = async () => {
     try {
       const values = await form.validateFields();
+      // @ts-ignore
       await updateRestaurantMutation(values);
       onHideModal();
     } catch (errorInfo) {

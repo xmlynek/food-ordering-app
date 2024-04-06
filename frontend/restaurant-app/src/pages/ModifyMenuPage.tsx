@@ -49,6 +49,7 @@ const ModifyMenuPage: React.FC = () => {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
+      // @ts-ignore
       await mutateAsync(values);
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
