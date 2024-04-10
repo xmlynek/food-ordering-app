@@ -1,4 +1,4 @@
-import {Badge, Card, Col, Image, List, Row, Typography} from "antd";
+import {Badge, Card, Col, Image, List, Row, Space, Typography} from "antd";
 import React from "react";
 import {OrderDetailsDto} from "../../model/order.ts";
 import {DeliveryStatus, KitchenTicketStatus, OrderStatus} from "../../model/enum.ts";
@@ -12,7 +12,6 @@ interface OrderDetailsProps {
 
 const OrderDetails: React.FC<OrderDetailsProps> = ({orderDetails}: OrderDetailsProps) => {
 
-  // TODO: update this function to return the correct color based on the order status
   const getOrderStatusColor = (status: OrderStatus) => {
     switch (status) {
       case OrderStatus.PENDING:
@@ -78,10 +77,10 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({orderDetails}: OrderDetailsP
           </Col>
           <Col xs={24} sm={12}>
             <Typography.Text strong>Total
-              Price:</Typography.Text> ${orderDetails.totalPrice.toFixed(2)}
+              Price:</Typography.Text> €{orderDetails.totalPrice.toFixed(2)}
           </Col>
           <Col xs={24} sm={12}>
-            <Typography.Text strong>Restaurant ID:</Typography.Text> {orderDetails.restaurantId}
+            <Typography.Text strong>Restaurant Name:</Typography.Text> {orderDetails.restaurantName}
           </Col>
           <Col xs={24} sm={12}>
             <Typography.Text strong>Order Status: </Typography.Text>
@@ -120,35 +119,39 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({orderDetails}: OrderDetailsP
                   padding: '16px',
                   transition: 'box-shadow 0.3s',
                 }}>
-                  <Row gutter={[16, 16]} align="middle" wrap>
-                    <Col xs={24} sm={8} md={6} lg={4} xl={4}>
+                  <Row gutter={[16, 16]} align="middle" justify="space-evenly" wrap>
+                    <Col xs={24} sm={7} md={5} lg={3} xl={3}>
                       <Image
                           src={item.imageUrl}
                           style={{
-                            width: '100px',
-                            height: '100px',
+                            width: '100%',
+                            height: 'auto',
                             objectFit: 'cover',
                             borderRadius: '8px',
                           }}
                       />
                     </Col>
-                    <Col xs={24} sm={10} md={14} lg={16} xl={16}>
-                      <Typography.Title level={5}
-                                        style={{marginBottom: '4px'}}>{item.name}</Typography.Title>
-                      <div>
-                        <Typography.Text strong>ID: </Typography.Text> {item.productId}
-                      </div>
-                      <div>
-                        <Typography.Text strong>Description: </Typography.Text> {item.description}
-                      </div>
+                    <Col xs={24} sm={17} md={15} lg={17} xl={17}>
+                      <Space direction="vertical">
+                        <Typography.Title level={5}
+                                          style={{margin: 0}}>{item.name}</Typography.Title>
+                        <div>
+                          <Typography.Text strong>ID: </Typography.Text> {item.productId}
+                        </div>
+                        <div style={{textAlign: 'justify'}}>
+                          <Typography.Text strong>Description: </Typography.Text> {item.description}
+                        </div>
+                      </Space>
                     </Col>
-                    <Col xs={24} sm={6} md={4} lg={4} xl={4}>
-                      <Typography.Text
-                          style={{display: 'block'}}>Quantity: {item.quantity}</Typography.Text>
-                      <Typography.Text style={{display: 'block'}}>Price:
-                        €{item.price.toFixed(2)}</Typography.Text>
-                      <Typography.Text strong style={{display: 'block'}}>Total:
-                        €{(item.price * item.quantity).toFixed(2)}</Typography.Text>
+                    <Col xs={24} sm={24} md={4} lg={3} xl={3}>
+                      <Space direction="vertical">
+                        <Typography.Text
+                            style={{display: 'block'}}>Quantity: {item.quantity}</Typography.Text>
+                        <Typography.Text style={{display: 'block'}}>Price:
+                          €{item.price.toFixed(2)}</Typography.Text>
+                        <Typography.Text strong style={{display: 'block'}}>Total:
+                          €{(item.price * item.quantity).toFixed(2)}</Typography.Text>
+                      </Space>
                     </Col>
                   </Row>
                 </List.Item>

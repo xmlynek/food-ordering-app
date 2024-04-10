@@ -94,13 +94,13 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               <Input placeholder="ABC 123"/>
             </Form.Item>
           </Col>
-          <Col xs={24}>
-            <Form.Item label="Card Details"
+          <Col xs={24} sm={24} md={24} lg={{offset: 6, span: 12}}  >
+            <Form.Item name={"cardDetails"} label="Card Details"
                        rules={[{required: true, message: 'Please input your card details!'}]}>
               <CardElement options={cardElementOptions}/>
             </Form.Item>
           </Col>
-          <Col xs={24} style={{textAlign: 'center'}}>
+          <Col xs={24} style={{textAlign: 'center', marginTop: "10px"}}>
             <Button type="primary" htmlType="submit" disabled={!stripe} size="large">
               Confirm order <strong
                 style={{marginLeft: '8px'}}>({totalPrice}€)</strong>

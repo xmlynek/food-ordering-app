@@ -32,12 +32,12 @@ const BasketPage: React.FC = () => {
 
 
         {basket.length > 0 ? (
-            <Row gutter={[16, 16]} align="middle">
-              <Col xs={24} md={16} lg={16} xl={{span: 12, offset: 4}}>
+            <Row gutter={[16, 16]} align="middle" justify={"center"}>
+              <Col xs={24} md={24} lg={24} style={{maxWidth: '920px'}}>
                 <BasketItemList basket={basket} onQuantityChange={handleQuantityChange}
                                 onRemoveFromBasket={removeFromBasket}/>
               </Col>
-              <Col xs={24} md={8} lg={8}>
+              <Col xs={24} md={24} lg={24} style={{maxWidth: '920px'}}>
                 <BasketSummary onCheckout={handleCheckout}/>
               </Col>
             </Row>

@@ -19,6 +19,7 @@ export interface CreateOrderItemDto {
 export interface OrderHistoryDto {
   id: string;
   restaurantId: string;
+  restaurantName: string;
   totalPrice: number;
   createdAt: string;
   orderStatus: OrderStatus;
