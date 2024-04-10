@@ -29,6 +29,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         .flatMap(restaurant -> {
           restaurant.setIsAvailable(restaurantRevisedEvent.isAvailable());
           restaurant.setName(restaurantRevisedEvent.name());
+          restaurant.setDescription(restaurantRevisedEvent.description());
           restaurant.setLastModifiedAt(restaurantRevisedEvent.lastModifiedAt());
           restaurant.setAddress(restaurantRevisedEvent.address());
           return restaurantRepository.save(restaurant);
