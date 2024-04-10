@@ -3,6 +3,7 @@ package com.food.ordering.app.order.service.service;
 import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.common.exception.MenuItemNotFoundException;
+import com.food.ordering.app.common.exception.RestaurantNotFoundException;
 import com.food.ordering.app.order.service.dto.OrderDetails;
 import com.food.ordering.app.order.service.dto.OrderItemDetails;
 import com.food.ordering.app.order.service.entity.Order;
@@ -11,6 +12,7 @@ import com.food.ordering.app.order.service.exception.OrderNotFoundException;
 import com.food.ordering.app.order.service.mapper.OrderDetailsMapper;
 import com.food.ordering.app.order.service.repository.OrderRepository;
 import com.food.ordering.app.order.service.repository.RestaurantMenuItemRepository;
+import com.food.ordering.app.order.service.repository.RestaurantRepository;
 import com.food.ordering.app.order.service.repository.projection.OrderMenuItemDetailsView;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +29,7 @@ public class OrderServiceImpl implements OrderService {
 
   private final OrderRepository orderRepository;
   private final RestaurantMenuItemRepository restaurantMenuItemRepository;
+  private final RestaurantRepository restaurantRepository;
   private final OrderDetailsMapper orderDetailsMapper;
 
   @Override
@@ -45,6 +48,10 @@ public class OrderServiceImpl implements OrderService {
             UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()))
         .orElseThrow(() -> new OrderNotFoundException(orderId));
 
+    String restaurantName = restaurantRepository.findById(order.getRestaurantId())
+        .orElseThrow(() -> new RestaurantNotFoundException(order.getRestaurantId()))
+        .getName();
+
     List<OrderItemDetails> orderItemDetails = order.getItems().stream()
         .map(orderItem -> {
           OrderMenuItemDetailsView menuItemDetailsView = restaurantMenuItemRepository
@@ -55,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
         })
         .toList();
 
-    return orderDetailsMapper.toOrderDetails(order, orderItemDetails);
+    return orderDetailsMapper.toOrderDetails(order, orderItemDetails, restaurantName);
   }
 
   @Override

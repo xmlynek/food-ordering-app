@@ -17,9 +17,10 @@ public interface OrderDetailsMapper {
   @Mappings({
     @Mapping(target = "totalPrice", source = "totalPrice.amount"),
     @Mapping(target = "items", expression = "java(itemDetails)"),
+    @Mapping(target = "restaurantName", expression = "java(restaurantName)"),
     @Mapping(target = "failureMessage", expression = "java(String.join(\".\\n\", order.getFailureMessages()))"),
   })
-  OrderDetails toOrderDetails(Order order, @Context List<OrderItemDetails> itemDetails);
+  OrderDetails toOrderDetails(Order order, @Context List<OrderItemDetails> itemDetails, @Context String restaurantName);
 
   OrderItemDetails toOrderItemDetails(
       OrderItem orderItem, OrderMenuItemDetailsView view);

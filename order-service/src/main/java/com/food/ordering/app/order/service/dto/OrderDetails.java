@@ -12,6 +12,7 @@ import lombok.Builder;
 @Builder
 public record OrderDetails(UUID id,
                            UUID restaurantId,
+                           String restaurantName,
                            LocalDateTime createdAt,
                            LocalDateTime lastModifiedAt,
                            OrderStatus orderStatus,
