@@ -2,6 +2,7 @@ package com.food.ordering.app.payment.service.entity;
 
 import com.food.ordering.app.common.enums.PaymentStatus;
 import io.eventuate.examples.common.money.Money;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -39,6 +40,7 @@ public class Payment {
   private UUID orderId;
 
   @CurrentTimestamp
+  @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   @UpdateTimestamp

@@ -43,7 +43,7 @@ public class MenuItem {
   private BigDecimal price;
 
   @CurrentTimestamp
-  @Column(nullable = false)
+  @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   @Column(nullable = false)

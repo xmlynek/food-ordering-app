@@ -56,6 +56,7 @@ public class Order {
   private UUID restaurantId;
 
   @CurrentTimestamp
+  @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   @UpdateTimestamp

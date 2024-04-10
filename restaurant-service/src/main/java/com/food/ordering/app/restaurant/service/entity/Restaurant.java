@@ -47,7 +47,7 @@ public class Restaurant {
   private String ownerId;
 
   @CurrentTimestamp
-  @Column(nullable = false)
+  @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   @Column(nullable = false)

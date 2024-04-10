@@ -52,6 +52,7 @@ public class KitchenTicket {
   private List<KitchenTicketItem> ticketItems;
 
   @CurrentTimestamp
+  @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   @UpdateTimestamp
