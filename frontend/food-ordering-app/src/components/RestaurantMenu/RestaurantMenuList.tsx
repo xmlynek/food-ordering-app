@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Button, Col, Divider, Image, List, Row, Space, Typography} from "antd";
 import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
-import {ShoppingCartOutlined} from "@ant-design/icons";
+import {DownOutlined, ShoppingCartOutlined, UpOutlined} from "@ant-design/icons";
 import {useBasket} from "../../hooks/useBasketContext.tsx";
 import {fetchRestaurantMenus} from "../../client/catalogRestaurantMenuItemsApiClient.ts";
 import {PageableRestApiResponse} from "../../model/pageable.ts";
@@ -61,15 +61,27 @@ const RestaurantMenuList: React.FC<MenuListProps> = ({}: MenuListProps) => {
     setSortDirection(isAscending ? "ascend" : "descend");
   };
 
+  const clearSort = () => {
+    setSortType("");
+    setSortDirection("");
+  };
+
   if (error) return 'An error has occurred: ' + error.message
 
   return (
       <>
         <Space style={{marginBottom: 16}}>
-          <Button onClick={() => handleSort("name")}>Sort by Name</Button>
-          <Button onClick={() => handleSort("price")}>Sort by Price</Button>
+          <Button onClick={() => handleSort("name")}>
+            Sort by Name {sortType === "name" && (sortDirection === "ascend" ? <UpOutlined/> :
+              <DownOutlined/>)}
+          </Button>
+          <Button onClick={() => handleSort("price")}>
+            Sort by Price {sortType === "price" && (sortDirection === "ascend" ? <UpOutlined/> :
+              <DownOutlined/>)}
+          </Button>
+          <Button onClick={clearSort}>Clear Sort</Button>
         </Space>
-        <Divider style={{margin: "5px"}} />
+        <Divider style={{margin: "5px"}}/>
         <List
             className={styles.menuList}
             loading={isPending}
