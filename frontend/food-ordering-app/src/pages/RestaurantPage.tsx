@@ -28,23 +28,16 @@ const RestaurantPage: React.FC = () => {
   if (isPending) return 'Loading...'
 
   return (
-      <div>
+      <Card>
         <div style={{marginBottom: '24px', textAlign: 'center'}}>
-          <Title level={1}>{restaurant.name}</Title>
+          <Title level={1} style={{marginTop: '10px'}}>{restaurant.name}</Title>
         </div>
 
         <Space direction="vertical" size="large" style={{width: '100%'}}>
-          <Card title="Restaurant Details" bordered={false}
-                style={{boxShadow: '0 4px 8px rgba(0,0,0,0.1)'}}>
-            <RestaurantDetails restaurant={restaurant}/>
-          </Card>
-
-          <Card title="Available Menu Products" bordered={false}
-                style={{boxShadow: '0 4px 8px rgba(0,0,0,0.1)'}}>
-            <RestaurantMenuList/>
-          </Card>
+          <RestaurantDetails restaurant={restaurant}/>
+          <RestaurantMenuList/>
         </Space>
-      </div>
+      </Card>
   );
 };
 

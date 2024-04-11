@@ -1,4 +1,4 @@
-import {Row, Spin, Typography} from "antd";
+import {Card, Row, Spin, Typography} from "antd";
 import React from "react";
 import {useQuery} from "@tanstack/react-query";
 import {OrderDetailsDto} from "../model/order.ts";
@@ -26,14 +26,14 @@ const OrderDetailsPage: React.FC = () => {
 
 
   return (
-      <div>
+      <Card>
         <Row justify="center" style={{marginBottom: '12px'}}>
           <Title style={{marginTop: '0px'}} level={1}>Order details</Title>
         </Row>
         {isPending && <Spin size="large"/>}
         {error && <div>An error has occurred: {error.message}</div>}
         {!isPending && !error && <OrderDetails orderDetails={orderDetails} />}
-      </div>
+      </Card>
   );
 };
 

@@ -22,7 +22,7 @@ const BasketItemList: React.FC<BasketItemListProps> = ({
                                                        }) => {
 
   return (
-      <Card>
+      <Card style={{boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px'}}>
         {basket.map((item) => (
             <Card key={item.id} bordered={true}>
               <Row justify="space-between" align="middle" gutter={[16, 16]}>

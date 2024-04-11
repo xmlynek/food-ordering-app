@@ -63,7 +63,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({orderDetails}: OrderDetailsP
       <Card
           title={<Title ellipsis={true} style={{marginTop: '0px'}}
                         level={4}>Order {orderDetails.id}</Title>}
-          style={{width: '100%'}}
+          style={{width: '100%', boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px'}}
           headStyle={{background: '#f0f2f5'}}
       >
         <Row gutter={[16, 16]}>

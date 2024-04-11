@@ -7,16 +7,17 @@ const {Title} = Typography;
 
 const RestaurantsListPage: React.FC = () => {
   return (
-      <div>
+      <Card>
         <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
-          <Title level={1}>Restaurants</Title>
+          <Title level={1} style={{marginTop: '10px'}}>Restaurants</Title>
         </ Space>
-        {/*{error && 'An error has occurred: ' + error.message}*/}
-        <Card title="List of available restaurants" bordered={false}>
-          {<RestaurantList />}
+
+        <Card title="List of available restaurants" bordered={false}
+              style={{marginTop: '10px', boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px'}}>
+          {<RestaurantList/>}
         </Card>
         <Outlet/>
-      </div>
+      </Card>
   );
 };
 

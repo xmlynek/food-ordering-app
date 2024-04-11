@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, Divider, Image, List, Row, Space, Typography} from "antd";
+import {Button, Card, Col, Divider, Image, List, Row, Space, Typography} from "antd";
 import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import {DownOutlined, ShoppingCartOutlined, UpOutlined} from "@ant-design/icons";
@@ -69,7 +69,7 @@ const RestaurantMenuList: React.FC<MenuListProps> = ({}: MenuListProps) => {
   if (error) return 'An error has occurred: ' + error.message
 
   return (
-      <>
+      <Card title="Available Menu Products" bordered={false} style={{boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px'}}>
         <Space style={{marginBottom: 16}}>
           <Button onClick={() => handleSort("name")}>
             Sort by Name {sortType === "name" && (sortDirection === "ascend" ? <UpOutlined/> :
@@ -89,6 +89,7 @@ const RestaurantMenuList: React.FC<MenuListProps> = ({}: MenuListProps) => {
             size="large"
             pagination={{
               position: 'bottom',
+              align: 'end',
               pageSize: pageSize,
               current: currentPage,
               total: menuPage?.totalElements,
@@ -136,7 +137,7 @@ const RestaurantMenuList: React.FC<MenuListProps> = ({}: MenuListProps) => {
                 </List.Item>
             )}
         />
-      </>
+      </Card>
   );
 };
 

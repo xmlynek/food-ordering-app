@@ -14,7 +14,7 @@ const BasketSummary: React.FC<BasketSummaryProps> = ({onCheckout}: BasketSummary
   const {totalItems, calculateTotalPrice} = useBasket();
 
   return (
-      <Card className={styles.summaryCard}>
+      <Card className={styles.summaryCard} >
         <Title level={4}>Summary</Title>
         <Divider/>
         <Row className={styles.spaceBetween}>

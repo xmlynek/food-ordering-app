@@ -1,4 +1,4 @@
-import {Typography, Row, Col, Layout, Result, Button} from 'antd';
+import {Typography, Row, Col, Result, Button, Card} from 'antd';
 import React from "react";
 import BasketItemList from "../components/Basket/BasketItemList.tsx";
 import BasketSummary from "../components/Basket/BasketSummary.tsx";
@@ -6,7 +6,6 @@ import {useBasket} from "../hooks/useBasketContext.tsx";
 import {useNavigate} from "react-router-dom";
 
 const {Title} = Typography;
-const {Content} = Layout;
 
 const BasketPage: React.FC = () => {
   const {basket, removeFromBasket, updateQuantity} = useBasket();
@@ -25,14 +24,15 @@ const BasketPage: React.FC = () => {
   };
 
   return (
-      <Content>
+      <Card>
         <Row justify="center" style={{marginBottom: '12px'}}>
-          <Title level={1}>Your Basket</Title>
+          <Title level={1} style={{marginTop: '10px', padding: 0}}>Your Basket</Title>
         </Row>
 
 
         {basket.length > 0 ? (
-            <Row gutter={[16, 16]} align="middle" justify={"center"}>
+
+            <Row gutter={[16, 16]} align="middle" justify={"center"} >
               <Col xs={24} md={24} lg={24} style={{maxWidth: '920px'}}>
                 <BasketItemList basket={basket} onQuantityChange={handleQuantityChange}
                                 onRemoveFromBasket={removeFromBasket}/>
@@ -42,15 +42,15 @@ const BasketPage: React.FC = () => {
               </Col>
             </Row>
         ) : (
-            <Result
-                status="404"
-                title="Your Basket is Empty"
-                subTitle="Looks like you haven't added anything to your basket yet."
-                extra={<Button type="primary" onClick={() => navigate('/restaurants')}>Start
-                  Shopping</Button>}
-            />
+              <Result
+                  status="404"
+                  title="Your Basket is Empty"
+                  subTitle="Looks like you haven't added anything to your basket yet."
+                  extra={<Button type="primary" onClick={() => navigate('/restaurants')}>Start
+                    Shopping</Button>}
+              />
         )}
-      </Content>
+      </Card>
   );
 };
 
