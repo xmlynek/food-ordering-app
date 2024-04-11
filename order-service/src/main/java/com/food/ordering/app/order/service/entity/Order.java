@@ -89,7 +89,7 @@ public class Order {
   private List<OrderItem> items = new ArrayList<>();
 
   @ElementCollection
-  @Fetch(FetchMode.SUBSELECT)
+  @Column(length = 1024)
   @Builder.Default
   private List<String> failureMessages = new ArrayList<>();
 
