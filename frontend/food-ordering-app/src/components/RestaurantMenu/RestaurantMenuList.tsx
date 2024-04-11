@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {Button, Card, Col, Divider, Image, List, Row, Space, Typography} from "antd";
 import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
@@ -10,6 +10,7 @@ import {MenuItemRestDTO} from "../../model/restApiDto.ts";
 
 import styles from './RestaurantMenuList.module.css';
 import {usePagination} from "../../hooks/usePagination.ts";
+import useSortableData from "../../hooks/useSortableData.ts";
 
 const {Title, Paragraph} = Typography;
 
@@ -20,8 +21,6 @@ const RestaurantMenuList: React.FC<MenuListProps> = ({}: MenuListProps) => {
   const params = useParams();
   const {pageSize, currentPage, handlePageChange} = usePagination();
   const {addToBasket} = useBasket();
-  const [sortDirection, setSortDirection] = useState<"ascend" | "descend" | "">("");
-  const [sortType, setSortType] = useState<"name" | "price" | "">("");
 
   const restaurantId = params.id as string;
 
@@ -39,45 +38,31 @@ const RestaurantMenuList: React.FC<MenuListProps> = ({}: MenuListProps) => {
     refetch();
   }, [currentPage, pageSize]);
 
+  const {
+    items: sortedMenuItems,
+    requestSort,
+    sortConfig,
+    clearSort
+  } = useSortableData<MenuItemRestDTO>(menuPage?.content || []);
 
   const handleAddToBasket = async (basketItem: BasketItem) => {
     addToBasket(basketItem);
   }
-
-  const sortedData = () => {
-    return [...menuPage?.content || []].sort((a, b) => {
-      if (sortType === "name") {
-        return sortDirection === "ascend" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
-      } else if (sortType === "price") {
-        return sortDirection === "ascend" ? a.price - b.price : b.price - a.price;
-      }
-      return 0;
-    });
-  };
-
-  const handleSort = (type: "name" | "price") => {
-    const isAscending = sortType !== type || sortDirection === "descend";
-    setSortType(type);
-    setSortDirection(isAscending ? "ascend" : "descend");
-  };
-
-  const clearSort = () => {
-    setSortType("");
-    setSortDirection("");
-  };
 
   if (error) return 'An error has occurred: ' + error.message
 
   return (
       <Card title="Available Menu Products" bordered={false} style={{boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px'}}>
         <Space style={{marginBottom: 16}}>
-          <Button onClick={() => handleSort("name")}>
-            Sort by Name {sortType === "name" && (sortDirection === "ascend" ? <UpOutlined/> :
-              <DownOutlined/>)}
+          <Button onClick={() => requestSort("name")}>
+            Sort by
+            Name{sortConfig.key === "name" && (sortConfig.direction === "ascend" ?
+              <UpOutlined/> : <DownOutlined/>)}
           </Button>
-          <Button onClick={() => handleSort("price")}>
-            Sort by Price {sortType === "price" && (sortDirection === "ascend" ? <UpOutlined/> :
-              <DownOutlined/>)}
+          <Button onClick={() => requestSort("price")}>
+            Sort by
+            Price {sortConfig.key === "price" && (sortConfig.direction === "ascend" ?
+              <UpOutlined/> : <DownOutlined/>)}
           </Button>
           <Button onClick={clearSort}>Clear Sort</Button>
         </Space>
@@ -99,7 +84,7 @@ const RestaurantMenuList: React.FC<MenuListProps> = ({}: MenuListProps) => {
               showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               responsive: true,
             }}
-            dataSource={sortedData()}
+            dataSource={sortedMenuItems}
             renderItem={item => (
                 <List.Item>
                   <Row gutter={[16, 16]} align={"top"} justify={"center"} style={{width: "100%"}}>
