@@ -39,7 +39,8 @@ public class RestaurantQueryServiceImpl implements RestaurantQueryService {
         .filter(QueryBuilders.bool()
             .should(QueryBuilders.wildcard().field("name").wildcard("*" + searchValue + "*").build()
                 ._toQuery())
-            .should(QueryBuilders.wildcard().field("description").wildcard("*" + searchValue + "*").build()
+            .should(QueryBuilders.wildcard().field("description").wildcard("*" + searchValue + "*")
+                .build()
                 ._toQuery())
             .should(QueryBuilders.nested().path("menuItems").query(QueryBuilders.bool()
                     .should(
@@ -64,12 +65,17 @@ public class RestaurantQueryServiceImpl implements RestaurantQueryService {
     return reactiveElasticsearchTemplate.searchForPage(searchQuery, Restaurant.class)
         .map(pageResult -> PageableExecutionUtils.getPage(
             pageResult.getContent().stream().map(SearchHit::getContent)
+                .sorted((restaurant1, restaurant2) ->
+                    restaurant1.getName() != null && restaurant2.getName() != null
+                        ? restaurant1.getName().compareTo(restaurant2.getName())
+                        : 0)
                 .map(restaurantMapper::restaurantToBasicRestaurantDto).collect(
                     Collectors.toList()),
             PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()),
             pageResult::getTotalPages)
         );
   }
+
   @Override
   public Mono<FullRestaurantDto> findRestaurantById(String id) {
     return restaurantRepository.findById(id)

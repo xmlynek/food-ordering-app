@@ -7,6 +7,7 @@ import com.food.ordering.app.catalog.service.repository.RestaurantRepository;
 import com.food.ordering.app.common.exception.MenuItemNotFoundException;
 import com.food.ordering.app.common.exception.RestaurantNotFoundException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class RestaurantMenuItemQueryServiceImpl implements RestaurantMenuItemQue
         .flatMap(restaurant -> {
           List<MenuItem> menuItems = restaurant.getMenuItems().stream()
               .filter(MenuItem::getIsAvailable)
+              .sorted(Comparator.comparing(MenuItem::getName))
               .toList();
           int totalItems = menuItems.size();
 
