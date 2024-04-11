@@ -2,8 +2,8 @@ import {BasicKitchenTicketRestDTO, KitchenTicketDetailsRestDTO} from "../model/k
 import {axiosInstance} from "./axiosInstance.ts";
 import {PageableRestApiResponse} from "../model/pageable.ts";
 
-export const fetchKitchenTickets = async (restaurantId: string, page: number = 0, size: number = 10): Promise<PageableRestApiResponse<BasicKitchenTicketRestDTO>> => {
-  const response = await axiosInstance.get(`${window.envVars.REACT_KITCHEN_SERVICE_PATH}/${restaurantId}/tickets?page=${page}&size=${size}`);
+export const fetchKitchenTickets = async (restaurantId: string, page: number = 0, size: number = 10, ticketStatus: string = ""): Promise<PageableRestApiResponse<BasicKitchenTicketRestDTO>> => {
+  const response = await axiosInstance.get(`${window.envVars.REACT_KITCHEN_SERVICE_PATH}/${restaurantId}/tickets?page=${page}&size=${size}&ticketStatus=${ticketStatus}`);
   return response.data;
 };
 

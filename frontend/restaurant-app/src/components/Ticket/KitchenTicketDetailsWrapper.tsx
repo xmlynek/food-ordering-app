@@ -3,24 +3,26 @@ import {
   Drawer, Spin,
   Typography
 } from "antd";
-import {useNavigate, useParams} from "react-router-dom";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {KitchenTicketDetailsRestDTO} from "../model/kitchenTicket.ts";
+import {KitchenTicketDetailsRestDTO} from "../../model/kitchenTicket.ts";
 import {
   completeKitchenTicket,
   fetchKitchenTicketDetailsById
-} from "../client/kitchenTicketsApiClient.ts";
-import KitchenTicketDetails from "../components/Ticket/KitchenTicketDetails.tsx";
+} from "../../client/kitchenTicketsApiClient.ts";
+import KitchenTicketDetails from "./KitchenTicketDetails.tsx";
+
 
 const {Title} = Typography;
 
-const KitchenTicketDetailsPage: React.FC = () => {
-  const queryClient = useQueryClient();
-  const params = useParams()
-  const navigate = useNavigate();
+interface KitchenTicketDetailsWrapperProps {
+  ticketId: string;
+  restaurantId: string;
+  isVisible: boolean;
+  onClose: () => void;
+}
 
-  const restaurantId = params.id as string;
-  const ticketId = params.ticketId as string;
+const KitchenTicketDetailsWrapper: React.FC<KitchenTicketDetailsWrapperProps> = ({ticketId, isVisible, restaurantId, onClose}) => {
+  const queryClient = useQueryClient();
 
 
   const {
@@ -30,7 +32,8 @@ const KitchenTicketDetailsPage: React.FC = () => {
     error
   } = useQuery<KitchenTicketDetailsRestDTO, Error>({
     queryKey: ["kitchen-ticket-details", restaurantId, ticketId],
-    queryFn: fetchKitchenTicketDetailsById.bind(null, restaurantId, ticketId)
+    queryFn: fetchKitchenTicketDetailsById.bind(null, restaurantId, ticketId),
+    enabled: isVisible
   });
 
   const {mutateAsync} = useMutation({
@@ -42,7 +45,8 @@ const KitchenTicketDetailsPage: React.FC = () => {
   });
 
   const handleOnClose = () => {
-    navigate(`..`);
+    // navigate(`..`);
+    onClose();
   }
 
   const handleCompleteTicket = async () => {
@@ -56,7 +60,7 @@ const KitchenTicketDetailsPage: React.FC = () => {
           title={<Title level={4} style={{margin: 0}}>Kitchen Ticket Details</Title>}
           width={720}
           onClose={handleOnClose}
-          open={true}
+          open={isVisible}
       >
 
         {isPending && <Spin size={"large"} fullscreen={true} spinning={true} tip="Loading..."/>}
@@ -69,4 +73,4 @@ const KitchenTicketDetailsPage: React.FC = () => {
   );
 };
 
-export default KitchenTicketDetailsPage;
+export default KitchenTicketDetailsWrapper;

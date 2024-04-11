@@ -1,4 +1,4 @@
-import {Layout, message, Typography} from "antd";
+import {Card, Layout, message, Typography} from "antd";
 import React from "react";
 import MenuList from "../components/Menu/MenuList.tsx";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
@@ -34,10 +34,10 @@ const MenusPage: React.FC = () => {
   return (
       <Content>
         <Outlet/>
-        {/*<Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>*/}
-        <Title style={{marginTop: 0}} level={2}>List of menus</Title>
-        {/*</ Space>*/}
-        <MenuList deleteHandler={handleDelete}/>
+        <Card style={{boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px'}}>
+          <Title style={{marginTop: 0}} level={2}>List of menus</Title>
+          <MenuList deleteHandler={handleDelete}/>
+        </Card>
 
       </Content>
   );

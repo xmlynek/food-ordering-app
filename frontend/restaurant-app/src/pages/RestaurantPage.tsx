@@ -1,8 +1,8 @@
-import {Button, Card, Col, Layout, message, Modal, Row, Space, Spin, Typography} from "antd";
+import {Button, Card, Col, message, Modal, Row, Space, Spin, Typography} from "antd";
 import React from "react";
 import {Outlet, useNavigate, useParams} from "react-router-dom";
 import RestaurantDetails from "../components/Restaurant/RestaurantDetails.tsx";
-import RestaurantLayout from "../components/Restaurant/layout/RestaurantLayout.tsx";
+import RestaurantDetailsLayout from "../components/Restaurant/layout/RestaurantDetailsLayout.tsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {Restaurant} from "../model/restaurant.ts";
 import {
@@ -13,8 +13,6 @@ import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import ModifyRestaurantModal from "../components/Restaurant/ModifyRestaurantModal.tsx";
 
 const {Title} = Typography;
-
-const {Content} = Layout;
 
 const RestaurantPage: React.FC = () => {
   const params = useParams();
@@ -68,12 +66,12 @@ const RestaurantPage: React.FC = () => {
 
 
   return (
-      <Content>
-        <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
-          <Title level={1}>{restaurant.name}</Title>
+      <Card>
+        <Space direction="horizontal" style={{width: '100%', justifyContent: 'center', marginBottom: '10px'}}>
+          <Title level={1} style={{marginTop: '10px'}}>{restaurant.name}</Title>
         </Space>
 
-        <Card title={
+        <Card style={{boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px'}} title={
           <Row justify="space-between" align="middle">
             <Col>Restaurant Details</Col>
             <Col>
@@ -88,13 +86,13 @@ const RestaurantPage: React.FC = () => {
           <RestaurantDetails restaurant={restaurant}/>
         </Card>
 
-        <RestaurantLayout>
+        <RestaurantDetailsLayout>
           <Outlet/>
-        </RestaurantLayout>
+        </RestaurantDetailsLayout>
 
         <ModifyRestaurantModal restaurant={restaurant} isVisible={isModalVisible}
                                onHideModal={handleModalCancel}/>
-      </Content>
+      </Card>
   );
 };
 

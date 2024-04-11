@@ -22,6 +22,7 @@ import com.food.ordering.app.kitchen.service.repository.KitchenTicketRepository;
 import com.food.ordering.app.kitchen.service.repository.RestaurantMenuItemRepository;
 import com.food.ordering.app.kitchen.service.repository.RestaurantRepository;
 import com.food.ordering.app.kitchen.service.repository.projection.KitchenTicketDetailsView;
+import com.food.ordering.app.kitchen.service.repository.specification.KitchenTicketSpecifications;
 import io.eventuate.examples.common.money.Money;
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,9 +50,11 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
 
   @Override
   public Page<KitchenTicket> getAllKitchenTicketsByRestaurantId(UUID restaurantId,
-      Pageable pageable) {
-    return kitchenTicketRepository.findAllByRestaurantIdAndRestaurantOwnerId(restaurantId,
-        SecurityContextHolder.getContext().getAuthentication().getName(), pageable);
+      Pageable pageable, KitchenTicketStatus ticketStatus) {
+    Specification<KitchenTicket> spec = KitchenTicketSpecifications
+        .withRestaurantIdAndRestaurantOwnerIdAndOptionalStatus(restaurantId,
+            SecurityContextHolder.getContext().getAuthentication().getName(), ticketStatus);
+    return kitchenTicketRepository.findAll(spec, pageable);
   }
 
   @Override

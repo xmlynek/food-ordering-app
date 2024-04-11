@@ -10,23 +10,25 @@ const RestaurantsListPage: React.FC = () => {
 
 
   return (
-      <div>
-        <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
-          <Title level={1}>Restaurants</Title>
+      <Card style={{boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px'}}>
+        <Space direction="horizontal" style={{width: '100%', justifyContent: 'center', marginBottom: '10px'}}>
+          <Title level={1} style={{marginTop: '10px'}}>Restaurants</Title>
         </ Space>
-        {/*{error && 'An error has occurred: ' + error.message}*/}
-        <Card title="List of your restaurants" bordered={false} extra={
-          <Button type="primary" onClick={() => {
-            navigate("add")
-          }}>
-            Create Restaurant
-          </Button>
+
+        <Card title="List of your restaurants" bordered={false}
+              style={{boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px'}} extra={
+                <Button type="primary" onClick={() => {
+                navigate("add")
+              }}>
+          Create Restaurant
+        </Button>
         }>
-          {<RestaurantList/>}
-        </Card>
-        <Outlet/>
-      </div>
-  );
+        {<RestaurantList/>}
+      </Card>
+  <Outlet/>
+</Card>
+)
+  ;
 };
 
 export default RestaurantsListPage;

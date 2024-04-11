@@ -1,5 +1,6 @@
 package com.food.ordering.app.kitchen.service.controller;
 
+import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.kitchen.service.dto.BasicKitchenTicketResponse;
 import com.food.ordering.app.kitchen.service.dto.KitchenTicketDetails;
 import com.food.ordering.app.kitchen.service.mapper.KitchenTicketMapper;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,9 +33,10 @@ public class KitchenTicketController {
   @GetMapping
   public ResponseEntity<Page<BasicKitchenTicketResponse>> getRestaurantKitchenTickets(
       @PathVariable(name = "restaurantId") UUID restaurantId,
+      @RequestParam(name = "ticketStatus", required = false) KitchenTicketStatus ticketStatus,
       @SortDefault(value = "createdAt", direction = Direction.DESC) @PageableDefault Pageable pageable) {
     Page<BasicKitchenTicketResponse> kitchenTicketResponses = kitchenTicketService.getAllKitchenTicketsByRestaurantId(
-            restaurantId, pageable)
+            restaurantId, pageable, ticketStatus)
         .map(kitchenTicketMapper::kitchenTicketEntityToBasicKitchenTicketResponse);
     return ResponseEntity.ok(kitchenTicketResponses);
   }

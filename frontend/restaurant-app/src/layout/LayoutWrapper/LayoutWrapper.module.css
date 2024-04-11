@@ -1,5 +1,10 @@
 .layout {
   min-height: 100vh;
+  background-image: url("./restaurant-homepage.webp");
+  background-size: cover;
+  background-position: center;
+  margin: 0;
+  padding: 0;
 }
 
 .content {

@@ -4,14 +4,13 @@ import {lazy, Suspense} from "react";
 import ModifyMenuPage from "./pages/ModifyMenuPage.tsx";
 import CreateMenuPage from "./pages/CreateMenuPage.tsx";
 import CreateRestaurantPage from "./pages/CreateRestaurantPage.tsx";
-import KitchenTicketDetailsPage from "./pages/KitchenTicketDetailsPage.tsx";
 import LayoutWrapper from "./layout/LayoutWrapper/LayoutWrapper.tsx";
+import MenusPage from "./pages/MenusPage.tsx";
+import KitchenTicketsPage from "./pages/KitchenTicketsPage.tsx";
 
 const HomePage = lazy(() => import("./pages/HomePage.tsx"));
 const RestaurantsListPage = lazy(() => import("./pages/RestaurantsListPage.tsx"));
 const RestaurantPage = lazy(() => import("./pages/RestaurantPage.tsx"));
-const OrderTicketsPage = lazy(() => import("./pages/KitchenTicketsPage.tsx"));
-const MenusPage = lazy(() => import("./pages/MenusPage.tsx"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage.tsx"));
 
 
@@ -27,9 +26,7 @@ function App() {
                   <Route path="add" element={<CreateRestaurantPage/>}/>
                 </Route>
                 <Route path="/restaurants/:id" element={<RestaurantPage/>}>
-                  <Route path="tickets" element={<OrderTicketsPage/>}>
-                    <Route path=":ticketId" element={<KitchenTicketDetailsPage/>}/>
-                  </Route>
+                  <Route path="tickets" element={<KitchenTicketsPage/>} />
                   <Route path="menu" element={<MenusPage/>}>
                     <Route path="add" element={<CreateMenuPage/>}/>
                     <Route path=":menuId/edit" element={<ModifyMenuPage/>}/>
