@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Input, List, Tag, Typography} from "antd";
+import {Button, Card, Input, Table, Tag, Typography} from "antd";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {
   BasicRestaurantRestDTO,
@@ -10,6 +10,7 @@ import {useQuery} from "@tanstack/react-query";
 
 import styles from './RestaurantList.module.css';
 import {usePagination} from "../../hooks/usePagination.ts";
+import {ColumnsType} from "antd/es/table";
 
 const {Title, Paragraph} = Typography;
 
@@ -47,6 +48,49 @@ const RestaurantList: React.FC = () => {
     });
   }
 
+  const columns: ColumnsType<BasicRestaurantRestDTO> = [
+    {
+      title: 'Sort by name',
+      dataIndex: 'name',
+      key: 'name',
+      defaultSortOrder: 'ascend',
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      render: (_, restaurant) => (
+          <Card
+              hoverable
+              className={styles.card}
+              // onClick={handleCardClick.bind(null, restaurant.id)}
+              title={
+                <div className={styles.cardTitleContainer}>
+                  <Title level={4}>{restaurant.name}</Title>
+                  <span>{restaurant.isAvailable ? (<Tag color="green">Available</Tag>) : (
+                      <Tag color="red">Not available</Tag>)}
+                          </span>
+                </div>
+              }
+          >
+            <div className={styles.cardContent}>
+              <Paragraph className={styles.paragraphJustify} ellipsis={{rows: 3}}>
+                <strong>Description:</strong> {restaurant.description}
+              </Paragraph>
+              <Paragraph>
+                <strong>Address:</strong> {`${restaurant.address.street}, ${restaurant.address.city}, ${restaurant.address.postalCode}, ${restaurant.address.country}`}
+              </Paragraph>
+            </div>
+            <Button className={styles.btnPrimary} type="primary">
+              View Details
+            </Button>
+          </Card>
+      ),
+    },
+  ];
+
+  const dataSource = restaurantsPage?.content.map(restaurant => ({
+    key: restaurant.id,
+    ...restaurant,
+  })) || [];
+
+
   const handleCardClick = (restaurantId: string) => {
     navigate(`${restaurantId}`);
   }
@@ -63,56 +107,24 @@ const RestaurantList: React.FC = () => {
             onSearch={handleOnSearch}
             style={{marginBottom: 20}}
         />
-        <List
+        <Table
+            columns={columns}
+            dataSource={dataSource}
             loading={isPending}
-            itemLayout="horizontal"
-            grid={{gutter: 16, column: 1}}
-            size="large"
+            onRow={(record) => ({
+              onClick: () => handleCardClick(record.id),
+            })}
             pagination={{
-              position: 'bottom',
-              align: 'start',
+              position: ['bottomRight'],
               pageSize: pageSize,
               current: currentPage,
               total: restaurantsPage?.totalElements,
               onChange: handlePageChange,
-              onShowSizeChange: handlePageChange,
               showSizeChanger: true,
               showQuickJumper: true,
               showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               responsive: true,
             }}
-            dataSource={restaurantsPage?.content || []}
-            renderItem={restaurant => (
-                <List.Item>
-                  <Card
-                      hoverable
-                      className={styles.card}
-                      onClick={handleCardClick.bind(null, restaurant.id)}
-                      title={
-                        <div className={styles.cardTitleContainer}>
-                          <Title level={4}>{restaurant.name}</Title>
-                          <span>{restaurant.isAvailable ? (<Tag color="green">Available</Tag>) : (
-                              <Tag color="red">Not available</Tag>)}
-                          </span>
-                        </div>
-                      }
-                  >
-                    <div className={styles.cardContent}>
-                      <Paragraph className={styles.paragraphJustify} ellipsis={{rows: 3}}>
-                        <strong>Description:</strong> {restaurant.description}
-                      </Paragraph>
-                      <Paragraph>
-                        <strong>Address:</strong> {`${restaurant.address.street}, ${restaurant.address.city}, ${restaurant.address.postalCode}, ${restaurant.address.country}`}
-                      </Paragraph>
-                    </div>
-                    <Button className={styles.btnPrimary} type="primary"
-                            onClick={handleCardClick.bind(null, restaurant.id)}>
-                      View Details
-                    </Button>
-                  </Card>
-                </List.Item>
-            )
-            }
         />
       </>
   );
