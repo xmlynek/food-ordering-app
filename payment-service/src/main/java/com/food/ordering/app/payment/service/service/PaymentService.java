@@ -6,7 +6,7 @@ import com.food.ordering.app.payment.service.entity.Payment;
 
 public interface PaymentService {
 
-  Payment saveFailedPayment(Payment payment);
+  Payment saveFailedPayment(ProcessPaymentCommand command);
 
   Payment processPayment(ProcessPaymentCommand command) throws Exception;
 

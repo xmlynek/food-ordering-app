@@ -12,7 +12,7 @@
   <artifactId>payment-service</artifactId>
 
   <properties>
-    <com.stripe.version>24.16.0</com.stripe.version>
+    <com.stripe.version>24.24.0</com.stripe.version>
   </properties>
 
   <profiles>

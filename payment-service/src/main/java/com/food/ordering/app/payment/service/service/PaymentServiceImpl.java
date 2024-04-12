@@ -25,9 +25,9 @@ public class PaymentServiceImpl implements PaymentService {
 
 
   @Override
-  public Payment saveFailedPayment(Payment payment) {
+  public Payment saveFailedPayment(ProcessPaymentCommand command) {
+    Payment payment = paymentMapper.paymentRequestToPaymentEntity(command);
     payment.setPaymentStatus(PaymentStatus.FAILED);
-
     return paymentRepository.save(payment);
   }
 

@@ -32,7 +32,7 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
   public Message processPayment(CommandMessage<ProcessPaymentCommand> cm) {
     ProcessPaymentCommand command = cm.getCommand();
     log.info("Process payment started for order id {}", command.orderId().toString());
-    Payment payment = null;
+    Payment payment;
 
     try {
       payment = paymentService.processPayment(command);
@@ -45,7 +45,7 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
               payment.getPaymentStatus()));
     } catch (Exception e) {
       log.error("Creation of payment failed. {}", e.getMessage());
-      payment = paymentService.saveFailedPayment(payment);
+      payment = paymentService.saveFailedPayment(command);
       log.error("Failed payment was saved with {} status", payment.getPaymentStatus().toString());
       return CommandHandlerReplyBuilder.withFailure(
           new ProcessPaymentFailed(command.orderId(), command.customerId(), PaymentStatus.FAILED,
