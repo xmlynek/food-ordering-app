@@ -104,11 +104,11 @@ const MenuList: React.FC<MenuListProps> = ({deleteHandler}: MenuListProps) => {
                       ]}
                   >
                     <Row gutter={16}>
-                      <Col xs={24} sm={24} md={11} lg={7} xl={5}>
+                      <Col xs={24} sm={24} md={11} lg={7} xl={6}>
                         <Image src={item.imageUrl} width={128} height={128}
                                style={{objectFit: 'cover'}}/>
                       </Col>
-                      <Col xs={24} sm={24} md={13} lg={17} xl={19}>
+                      <Col xs={24} sm={24} md={13} lg={17} xl={18}>
                         <List.Item.Meta
                             title={
                               <div>

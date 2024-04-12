@@ -18,7 +18,25 @@ export const deleteRestaurantMenuItem = async (restaurantId: string, menuId: str
 }
 
 export const updateRestaurantMenuItem = async (restaurantId: string, menuId: string, menuData: MenuItemFormValues) => {
-  const response = await axiosInstance.put(`${window.envVars.REACT_RESTAURANT_SERVICE_PATH}/${restaurantId}/menu/${menuId}`, menuData);
+  const formData = new FormData();
+
+  formData.append('menuItemUpdateRequest', new Blob([JSON.stringify({
+    name: menuData.name,
+    description: menuData.description,
+    price: menuData.price,
+    isAvailable: menuData.isAvailable,
+  })], {type: 'application/json'}));
+
+  formData.append('image', menuData.image);
+
+  const response = await axiosInstance.put(`${window.envVars.REACT_RESTAURANT_SERVICE_PATH}/${restaurantId}/menu/${menuId}`, formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+      )
+  ;
   return response.data;
 };
 

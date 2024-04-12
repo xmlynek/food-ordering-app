@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Form, message, Modal, Skeleton, Switch} from 'antd';
+import {Form, Image, message, Modal, Skeleton, Space, Switch} from 'antd';
 import {useNavigate, useParams} from 'react-router-dom';
 import MenuItemFormSkeleton from '../components/Menu/MenuItemFormSkeleton.tsx';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
@@ -8,6 +8,7 @@ import {
   updateRestaurantMenuItem
 } from "../client/restaurantMenuItemsApiClient.ts";
 import {MenuItem, MenuItemFormValues} from "../model/menuItem.ts";
+import UploadFormItem from "../components/UI/UploadFormItem.tsx";
 
 const ModifyMenuPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -49,6 +50,7 @@ const ModifyMenuPage: React.FC = () => {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
+      console.log(values);
       // @ts-ignore
       await mutateAsync(values);
     } catch (errorInfo) {
@@ -81,7 +83,18 @@ const ModifyMenuPage: React.FC = () => {
               >
                 <Switch/>
               </Form.Item>
-            </MenuItemFormSkeleton> }
+              <Space direction={"vertical"} style={{marginBottom: '20px'}}>
+                Current image
+                <Image src={menuItemData?.imageUrl} alt={menuItemData?.name}
+                       style={{
+                         height: 'auto',
+                         maxHeight: '150px',
+                         width: '150px',
+                         objectFit: 'cover'
+                       }}/>
+              </Space>
+              <UploadFormItem form={form} required={false}/>
+            </MenuItemFormSkeleton>}
       </Modal>
   );
 };

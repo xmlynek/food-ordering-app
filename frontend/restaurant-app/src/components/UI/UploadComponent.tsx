@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from "react";
-import {GetProp, message, Upload, UploadFile, UploadProps} from "antd";
-import {LoadingOutlined, UploadOutlined} from "@ant-design/icons";
+import {Button, GetProp, message, Space, Upload, UploadFile, UploadProps} from "antd";
+import {DeleteOutlined, LoadingOutlined, UploadOutlined} from "@ant-design/icons";
 import {UploadChangeParam} from "antd/es/upload";
 
 interface UploadComponentProps {
@@ -27,9 +27,9 @@ const UploadComponent: React.FC<UploadComponentProps> = ({onFileChange}) => {
     if (!isJpgOrPng) {
       message.error('You can only upload JPG/PNG file!');
     }
-    const isLt2M = file.size / 1024 / 1024 < 2;
+    const isLt2M = file.size / 1024 / 1024 <= 4;
     if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
+      message.error('Image must be smaller than 4MB!');
     }
     return false;
   };
@@ -58,6 +58,12 @@ const UploadComponent: React.FC<UploadComponentProps> = ({onFileChange}) => {
     }
   }, []);
 
+  const handleRemove = () => {
+    setImageUrl('');
+    setLoading(false);
+    onFileChange(undefined);
+  };
+
   const uploadButton = (
       <>
         {loading ? <LoadingOutlined/> :
@@ -68,17 +74,24 @@ const UploadComponent: React.FC<UploadComponentProps> = ({onFileChange}) => {
   );
 
   return (
-      <Upload
-          name="image"
-          listType="picture-card"
-          className="avatar-uploader"
-          showUploadList={false}
-          beforeUpload={beforeUpload}
-          onChange={handleChange}
-      >
-        {imageUrl ? <img src={imageUrl} width={100} height={100} alt="avatar"
-                         style={{width: '100%'}}/> : uploadButton}
-      </Upload>
+      <Space>
+        <Upload
+            name="image"
+            listType="picture-card"
+            className="avatar-uploader"
+            showUploadList={false}
+            beforeUpload={beforeUpload}
+            onChange={handleChange}
+        >
+          {imageUrl ? <img src={imageUrl} alt="avatar"
+                           style={{
+                             height: '100px',
+                             width: '100px',
+                             objectFit: 'cover'
+                           }}/> : uploadButton}
+        </Upload>
+        {imageUrl && <Button onClick={handleRemove} icon={<DeleteOutlined />}>Clear selection</Button>}
+      </Space>
   );
 }
 

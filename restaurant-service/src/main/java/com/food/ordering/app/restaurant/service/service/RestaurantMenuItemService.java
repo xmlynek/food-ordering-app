@@ -17,7 +17,8 @@ public interface RestaurantMenuItemService {
   MenuItem createMenuItem(UUID restaurantId, MenuItem menuItem, MultipartFile image)
       throws IOException;
 
-  MenuItem updateMenuItem(UUID restaurantId, UUID menuItemId, MenuItemUpdateRequest menuItemUpdateRequest);
+  MenuItem updateMenuItem(UUID restaurantId, UUID menuItemId,
+      MenuItemUpdateRequest menuItemUpdateRequest, MultipartFile image) throws IOException;
 
   void deleteMenuItem(UUID restaurantId, UUID menuItemId);
 }

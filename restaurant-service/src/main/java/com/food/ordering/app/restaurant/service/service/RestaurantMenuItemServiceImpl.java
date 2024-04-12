@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RestaurantMenuItemServiceImpl implements
     RestaurantMenuItemService {
 
@@ -79,10 +81,15 @@ public class RestaurantMenuItemServiceImpl implements
   @Override
   @Transactional
   public MenuItem updateMenuItem(UUID restaurantId, UUID menuItemId,
-      MenuItemUpdateRequest menuItemRequest) {
+      MenuItemUpdateRequest menuItemRequest, MultipartFile image) throws IOException {
     MenuItem menuItem = menuItemRepository.findByIdAndRestaurantIdAndIsDeletedFalse(menuItemId,
             restaurantId)
         .orElseThrow(() -> new MenuItemNotFoundException(menuItemId));
+
+    if (image != null) {
+      String imageUrl = imageStorageService.uploadFile(image, menuItem.getId());
+      menuItem.setImageUrl(imageUrl);
+    }
 
     menuItem.setName(menuItemRequest.name());
     menuItem.setDescription(menuItemRequest.description());

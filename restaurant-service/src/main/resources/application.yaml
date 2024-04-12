@@ -1,6 +1,5 @@
 server:
   port: ${SERVER_PORT:8080}
-
 spring:
   application:
     name: restaurant-service
@@ -32,6 +31,11 @@ spring:
         project-id: ${GCP_STORAGE_PROJECT_ID}
         credentials:
           default-scopes: ${GCP_STORAGE_CREDENTIALS_DEFAULT_SCOPES:www.googleapis.com/auth/devstorage.read_write}
+  servlet:
+    multipart:
+      max-file-size: ${MULTIPART_MAX_FILE_SIZE:4MB}
+      max-request-size: ${MULTIPART_MAX_REQUEST_SIZE:4MB}
+      resolve-lazily: true
 eventuatelocal:
   kafka:
     bootstrap:
@@ -49,6 +53,7 @@ app:
   gcp:
     storage:
       bucket-name: ${GCP_STORAGE_BUCKET_NAME}
+      public-url: ${GCP_STORAGE_URL:https://storage.googleapis.com}
 
 logging:
   level:

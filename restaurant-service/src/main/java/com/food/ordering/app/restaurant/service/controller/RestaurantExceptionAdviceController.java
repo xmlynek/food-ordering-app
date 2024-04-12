@@ -1,7 +1,9 @@
-package com.food.ordering.app.restaurant.service.exception;
+package com.food.ordering.app.restaurant.service.controller;
 
 import com.food.ordering.app.common.exception.ErrorResponse;
 import com.food.ordering.app.common.exception.ExceptionAdviceController;
+import com.food.ordering.app.restaurant.service.exception.InvalidImageTypeException;
+import com.food.ordering.app.restaurant.service.exception.OrderTicketNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @ControllerAdvice
 @Slf4j
@@ -24,10 +27,10 @@ public class RestaurantExceptionAdviceController extends ExceptionAdviceControll
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler({InvalidImageTypeException.class})
+  @ExceptionHandler({InvalidImageTypeException.class, MaxUploadSizeExceededException.class})
   public ResponseEntity<ErrorResponse> handleBadRequestException(
       RuntimeException ex) {
-    log.warn("Handling bad request exception: {}", ex.getMessage());
+    log.warn("Handling bad request {}: {}", ex.getClass().getName(), ex.getMessage());
     return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()),
         HttpStatus.BAD_REQUEST);
   }

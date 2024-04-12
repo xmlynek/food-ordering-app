@@ -1,4 +1,4 @@
-import {Result, Spin} from "antd";
+import {Card, Result, Spin} from "antd";
 import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
 import {lazy, Suspense} from "react";
 import ModifyMenuPage from "./pages/ModifyMenuPage.tsx";
@@ -19,28 +19,30 @@ function App() {
   return (
       <BrowserRouter>
         <LayoutWrapper>
-            <Suspense fallback={<Spin fullscreen spinning={true}/>}>
-              <Routes>
-                <Route path="/" element={<HomePage/>}/>
-                <Route path="/restaurants" element={<RestaurantsListPage/>}>
-                  <Route path="add" element={<CreateRestaurantPage/>}/>
+          <Suspense fallback={<Spin fullscreen spinning={true}/>}>
+            <Routes>
+              <Route path="/" element={<HomePage/>}/>
+              <Route path="/restaurants" element={<RestaurantsListPage/>}>
+                <Route path="add" element={<CreateRestaurantPage/>}/>
+              </Route>
+              <Route path="/restaurants/:id" element={<RestaurantPage/>}>
+                <Route path="tickets" element={<KitchenTicketsPage/>}/>
+                <Route path="menu" element={<MenusPage/>}>
+                  <Route path="add" element={<CreateMenuPage/>}/>
+                  <Route path=":menuId/edit" element={<ModifyMenuPage/>}/>
                 </Route>
-                <Route path="/restaurants/:id" element={<RestaurantPage/>}>
-                  <Route path="tickets" element={<KitchenTicketsPage/>} />
-                  <Route path="menu" element={<MenusPage/>}>
-                    <Route path="add" element={<CreateMenuPage/>}/>
-                    <Route path=":menuId/edit" element={<ModifyMenuPage/>}/>
-                  </Route>
-                </Route>
-                <Route path="/profile" element={<ProfilePage/>}/>
-                <Route path="*" element={<Result
+              </Route>
+              <Route path="/profile" element={<ProfilePage/>}/>
+              <Route path="*" element={<Card>
+                <Result
                     status="404"
                     title="404"
                     subTitle="Sorry, the page you visited does not exist."
                     extra={<Link to={"/"}>Back Home</Link>}
-                />}/>
-              </Routes>
-            </Suspense>
+                />
+              </Card>}/>
+            </Routes>
+          </Suspense>
         </LayoutWrapper>
       </BrowserRouter>
 

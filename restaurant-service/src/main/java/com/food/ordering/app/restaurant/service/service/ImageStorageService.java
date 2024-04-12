@@ -26,6 +26,7 @@ public class ImageStorageService implements StorageService {
 
   @Override
   public String uploadFile(MultipartFile image, UUID relatedEntityId) throws IOException {
+    log.info("Uploading image for entity with id: {}", relatedEntityId);
     if (image.getContentType() == null || !ACCEPTED_IMAGE_TYPES.contains(image.getContentType())) {
       throw new InvalidImageTypeException(String.join(", ", ACCEPTED_IMAGE_TYPES));
     }

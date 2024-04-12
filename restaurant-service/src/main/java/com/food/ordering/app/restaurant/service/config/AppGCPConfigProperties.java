@@ -12,5 +12,6 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesBindin
 public class AppGCPConfigProperties {
 
   private final String bucketName;
+  private final String publicUrl;
 
 }

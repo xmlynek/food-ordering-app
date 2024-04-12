@@ -13,18 +13,22 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class GoogleBucketStorageStrategy implements BucketStorageStrategy {
 
-  public static final String GOOGLE_STORAGE_URL = "https://storage.googleapis.com";
-
   private final Storage storage;
   private final AppGCPConfigProperties appGCPConfigProperties;
 
   @Override
   public String saveFile(String fileName, String contentType, byte[] file) {
+    log.info("Uploading file {} to Google Cloud Storage", fileName);
     BlobId blobId = BlobId.of(appGCPConfigProperties.getBucketName(), fileName);
 
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType).build();
+    // short cache time for testing purposes
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType)
+        .setCacheControl("public, max-age=30").build();
     storage.create(blobInfo, file);
 
-    return String.format("%s/%s/%s", GOOGLE_STORAGE_URL, appGCPConfigProperties.getBucketName(), fileName);
+    log.info("File {} was uploaded to Google Cloud Storage", fileName);
+
+    return String.format("%s/%s/%s", appGCPConfigProperties.getPublicUrl(),
+        appGCPConfigProperties.getBucketName(), fileName);
   }
 }
