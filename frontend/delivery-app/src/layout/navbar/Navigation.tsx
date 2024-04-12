@@ -33,7 +33,7 @@ const Navbar = () => {
     {
       key: 'delivery',
       icon: <TruckOutlined/>,
-      label: <Link to="/delivery">Orders Delivery</Link>,
+      label: <Link to="/delivery">Delivery Orders</Link>,
     },
     {
       key: 'profile',

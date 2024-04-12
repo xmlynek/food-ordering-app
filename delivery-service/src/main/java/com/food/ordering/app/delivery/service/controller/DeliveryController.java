@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,9 +29,19 @@ public class DeliveryController {
   private final DeliveryMapper deliveryMapper;
 
   @GetMapping
-  public ResponseEntity<Page<DeliveryResponse>> getAllDeliveries(
+  public ResponseEntity<Page<DeliveryResponse>> getAllAvailableDeliveries(
       @SortDefault(value = "createdAt", direction = Direction.DESC) @PageableDefault Pageable pageable) {
-    Page<DeliveryResponse> deliveryResponses = deliveryService.getAllDeliveryDetailsViews(pageable)
+    Page<DeliveryResponse> deliveryResponses = deliveryService.getAllAvailableDeliveryDetailsViews(pageable)
+        .map(deliveryMapper::deliveryDetailsViewToDeliveryResponse);
+
+    return ResponseEntity.ok(deliveryResponses);
+  }
+
+  @GetMapping("/history")
+  public ResponseEntity<Page<DeliveryResponse>> getCourierDeliveryHistory(
+      @SortDefault(value = "createdAt", direction = Direction.DESC) @PageableDefault Pageable pageable) {
+    Page<DeliveryResponse> deliveryResponses = deliveryService.getDeliveryHistoryForCourier(
+            UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()), pageable)
         .map(deliveryMapper::deliveryDetailsViewToDeliveryResponse);
 
     return ResponseEntity.ok(deliveryResponses);

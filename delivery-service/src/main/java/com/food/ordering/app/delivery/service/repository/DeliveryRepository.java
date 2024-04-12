@@ -1,6 +1,9 @@
 package com.food.ordering.app.delivery.service.repository;
 
+import com.food.ordering.app.common.enums.DeliveryStatus;
+import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.delivery.service.entity.Delivery;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -15,7 +18,16 @@ public interface DeliveryRepository extends JpaRepository<Delivery, UUID> {
   <T> Optional<T> findById(@NonNull UUID id, @NonNull Class<T> type);
 
   @NonNull
-  <T> Page<T> findAllBy(Pageable pageable, @NonNull Class<T> type);
+  <T> Page<T> findAllByDeliveryStatusAndKitchenTicketStatusInAndCourierIdIsNull(
+      @NonNull DeliveryStatus deliveryStatus,
+      @NonNull Collection<KitchenTicketStatus> kitchenTicketStatuses,
+      Pageable pageable,
+      @NonNull Class<T> type);
+
+  @NonNull
+  @PreAuthorize("isFullyAuthenticated() and #courierId.toString() == authentication.name")
+  <T> Page<T> findAllByCourierId(@NonNull UUID courierId, Pageable pageable,
+      @NonNull Class<T> type);
 
   @NonNull
   @PreAuthorize("isFullyAuthenticated() and #courierId.toString() == authentication.name")

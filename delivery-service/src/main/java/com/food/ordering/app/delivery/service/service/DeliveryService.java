@@ -12,7 +12,9 @@ public interface DeliveryService {
 
   Delivery createDelivery(PrepareOrderDeliveryCommand command);
 
-  Page<DeliveryDetailsView> getAllDeliveryDetailsViews(Pageable pageable);
+  Page<DeliveryDetailsView> getAllAvailableDeliveryDetailsViews(Pageable pageable);
+
+  Page<DeliveryDetailsView> getDeliveryHistoryForCourier(UUID courierId, Pageable pageable);
 
   DeliveryDetailsView getDeliveryDetailsViewById(UUID deliveryId);
 

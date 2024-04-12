@@ -23,10 +23,11 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
   }
 
   return (
-      <Row justify="center" className={styles.cardContainer}>
+      <Row justify="center" align={"middle"} className={styles.cardContainer}>
         <Col xs={24} sm={12} md={8} lg={6}>
           <Card
               className={styles.card}
+              style={{boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px', marginTop: '15px'}}
               bordered={false}
           >
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -34,6 +35,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
               <Typography.Title level={4}
                                 className={styles.title}>{userData.name}</Typography.Title>
               <Descriptions column={1} size="small">
+                <Descriptions.Item label="ID">{userData.sub}</Descriptions.Item>
                 <Descriptions.Item
                     label="Username">{userData.preferred_username}</Descriptions.Item>
                 <Descriptions.Item label="Email">{userData.email}</Descriptions.Item>

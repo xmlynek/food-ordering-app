@@ -1,4 +1,4 @@
-import {Card, Layout, message, Space, Spin, Typography} from "antd";
+import {Card, message, Space, Spin, Typography} from "antd";
 import React from "react";
 import {useParams} from "react-router-dom";
 import {useMutation, useQuery} from "@tanstack/react-query";
@@ -12,8 +12,6 @@ import {
 import DeliveryDetails from "../components/Delivery/DeliveryDetails.tsx";
 
 const {Title} = Typography;
-
-const {Content} = Layout;
 
 const DeliveryDetailsPage: React.FC = () => {
   const params = useParams();
@@ -75,13 +73,11 @@ const DeliveryDetailsPage: React.FC = () => {
   }
 
   return (
-      <Content>
         <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
-          <Title level={1}>Delivery details</Title>
-        </Space>
-
-        <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
-          <Card>
+          <Card style={{boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px', marginTop: '15px'}}>
+            <Space direction="horizontal" style={{width: '100%', justifyContent: 'center'}}>
+              <Title level={1} style={{marginTop: '10px'}}>Delivery details</Title>
+            </Space>
             {isPending && <Spin size="large"/>}
             {error && <p>Error: {error.message}</p>}
             {!isPending && !error && deliveryDetails &&
@@ -91,8 +87,7 @@ const DeliveryDetailsPage: React.FC = () => {
                                  onPickUpDelivery={handlePickUpDelivery}
                                  onCompleteDelivery={handleCompleteDelivery}/>}
           </Card>
-        </Space>
-      </Content>
+       </Space>
   );
 };
 

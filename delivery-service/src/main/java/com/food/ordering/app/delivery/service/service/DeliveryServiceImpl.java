@@ -18,6 +18,7 @@ import com.food.ordering.app.delivery.service.repository.DeliveryRepository;
 import com.food.ordering.app.delivery.service.repository.RestaurantRepository;
 import com.food.ordering.app.delivery.service.repository.projection.DeliveryDetailsView;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -53,8 +54,16 @@ public class DeliveryServiceImpl implements DeliveryService {
   }
 
   @Override
-  public Page<DeliveryDetailsView> getAllDeliveryDetailsViews(Pageable pageable) {
-    return deliveryRepository.findAllBy(pageable, DeliveryDetailsView.class);
+  public Page<DeliveryDetailsView> getAllAvailableDeliveryDetailsViews(Pageable pageable) {
+    return deliveryRepository.findAllByDeliveryStatusAndKitchenTicketStatusInAndCourierIdIsNull(
+        DeliveryStatus.WAITING_FOR_KITCHEN,
+        Arrays.asList(KitchenTicketStatus.PREPARING, KitchenTicketStatus.READY_FOR_DELIVERY),
+        pageable, DeliveryDetailsView.class);
+  }
+
+  @Override
+  public Page<DeliveryDetailsView> getDeliveryHistoryForCourier(UUID courierId, Pageable pageable) {
+    return deliveryRepository.findAllByCourierId(courierId, pageable, DeliveryDetailsView.class);
   }
 
   @Override
