@@ -1,4 +1,4 @@
-import {Result, Spin} from "antd";
+import {Card, Result, Spin} from "antd";
 import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
 import {lazy, Suspense} from "react";
 import LayoutWrapper from "./layout/LayoutWrapper/LayoutWrapper.tsx";
@@ -27,12 +27,14 @@ function App() {
               <Route path="/profile" element={<ProfilePage/>}/>
               <Route path="/order-history" element={<OrderHistoryPage/>}/>
               <Route path="/order-history/:orderId" element={<OrderDetailsPage/>}/>
-              <Route path="*" element={<Result
-                  status="404"
-                  title="404"
-                  subTitle="Sorry, the page you visited does not exist."
-                  extra={<Link to={"/"}>Back Home</Link>}
-              />}/>
+              <Route path="*" element={<Card>
+                <Result
+                    status="404"
+                    title="404"
+                    subTitle="Sorry, the page you visited does not exist."
+                    extra={<Link to={"/"}>Back Home</Link>}
+                />
+              </Card>}/>
             </Routes>
           </Suspense>
         </LayoutWrapper>
