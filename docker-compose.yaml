@@ -258,6 +258,13 @@ services:
     ports:
       - "8070:8080"
     restart: on-failure
+    depends_on:
+      - order-service
+      - catalog-service
+      - restaurant-service
+      - kitchen-service
+      - delivery-service
+      - payment-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
 
