@@ -1,23 +1,17 @@
 package com.food.ordering.app.delivery.service.config;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -26,8 +20,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-  public static final String JWT_ROLES_CLAIM_NAME = "roles";
-  public static final String GRANTED_AUTHORITY_ROLE_PREFIX = "ROLE_";
+  private final OAuth2ResourceServerProperties oAuth2ResourceServerProperties;
+
+  @Bean
+  public JwtDecoder jwtDecoder() {
+    return NimbusJwtDecoder.withJwkSetUri(
+        oAuth2ResourceServerProperties.getJwt().getJwkSetUri()).build();
+  }
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,26 +45,13 @@ public class SecurityConfiguration {
             .anyRequest().authenticated()
     );
 
+    http.csrf(AbstractHttpConfigurer::disable);
+
     http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
         SessionCreationPolicy.STATELESS));
 
-    http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
-        jwt.jwtAuthenticationConverter(this::jwtAuthenticationConverter)));
+    http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())));
 
     return http.build();
-  }
-
-
-  private JwtAuthenticationToken jwtAuthenticationConverter(Jwt jwt) {
-    JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-    List<GrantedAuthority> authorities = Stream.concat(
-        jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
-        Optional.ofNullable((List<String>) jwt.getClaims().get(JWT_ROLES_CLAIM_NAME))
-            .orElse(Collections.emptyList())
-            .stream()
-            .map(role -> new SimpleGrantedAuthority(GRANTED_AUTHORITY_ROLE_PREFIX + role))
-    ).collect(Collectors.toList());
-
-    return new JwtAuthenticationToken(jwt, authorities, jwt.getSubject());
   }
 }
