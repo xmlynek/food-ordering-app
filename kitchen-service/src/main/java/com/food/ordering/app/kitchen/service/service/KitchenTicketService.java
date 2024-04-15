@@ -15,6 +15,8 @@ public interface KitchenTicketService {
 
   KitchenTicketCreated createKitchenTicket(CreateKitchenTicketCommand createKitchenTicketCommand);
 
+  void cancelKitchenTicket(UUID ticketId);
+
   Page<KitchenTicket> getAllKitchenTicketsByRestaurantId(UUID restaurantId, Pageable pageable, KitchenTicketStatus ticketStatus);
 
   KitchenTicketDetailsView getKitchenTicketDetails(UUID restaurantId, UUID ticketId);

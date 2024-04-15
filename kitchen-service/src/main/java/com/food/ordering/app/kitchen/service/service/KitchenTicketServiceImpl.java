@@ -16,6 +16,7 @@ import com.food.ordering.app.kitchen.service.entity.KitchenTicketItem;
 import com.food.ordering.app.kitchen.service.entity.MenuItem;
 import com.food.ordering.app.kitchen.service.entity.Restaurant;
 import com.food.ordering.app.kitchen.service.event.publisher.KitchenDomainEventPublisher;
+import com.food.ordering.app.kitchen.service.exception.IllegalKitchenTicketStatusException;
 import com.food.ordering.app.kitchen.service.exception.KitchenTicketNotFoundException;
 import com.food.ordering.app.kitchen.service.exception.MenuItemNotAvailableException;
 import com.food.ordering.app.kitchen.service.repository.KitchenTicketRepository;
@@ -80,6 +81,12 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
             ticketId, restaurantId, SecurityContextHolder.getContext().getAuthentication().getName(),
             KitchenTicket.class)
         .orElseThrow(() -> new KitchenTicketNotFoundException(restaurantId, ticketId));
+
+    if (kitchenTicket.getStatus() != KitchenTicketStatus.PREPARING) {
+      throw new IllegalKitchenTicketStatusException(kitchenTicket.getStatus().name(),
+          "Complete ticket");
+    }
+
     kitchenTicket.setStatus(KitchenTicketStatus.READY_FOR_DELIVERY);
     kitchenTicketRepository.save(kitchenTicket);
 
