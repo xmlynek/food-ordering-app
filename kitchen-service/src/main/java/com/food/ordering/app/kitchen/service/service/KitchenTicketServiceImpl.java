@@ -66,6 +66,14 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   }
 
   @Override
+  public void cancelKitchenTicket(UUID ticketId) {
+    KitchenTicket kitchenTicket = kitchenTicketRepository.findById(ticketId)
+        .orElseThrow(() -> new KitchenTicketNotFoundException(ticketId));
+    kitchenTicket.setStatus(KitchenTicketStatus.CANCELLED);
+    kitchenTicketRepository.save(kitchenTicket);
+  }
+
+  @Override
   @Transactional
   public void completeKitchenTicket(UUID restaurantId, UUID ticketId) {
     KitchenTicket kitchenTicket = kitchenTicketRepository.findByIdAndRestaurantIdAndRestaurantOwnerId(

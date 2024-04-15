@@ -1,6 +1,6 @@
 package com.food.ordering.app.delivery.service.mapper;
 
-import com.food.ordering.app.common.command.PrepareOrderDeliveryCommand;
+import com.food.ordering.app.common.command.CreateDeliveryOrderCommand;
 import com.food.ordering.app.common.event.DeliveryAssignedToCourierEvent;
 import com.food.ordering.app.common.event.DeliveryStatusChangedEvent;
 import com.food.ordering.app.delivery.service.dto.DeliveryResponse;
@@ -22,7 +22,7 @@ public interface DeliveryMapper {
       @Mapping(target = "restaurant", ignore = true),
       @Mapping(target = "courierId", ignore = true),
   })
-  Delivery prepareOrderDeliveryCommandToDelivery(PrepareOrderDeliveryCommand command);
+  Delivery prepareOrderDeliveryCommandToDelivery(CreateDeliveryOrderCommand command);
 
 
   @Mappings({

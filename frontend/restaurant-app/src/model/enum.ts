@@ -8,6 +8,6 @@ export enum DeliveryStatus {
 export enum KitchenTicketStatus {
   PREPARING = "PREPARING",
   READY_FOR_DELIVERY = "READY_FOR_DELIVERY",
-  REJECTED = "REJECTED",
+  CANCELLED = "CANCELLED",
   FINISHED = "FINISHED"
 }

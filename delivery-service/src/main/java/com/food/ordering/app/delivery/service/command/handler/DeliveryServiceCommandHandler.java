@@ -1,9 +1,10 @@
 package com.food.ordering.app.delivery.service.command.handler;
 
-import com.food.ordering.app.common.command.PrepareOrderDeliveryCommand;
+import com.food.ordering.app.common.command.CreateDeliveryOrderCommand;
 import com.food.ordering.app.delivery.service.config.properties.CommandHandlerProperties;
 import io.eventuate.tram.commands.consumer.CommandHandlers;
 import io.eventuate.tram.commands.consumer.CommandMessage;
+import io.eventuate.tram.messaging.common.Message;
 import io.eventuate.tram.sagas.participant.SagaCommandHandlersBuilder;
 import lombok.RequiredArgsConstructor;
 
@@ -15,9 +16,9 @@ public abstract class DeliveryServiceCommandHandler {
   public CommandHandlers commandHandlerDefinitions() {
     return SagaCommandHandlersBuilder
         .fromChannel(commandHandlerProperties.getChannel())
-        .onMessage(PrepareOrderDeliveryCommand.class, this::prepareOrderDelivery)
+        .onMessage(CreateDeliveryOrderCommand.class, this::prepareOrderDelivery)
         .build();
   }
 
-  protected abstract void prepareOrderDelivery(CommandMessage<PrepareOrderDeliveryCommand> cm);
+  protected abstract Message prepareOrderDelivery(CommandMessage<CreateDeliveryOrderCommand> cm);
 }

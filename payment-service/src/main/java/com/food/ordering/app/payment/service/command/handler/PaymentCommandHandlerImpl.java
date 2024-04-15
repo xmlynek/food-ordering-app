@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
 
+  public static final String PROCESS_PAYMENT_FAILED_MESSAGE = "Could not process payment.";
+
   private final PaymentService paymentService;
 
   public PaymentCommandHandlerImpl(SagaCommandHandlerProperties sagaCommandHandlerProperties,
@@ -44,12 +46,12 @@ public class PaymentCommandHandlerImpl extends PaymentCommandHandler {
           new ProcessPaymentSucceeded(payment.getId(), command.orderId(),
               payment.getPaymentStatus()));
     } catch (Exception e) {
-      log.error("Creation of payment failed. {}", e.getMessage());
+      log.error("Process payment FAILED for order {}. message: {}", command.orderId(), e.getMessage(), e);
       payment = paymentService.saveFailedPayment(command);
-      log.error("Failed payment was saved with {} status", payment.getPaymentStatus().toString());
+      log.info("Failed payment was saved with {} status", payment.getPaymentStatus().toString());
       return CommandHandlerReplyBuilder.withFailure(
           new ProcessPaymentFailed(command.orderId(), command.customerId(), PaymentStatus.FAILED,
-              e.getMessage()));
+              PROCESS_PAYMENT_FAILED_MESSAGE));
     }
   }
 

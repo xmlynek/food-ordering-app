@@ -1,5 +1,6 @@
 package com.food.ordering.app.order.service.saga.data;
 
+import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.common.enums.PaymentStatus;
 import com.food.ordering.app.common.model.Address;
@@ -30,11 +31,15 @@ public class CreateOrderSagaData {
 
   private UUID ticketId;
 
+  private UUID deliveryId;
+
   private OrderStatus orderStatus;
 
   private KitchenTicketStatus kitchenTicketStatus;
 
   private PaymentStatus paymentStatus;
+
+  private DeliveryStatus deliveryStatus;
 
   private String paymentToken;
 

@@ -2,7 +2,7 @@ package com.food.ordering.app.order.service.saga.proxy;
 
 import static io.eventuate.tram.commands.consumer.CommandWithDestinationBuilder.send;
 
-import com.food.ordering.app.common.command.PrepareOrderDeliveryCommand;
+import com.food.ordering.app.common.command.CreateDeliveryOrderCommand;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.common.model.Address;
 import com.food.ordering.app.order.service.config.properties.CommandDestinationProperties;
@@ -17,10 +17,10 @@ public class DeliveryServiceProxy {
 
   private final CommandDestinationProperties commandDestinationProperties;
 
-  public CommandWithDestination notifyDeliveryService(UUID orderId, UUID customerId,
+  public CommandWithDestination createDeliveryOrder(UUID orderId, UUID customerId,
       UUID restaurantId, UUID kitchenTicketId, KitchenTicketStatus kitchenTicketStatus,
       Address deliveryAddress) {
-    return send(new PrepareOrderDeliveryCommand(orderId, customerId, restaurantId, kitchenTicketId,
+    return send(new CreateDeliveryOrderCommand(orderId, customerId, restaurantId, kitchenTicketId,
         kitchenTicketStatus, deliveryAddress))
         .to(commandDestinationProperties.getDeliveryService())
         .build();

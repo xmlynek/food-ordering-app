@@ -2,6 +2,7 @@ package com.food.ordering.app.kitchen.service.controller;
 
 import com.food.ordering.app.common.exception.ErrorResponse;
 import com.food.ordering.app.common.exception.ExceptionAdviceController;
+import com.food.ordering.app.kitchen.service.exception.IllegalKitchenTicketStatusException;
 import com.food.ordering.app.kitchen.service.exception.KitchenTicketNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,16 @@ public class KitchenExceptionAdviceController extends ExceptionAdviceController 
     log.warn("Handling AccessDeniedException: {}", ex.getMessage());
     return new ResponseEntity<>(new ErrorResponse(HttpStatus.FORBIDDEN.value(), ex.getMessage()),
         HttpStatus.FORBIDDEN);
+  }
+
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler({IllegalKitchenTicketStatusException.class})
+  public ResponseEntity<ErrorResponse> handleIllegalKitchenTicketStatusException(
+      IllegalKitchenTicketStatusException ex) {
+    log.warn("Handling IllegalKitchenTicketStatusException: {}", ex.getMessage());
+    return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()),
+        HttpStatus.BAD_REQUEST);
   }
 
 }

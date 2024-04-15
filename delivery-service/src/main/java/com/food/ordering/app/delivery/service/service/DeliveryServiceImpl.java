@@ -1,6 +1,6 @@
 package com.food.ordering.app.delivery.service.service;
 
-import com.food.ordering.app.common.command.PrepareOrderDeliveryCommand;
+import com.food.ordering.app.common.command.CreateDeliveryOrderCommand;
 import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.common.event.DeliveryAssignedToCourierEvent;
@@ -41,7 +41,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
 
   @Override
-  public Delivery createDelivery(PrepareOrderDeliveryCommand command) {
+  public Delivery createDelivery(CreateDeliveryOrderCommand command) {
     Restaurant restaurant = restaurantRepository.findById(command.restaurantId())
         .orElseThrow(() -> new RestaurantNotFoundException(command.restaurantId()));
 

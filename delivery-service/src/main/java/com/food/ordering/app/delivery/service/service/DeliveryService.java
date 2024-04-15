@@ -1,6 +1,6 @@
 package com.food.ordering.app.delivery.service.service;
 
-import com.food.ordering.app.common.command.PrepareOrderDeliveryCommand;
+import com.food.ordering.app.common.command.CreateDeliveryOrderCommand;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
 import com.food.ordering.app.delivery.service.entity.Delivery;
 import com.food.ordering.app.delivery.service.repository.projection.DeliveryDetailsView;
@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface DeliveryService {
 
-  Delivery createDelivery(PrepareOrderDeliveryCommand command);
+  Delivery createDelivery(CreateDeliveryOrderCommand command);
 
   Page<DeliveryDetailsView> getAllAvailableDeliveryDetailsViews(Pageable pageable);
 

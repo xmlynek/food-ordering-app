@@ -1,5 +1,8 @@
 package com.food.ordering.app.order.service.saga;
 
+import com.food.ordering.app.common.enums.KitchenTicketStatus;
+import com.food.ordering.app.common.response.delivery.CreateDeliveryOrderFailed;
+import com.food.ordering.app.common.response.delivery.DeliveryOrderCreated;
 import com.food.ordering.app.common.response.kitchen.CreateKitchenTicketFailed;
 import com.food.ordering.app.common.response.kitchen.KitchenTicketCreated;
 import com.food.ordering.app.common.response.payment.ProcessPaymentFailed;
@@ -40,8 +43,11 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
         .invokeParticipant(this::createKitchenTicket)
         .onReply(KitchenTicketCreated.class, this::handleCreateKitchenTicketSucceeded)
         .onReply(CreateKitchenTicketFailed.class, this::handleCreateKitchenTicketFailed)
+        .withCompensation(this::cancelKitchenTicket)
       .step()
-          .notifyParticipant(this::notifyDeliveryService)
+          .invokeParticipant(this::createDeliveryOrder)
+          .onReply(DeliveryOrderCreated.class, this::handleDeliveryOrderCreated)
+          .onReply(CreateDeliveryOrderFailed.class, this::handleCreateDeliveryOrderFailed)
       .step()
         .invokeLocal(this::confirmOrder)
       .build();
@@ -60,11 +66,12 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
   private void cancelOrder(CreateOrderSagaData data) {
     log.info("CreateOrderSaga cancelled for order id: {}", data.getOrderId().toString());
     orderService.updateOrderStatus(data.getOrderId(), OrderStatus.CANCELLED);
+    orderService.updateKitchenTicketStatus(data.getOrderId(), KitchenTicketStatus.CANCELLED);
     orderService.setFailureMessages(data.getOrderId(), data.getFailureMessages());
   }
 
   private void confirmOrder(CreateOrderSagaData data) {
-    log.info("Order: {} was confirmed and approved and kitchen ticket created.",
+    log.info("Order: {} was confirmed and approved, kitchen ticket and delivery order created.",
         data.getOrderId().toString());
     // TODO: maybe set different status?
   }
@@ -107,6 +114,26 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
     orderService.updateOrderStatus(data.getOrderId(), OrderStatus.CANCELLING);
   }
 
+  private void handleDeliveryOrderCreated(CreateOrderSagaData data,
+      DeliveryOrderCreated deliveryOrderCreated) {
+    data.setDeliveryId(deliveryOrderCreated.deliveryId());
+    data.setDeliveryStatus(deliveryOrderCreated.deliveryStatus());
+    log.info("Delivery order successfully created with id: {} and status: {} for order id: {}",
+        deliveryOrderCreated.deliveryId().toString(), deliveryOrderCreated.deliveryStatus(),
+        data.getOrderId().toString());
+
+    orderService.updateOrderDeliveryData(data.getOrderId(), deliveryOrderCreated.deliveryId(),
+        deliveryOrderCreated.deliveryStatus());
+  }
+
+  private void handleCreateDeliveryOrderFailed(CreateOrderSagaData data,
+      CreateDeliveryOrderFailed createDeliveryOrderFailed) {
+    log.info("Create delivery order failed for order id: {} with failure message: {}",
+        data.getOrderId().toString(), createDeliveryOrderFailed.failureMessage());
+    data.getFailureMessages().add(createDeliveryOrderFailed.failureMessage());
+    orderService.updateOrderStatus(data.getOrderId(), OrderStatus.CANCELLING);
+  }
+
   private CommandWithDestination cancelPayment(CreateOrderSagaData data) {
     log.info("Cancel payment compensation saga step started for order {} and payment {}",
         data.getOrderId().toString(), data.getPaymentId().toString());
@@ -127,11 +154,17 @@ public class CreateOrderSaga implements SimpleSaga<CreateOrderSagaData> {
         data.getRestaurantId(), data.getItems());
   }
 
-  private CommandWithDestination notifyDeliveryService(CreateOrderSagaData data) {
-    log.info("Notifying delivery service with order id: {}", data.getOrderId().toString());
-    return deliveryServiceProxy.notifyDeliveryService(data.getOrderId(), data.getCustomerId(),
+  private CommandWithDestination createDeliveryOrder(CreateOrderSagaData data) {
+    log.info("Create delivery order saga step started for order id: {}", data.getOrderId().toString());
+    return deliveryServiceProxy.createDeliveryOrder(data.getOrderId(), data.getCustomerId(),
         data.getRestaurantId(), data.getTicketId(), data.getKitchenTicketStatus(),
         data.getAddress());
+  }
+
+  private CommandWithDestination cancelKitchenTicket(CreateOrderSagaData data) {
+    log.info("Cancel Kitchen ticket compensation saga step started for order {} and ticket {}",
+        data.getOrderId().toString(), data.getTicketId().toString());
+    return kitchenServiceProxy.cancelKitchenTicket(data.getTicketId());
   }
 
 }
