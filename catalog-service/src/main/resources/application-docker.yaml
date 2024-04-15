@@ -16,3 +16,5 @@ R2DBC_DATASOURCE_URL: r2dbc:${DATASOURCE_URL}
 
 EVENTUATE_KAFKA_BOOTSTRAP_SERVERS: http://kafka:29092
 EVENTUATE_ZOOKEEPER_URL: http://zookeeper:2181
+
+OAUTH2_JWK_SET_URI: http://keycloak:8080/realms/food-ordering-app/protocol/openid-connect/certs

@@ -11,6 +11,11 @@ spring:
     baseline-on-migrate: true
   jpa:
     generate-ddl: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${OAUTH2_JWK_SET_URI}
 
   r2dbc:
     url: ${R2DBC_DATASOURCE_URL}
