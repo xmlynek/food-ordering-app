@@ -1,0 +1,20 @@
+DATASOURCE_URL: jdbc:postgresql://localhost:5433/payment_service
+SERVER_PORT: 8090
+STRIPE_API_KEY: sk_test_51Oc4G2Hg2RuOlHnDmj9OJ8NPORZpLpqHPg9kJN0msWpiTS9d3kfDj86sOoMyIBnppg0dGN80LyUODIzDZrn9xJDO00Lco5Q5f1
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        orm:
+          jpa: INFO
+        web:
+          filter:
+            org.springframework.web.filter.CommonsRequestLoggingFilter: TRACE
+        security: DEBUG
+        hibernate:
+          SQL: DEBUG
+          type.descriptor.sql.BasicBinder: TRACE
+    io:
+      eventuate: DEBUG

@@ -1,0 +1,43 @@
+.restaurantList {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+
+.cardContent {
+  overflow: auto;
+  padding: 10px;
+  flex-grow: 1; /* Allows the content area to expand as needed */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btnPrimary {
+  align-self: center;
+  margin-top: auto; /* Pushes the button to the bottom */
+}
+
+.paragraphJustify {
+  text-align: justify;
+}
+
+.cardTitleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}

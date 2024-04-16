@@ -12,10 +12,9 @@
   <artifactId>payment-service</artifactId>
 
   <properties>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <com.stripe.version>24.24.0</com.stripe.version>
   </properties>
+
 
   <dependencies>
     <dependency>
@@ -74,11 +73,11 @@
       <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <scope>runtime</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.postgresql</groupId>-->
+<!--      <artifactId>postgresql</artifactId>-->
+<!--      <scope>runtime</scope>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
@@ -89,6 +88,59 @@
       <artifactId>lombok</artifactId>
       <optional>true</optional>
     </dependency>
+
+    <dependency>
+      <groupId>com.food.ordering.app</groupId>
+      <artifactId>common</artifactId>
+    </dependency>
+
+    <!--    stripe payment -->
+    <dependency>
+      <groupId>com.stripe</groupId>
+      <artifactId>stripe-java</artifactId>
+      <version>${com.stripe.version}</version>
+    </dependency>
+
+    <!--    eventuate tram-->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-optimistic-locking</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-messaging-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-commands-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-jdbc-kafka</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-flyway</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+    </dependency>
+    <!-- Eventuate Tram Sagas Dependencies -->
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-spring-flyway</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-spring-participant-starter</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-testcontainers</artifactId>

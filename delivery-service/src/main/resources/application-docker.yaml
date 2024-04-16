@@ -1,0 +1,4 @@
+DATASOURCE_URL: jdbc:postgresql://delivery-service-postgres:5432/delivery_service
+OAUTH2_JWK_SET_URI: http://keycloak:8080/realms/delivery/protocol/openid-connect/certs
+EVENTUATE_KAFKA_BOOTSTRAP_SERVERS: http://kafka:29092
+EVENTUATE_ZOOKEEPER_URL: http://zookeeper:2181

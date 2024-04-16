@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "order_item")
+@Table(name = "order_items")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -38,7 +38,8 @@ public class OrderItem {
 
   private BigDecimal totalPrice;
 
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+      CascadeType.REFRESH, CascadeType.DETACH})
   @JoinColumn(name = "ORDER_ID")
   private Order order;
 }

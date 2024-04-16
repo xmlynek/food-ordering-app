@@ -1,66 +1,54 @@
 server:
-  port: 8090
+  port: ${SERVER_PORT:8080}
 
 spring:
+  application:
+    name: payment-service
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:flyway/{vendor}
   jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    database: postgresql
+    generate-ddl: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/payments
-    username: admin
-    password: password
-    driver-class-name: org.postgresql.Driver
-  main:
-    allow-circular-references: true
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME:admin}
+    password: ${DATASOURCE_PASSWORD:password}
+    driver-class-name: ${DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+    hikari:
+      initialization-fail-timeout: 30000
 
-axon:
-  distributed:
-    enabled: true
-  eventhandling:
-    processors:
-      "[WalletProcessor]":
-        source: kafkaMessageSource
-        mode: subscribing
-  serializer:
-    events: jackson
-    general: jackson
-    messages: jackson
+eventuatelocal:
   kafka:
-    bootstrap-servers: localhost:19092
-    client-id: payment
-    default-topic: local.event
-    properties:
-      security.protocol: PLAINTEXT
+    bootstrap:
+      servers: ${EVENTUATE_KAFKA_BOOTSTRAP_SERVERS:http://localhost:9092}
+  zookeeper:
+    connection:
+      string: ${EVENTUATE_ZOOKEEPER_URL:http://localhost:2181}
 
-    publisher:
-      confirmation-mode: wait_for_ack
+eventuate:
+  database:
+    schema: ${EVENTUATE_DATABASE_SCHEMA:public}
 
-    producer:
-#      transaction-id-prefix: payment-service
-      retries: 3
-      event-processor-mode: subscribing
-      # For additional unnamed properties, add them to the `properties` map like so
-      acks: all
-      compression-type: snappy
-      bootstrap-servers: localhost:29092
+app:
+  properties:
+    stripe-api-key: ${STRIPE_API_KEY}
+    saga:
+      command:
+        handler:
+          channel: ${SAGA_COMMAND_HANDLER_CHANNEL:payment-service}
 
-    #      properties:
-    #        some-key: [ some-value ]
-
-    fetcher:
-      poll-timeout: 3000
-
-    consumer:
-      enable-auto-commit: true
-      auto-commit-interval: 3000
-      event-processor-mode: pooled_streaming
-      # For additional unnamed properties, add them to the `properties` map like so
-      auto-offset-reset: largest
-      properties:
-        auto-startup: true
-      client-id: payment
-      bootstrap-servers: localhost:29092
-#      properties:
-#        some-key: [ some-value ]
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        orm:
+          jpa: INFO
+        web:
+          filter:
+            org.springframework.web.filter.CommonsRequestLoggingFilter: INFO
+      hibernate:
+        SQL: WARN
+    io:
+      eventuate: WARN

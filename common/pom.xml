@@ -12,28 +12,34 @@
   <artifactId>common</artifactId>
 
   <properties>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jib.skip>true</jib.skip>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.axonframework</groupId>
-      <artifactId>axon-spring-boot-starter</artifactId>
+      <groupId>io.eventuate.examples.common</groupId>
+      <artifactId>eventuate-examples-common-money</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-commands</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-events</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.common</groupId>
+      <artifactId>eventuate-common-json-mapper</artifactId>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 </project>

@@ -1,22 +1,13 @@
 package com.food.ordering.app.common.command;
 
 
-import java.math.BigDecimal;
+import io.eventuate.examples.common.money.Money;
+import io.eventuate.tram.commands.common.Command;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 @Builder
-@Data
-@AllArgsConstructor
-public class ProcessPaymentCommand {
-
-  @TargetAggregateIdentifier
-  private final UUID paymentId;
-  private final UUID orderId;
-  private final UUID customerId;
-  private final BigDecimal price;
+public record ProcessPaymentCommand(UUID orderId, UUID customerId, Money amount,
+                                    String paymentToken) implements Command {
 
 }

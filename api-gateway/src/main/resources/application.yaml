@@ -1,0 +1,46 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: ${ALLOWED_ORIGINS:*}
+            allowedHeaders: ${ALLOWED_HEADERS:*}
+            allowedMethods: ${ALLOWED_METHODS:OPTIONS,GET,POST,PUT,DELETE}
+        add-to-simple-url-handler-mapping: true
+      routes:
+        - id: catalog-service
+          uri: ${CATALOG_SERVICE_URI}
+          predicates:
+            - Path=/catalog-service/**
+          filters:
+            - RewritePath=/catalog-service(?<segment>.*), $\{segment}
+        - id: order-service
+          uri: ${ORDER_SERVICE_URI}
+          predicates:
+            - Path=/order-service/**
+          filters:
+            - RewritePath=/order-service(?<segment>.*), $\{segment}
+        - id: restaurant-service
+          uri: ${RESTAURANT_SERVICE_URI}
+          predicates:
+            - Path=/restaurant-service/**
+          filters:
+            - RewritePath=/restaurant-service(?<segment>.*), $\{segment}
+        - id: kitchen-service
+          uri: ${KITCHEN_SERVICE_URI}
+          predicates:
+            - Path=/kitchen-service/**
+          filters:
+            - RewritePath=/kitchen-service(?<segment>.*), $\{segment}
+        - id: delivery-service
+          uri: ${DELIVERY_SERVICE_URI}
+          predicates:
+            - Path=/delivery-service/**
+          filters:
+            - RewritePath=/delivery-service(?<segment>.*), $\{segment}

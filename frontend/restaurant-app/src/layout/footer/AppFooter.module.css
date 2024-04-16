@@ -1,0 +1,45 @@
+.footer {
+  padding: 25px 50px;
+  background-color: #263238;
+  color: #CFD8DC;
+}
+
+.column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+}
+
+.spaceVertical {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.footerText, .footerTitle {
+  color: #CFD8DC;
+}
+
+.footerTitle {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.link {
+  color: #4DB6AC;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: #B2DFDB;
+}
+
+
+.copyright {
+  margin-top: 20px;
+  text-align: center;
+}

@@ -1,0 +1,23 @@
+.layout {
+  min-height: 100vh;
+  background-image: url("./food-ordering-app-homepage.webp");
+  background-size: cover;
+  background-position: center;
+  margin: 0;
+  padding: 0;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0;
+  margin: 30px;
+}
+
+.contentInner {
+  max-width: 1280px;
+  width: 100%;
+  padding: 0 24px;
+  box-sizing: border-box;
+}

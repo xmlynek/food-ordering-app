@@ -1,0 +1,12 @@
+SERVER_PORT: 8060
+CATALOG_SERVICE_URI: http://localhost:8095
+ORDER_SERVICE_URI: http://localhost:8080
+RESTAURANT_SERVICE_URI: http://localhost:8085
+KITCHEN_SERVICE_URI: http://localhost:8088
+DELIVERY_SERVICE_URI: http://localhost:8092
+
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG

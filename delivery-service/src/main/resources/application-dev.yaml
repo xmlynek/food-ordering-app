@@ -1,0 +1,20 @@
+SERVER_PORT: 8092
+DATASOURCE_URL: jdbc:postgresql://localhost:5437/delivery_service
+OAUTH2_JWK_SET_URI: http://localhost:8083/realms/delivery/protocol/openid-connect/certs
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        orm:
+          jpa: INFO
+        web:
+          filter:
+            org.springframework.web.filter.CommonsRequestLoggingFilter: TRACE
+        security: DEBUG
+        hibernate:
+          SQL: DEBUG
+          type.descriptor.sql.BasicBinder: TRACE
+    io:
+      eventuate: DEBUG

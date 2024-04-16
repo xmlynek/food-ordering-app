@@ -1,0 +1,23 @@
+SERVER_PORT: 8085
+GCP_CREDENTIALS_LOCATION: classpath:studied-stock-416418-461f4c74d687.json
+GCP_STORAGE_PROJECT_ID: studied-stock-416418
+GCP_STORAGE_BUCKET_NAME: food-ordering-app-media
+DATASOURCE_URL: jdbc:postgresql://localhost:5434/restaurant_service
+OAUTH2_JWK_SET_URI: http://localhost:8083/realms/restaurant/protocol/openid-connect/certs
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        orm:
+          jpa: INFO
+        web:
+          filter:
+            org.springframework.web.filter.CommonsRequestLoggingFilter: TRACE
+        security: DEBUG
+        hibernate:
+          SQL: DEBUG
+          type.descriptor.sql.BasicBinder: TRACE
+    io:
+      eventuate: DEBUG

@@ -1,18 +1,24 @@
 package com.food.ordering.app.order.service.controller;
 
-import com.food.ordering.app.order.service.command.CreateOrderCommand;
+import com.food.ordering.app.order.service.dto.BasicOrderResponse;
 import com.food.ordering.app.order.service.dto.OrderCreatedResponse;
+import com.food.ordering.app.order.service.dto.OrderDetails;
 import com.food.ordering.app.order.service.dto.OrderRequest;
+import com.food.ordering.app.order.service.entity.Order;
 import com.food.ordering.app.order.service.mapper.OrderMapper;
+import com.food.ordering.app.order.service.service.OrderSagaService;
 import com.food.ordering.app.order.service.service.OrderService;
 import jakarta.validation.Valid;
-import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,45 +30,38 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class OrderController {
 
   private final OrderService orderService;
+  private final OrderSagaService orderSagaService;
   private final OrderMapper orderMapper;
 
-  private final CommandGateway commandGateway;
-
-  @GetMapping
-  public String getOrderById() {
-    return "hello";
-  }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public CompletableFuture<Object> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
-//    Order createdOrder = orderService.createOrder(
-//        orderMapper.orderRequestToOrderEntity(orderRequest));
-
-    CreateOrderCommand createOrderCommand = orderMapper.orderRequestToCommand(orderRequest);
-
-    return commandGateway.send(createOrderCommand);
-
-
-//    return orderMapper.orderEntityToOrderCreatedResponse(createdOrder);
-  }
-
-  @GetMapping("/customer/{customerId}")
-  public List<OrderCreatedResponse> findAllOrdersByCustomerId(
-      @PathVariable("customerId") UUID customerId) {
-    return orderService.findAllByCustomerId(customerId).stream()
-        .map(orderMapper::orderEntityToOrderCreatedResponse).collect(
-            Collectors.toList());
+  @PreAuthorize("isFullyAuthenticated() && #orderRequest.customerId().toString() == authentication.name")
+  public ResponseEntity<OrderCreatedResponse> createOrder(
+      @Valid @RequestBody OrderRequest orderRequest) {
+    Order createdOrder = orderSagaService.saveOrderAndCreateOrderSaga(
+        orderMapper.orderRequestToOrderEntity(orderRequest));
+    OrderCreatedResponse orderCreatedResponse = orderMapper.orderEntityToOrderCreatedResponse(
+        createdOrder);
+    return new ResponseEntity<>(orderCreatedResponse, HttpStatus.CREATED);
   }
 
   @GetMapping("/{orderId}")
-  public OrderCreatedResponse findOrderByOrderIdAndCustomerId(
-      @PathVariable("orderId") UUID orderId) {
-    return orderMapper.orderEntityToOrderCreatedResponse(
-        orderService.findByOrderId(orderId));
+  public ResponseEntity<OrderDetails> getOrderDetails(@PathVariable("orderId") UUID orderId) {
+    return ResponseEntity.ok(orderService. getOrderDetailsById(orderId));
   }
 
+  @GetMapping("/customer/{customerId}")
+  @PreAuthorize("isFullyAuthenticated() && #customerId == authentication.name")
+  public ResponseEntity<Page<BasicOrderResponse>> findAllOrdersByCustomerId(
+      @PathVariable("customerId") String customerId,
+      @SortDefault(value = "createdAt", direction = Direction.DESC) Pageable pageable) {
+    Page<BasicOrderResponse> orders = orderService.findAllByCustomerId(UUID.fromString(customerId), pageable)
+        .map(orderMapper::orderEntityToOrderDto);
+    return ResponseEntity.ok(orders);
+  }
 }

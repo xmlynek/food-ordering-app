@@ -1,0 +1,3 @@
+EVENTUATE_KAFKA_BOOTSTRAP_SERVERS: http://kafka:29092
+EVENTUATE_ZOOKEEPER_URL: http://zookeeper:2181
+DATASOURCE_URL: jdbc:postgresql://payment-service-postgres:5432/payment_service
