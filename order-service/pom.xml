@@ -27,7 +27,7 @@
       </build>
     </profile>
   </profiles>
-
+  
   <dependencies>
     <dependency>
       <groupId>org.mapstruct</groupId>
