@@ -5,6 +5,9 @@ on:
     branches:
       - develop
       - eventuate_tram
+  push:
+    branches:
+      - develop
 
 jobs:
   build-and-push:
