@@ -18,22 +18,6 @@
     <elasticsearch.rest.client.version>7.17.18</elasticsearch.rest.client.version>
   </properties>
 
-  <profiles>
-    <profile>
-      <id>build-docker-image</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.google.cloud.tools</groupId>
-            <artifactId>jib-maven-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
   <dependencies>
     <dependency>

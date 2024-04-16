@@ -11,6 +11,10 @@
 
   <artifactId>common</artifactId>
 
+  <properties>
+    <jib.skip>true</jib.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.projectlombok</groupId>
