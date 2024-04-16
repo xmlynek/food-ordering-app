@@ -186,8 +186,8 @@
                   <arguments>
                     <argument>build</argument>
                     <argument>-t</argument>
-<!--                    <argument>${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest</argument>-->
-<!--                    <argument>-t</argument>-->
+                    <argument>${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest</argument>
+                    <argument>-t</argument>
                     <argument>${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:${project.version}</argument>
                     <argument>-f</argument>
                     <argument>${project.basedir}/${frontend.food.ordering.app.dir}/Dockerfile</argument>
@@ -224,8 +224,8 @@
                   <arguments>
                     <argument>build</argument>
                     <argument>-t</argument>
-<!--                    <argument>${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest</argument>-->
-<!--                    <argument>-t</argument>-->
+                    <argument>${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest</argument>
+                    <argument>-t</argument>
                     <argument>${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:${project.version}</argument>
                     <argument>-f</argument>
                     <argument>${project.basedir}/${frontend.restaurant.app.dir}/Dockerfile</argument>
@@ -262,8 +262,8 @@
                   <arguments>
                     <argument>build</argument>
                     <argument>-t</argument>
-<!--                    <argument>${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest</argument>-->
-<!--                    <argument>-t</argument>-->
+                    <argument>${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest</argument>
+                    <argument>-t</argument>
                     <argument>${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:${project.version}</argument>
                     <argument>-f</argument>
                     <argument>${project.basedir}/${frontend.delivery.app.dir}/Dockerfile</argument>

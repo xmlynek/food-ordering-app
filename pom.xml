@@ -165,7 +165,7 @@
             <configuration>
               <skip>${jib.skip}</skip>
               <from>
-                <image>openjdk:${java.version}</image>
+                <image>openjdk:${java.version}-jdk</image>
               </from>
               <container>
                 <ports>
@@ -188,18 +188,18 @@
                   <goal>build</goal>
                 </goals>
               </execution>
-<!--              <execution>-->
-<!--                <id>push-latest-tag</id>-->
-<!--                <phase>package</phase>-->
-<!--                <configuration>-->
-<!--                  <to>-->
-<!--                    <image>docker.io/${docker.repo.username}/${docker.image.name}:latest</image>-->
-<!--                  </to>-->
-<!--                </configuration>-->
-<!--                <goals>-->
-<!--                  <goal>build</goal>-->
-<!--                </goals>-->
-<!--              </execution>-->
+              <execution>
+                <id>push-latest-tag</id>
+                <phase>package</phase>
+                <configuration>
+                  <to>
+                    <image>docker.io/${docker.repo.username}/${docker.image.name}:latest</image>
+                  </to>
+                </configuration>
+                <goals>
+                  <goal>build</goal>
+                </goals>
+              </execution>
             </executions>
           </plugin>
         </plugins>
