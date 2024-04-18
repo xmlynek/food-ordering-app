@@ -172,7 +172,7 @@
 
 
     <profile>
-      <id>build-docker-images-fe</id>
+      <id>build-docker-images</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>

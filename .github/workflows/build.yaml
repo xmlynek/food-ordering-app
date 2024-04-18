@@ -1,13 +1,9 @@
-name: Build and Push Docker image
+name: Build Docker image locally
 
 on:
   pull_request:
     branches:
-      - develop
-      - eventuate_tram
-  push:
-    branches:
-      - develop
+      - master
 
 jobs:
   build-and-push:
@@ -26,14 +22,5 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-      - name: Build and push Docker images
-        run: mvn --no-transfer-progress clean package -P build-docker-images -P build-docker-images-fe
-
-      - name: Build and push Docker images with latest tag
-        run: mvn --no-transfer-progress clean package -P build-docker-images -P build-docker-images-fe -Ddocker.image.tag=latest
+      - name: Build local Docker images
+        run: mvn --no-transfer-progress clean install -P build-docker-images-local
