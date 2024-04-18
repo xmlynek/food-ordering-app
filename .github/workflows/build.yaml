@@ -33,4 +33,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build and push Docker images
-        run: mvn --no-transfer-progress clean install -P build-docker-images -P build-docker-images-fe
+        run: mvn --no-transfer-progress clean package -P build-docker-images -P build-docker-images-fe
