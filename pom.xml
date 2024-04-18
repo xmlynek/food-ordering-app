@@ -245,6 +245,9 @@
                 <version>${lombok-mapstruct-binding.version}</version>
               </path>
             </annotationProcessorPaths>
+            <compilerArgs>
+              <compilerArg>-Amapstruct.verbose=true</compilerArg>
+            </compilerArgs>
           </configuration>
         </plugin>
 
