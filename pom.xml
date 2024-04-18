@@ -245,9 +245,6 @@
                 <version>${org.mapstruct.version}</version>
               </path>
             </annotationProcessorPaths>
-            <compilerArgs>
-              <compilerArg>-Amapstruct.verbose=true</compilerArg>
-            </compilerArgs>
           </configuration>
         </plugin>
 

@@ -196,10 +196,12 @@
                     <argument>build</argument>
                     <argument>-t</argument>
                     <argument>
-                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest
+                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:${docker.image.tag}
                     </argument>
-                    <!--                    <argument>-t</argument>-->
-                    <!--                    <argument>${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:${project.version}</argument>-->
+<!--                    <argument>-t</argument>-->
+<!--                    <argument>-->
+<!--                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest-->
+<!--                    </argument>-->
                     <argument>-f</argument>
                     <argument>${project.basedir}/${frontend.food.ordering.app.dir}/Dockerfile
                     </argument>
@@ -222,10 +224,12 @@
                     <argument>build</argument>
                     <argument>-t</argument>
                     <argument>
-                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest
+                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:${docker.image.tag}
                     </argument>
-                    <!--                    <argument>-t</argument>-->
-                    <!--                    <argument>${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:${project.version}</argument>-->
+<!--                    <argument>-t</argument>-->
+<!--                    <argument>-->
+<!--                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest-->
+<!--                    </argument>-->
                     <argument>-f</argument>
                     <argument>${project.basedir}/${frontend.restaurant.app.dir}/Dockerfile
                     </argument>
@@ -248,10 +252,12 @@
                     <argument>build</argument>
                     <argument>-t</argument>
                     <argument>
-                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest
+                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:${docker.image.tag}
                     </argument>
-                    <!--                    <argument>-t</argument>-->
-                    <!--                    <argument>${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:${project.version}</argument>-->
+<!--                    <argument>-t</argument>-->
+<!--                    <argument>-->
+<!--                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest-->
+<!--                    </argument>-->
                     <argument>-f</argument>
                     <argument>${project.basedir}/${frontend.delivery.app.dir}/Dockerfile</argument>
                     <argument>${project.basedir}/${frontend.delivery.app.dir}</argument>
@@ -272,9 +278,9 @@
                   <arguments>
                     <argument>push</argument>
                     <argument>
-                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest
+                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:${docker.image.tag}
                     </argument>
-                    <!--                    <argument>&#45;&#45;all-tags</argument>-->
+<!--                    <argument>&#45;&#45;all-tags</argument>-->
                   </arguments>
                 </configuration>
               </execution>
@@ -291,9 +297,9 @@
                   <arguments>
                     <argument>push</argument>
                     <argument>
-                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest
+                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:${docker.image.tag}
                     </argument>
-                    <!--                    <argument>&#45;&#45;all-tags</argument>-->
+<!--                    <argument>&#45;&#45;all-tags</argument>-->
                   </arguments>
                 </configuration>
               </execution>
@@ -310,9 +316,9 @@
                   <arguments>
                     <argument>push</argument>
                     <argument>
-                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest
+                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:${docker.image.tag}
                     </argument>
-                    <!--                    <argument>&#45;&#45;all-tags</argument>-->
+<!--                    <argument>&#45;&#45;all-tags</argument>-->
                   </arguments>
                 </configuration>
               </execution>

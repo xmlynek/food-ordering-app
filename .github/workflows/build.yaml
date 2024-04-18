@@ -34,3 +34,6 @@ jobs:
 
       - name: Build and push Docker images
         run: mvn --no-transfer-progress clean package -P build-docker-images -P build-docker-images-fe
+
+      - name: Build and push Docker images with latest tag
+        run: mvn --no-transfer-progress clean package -P build-docker-images -P build-docker-images-fe -Ddocker.image.tag=latest
