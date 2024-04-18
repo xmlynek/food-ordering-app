@@ -13,6 +13,7 @@
   <packaging>pom</packaging>
 
   <properties>
+    <jib.skip>true</jib.skip>
     <frontend-maven-plugin.version>1.15.0</frontend-maven-plugin.version>
     <exec-maven-plugin.version>3.2.0</exec-maven-plugin.version>
     <node.version>v21.1.0</node.version>
@@ -108,9 +109,12 @@
                   <arguments>
                     <argument>build</argument>
                     <argument>-t</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest
+                    </argument>
                     <argument>-f</argument>
-                    <argument>${project.basedir}/${frontend.food.ordering.app.dir}/Dockerfile</argument>
+                    <argument>${project.basedir}/${frontend.food.ordering.app.dir}/Dockerfile
+                    </argument>
                     <argument>${project.basedir}/${frontend.food.ordering.app.dir}</argument>
                   </arguments>
                 </configuration>
@@ -128,9 +132,12 @@
                   <arguments>
                     <argument>build</argument>
                     <argument>-t</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest
+                    </argument>
                     <argument>-f</argument>
-                    <argument>${project.basedir}/${frontend.restaurant.app.dir}/Dockerfile</argument>
+                    <argument>${project.basedir}/${frontend.restaurant.app.dir}/Dockerfile
+                    </argument>
                     <argument>${project.basedir}/${frontend.restaurant.app.dir}</argument>
                   </arguments>
                 </configuration>
@@ -148,7 +155,9 @@
                   <arguments>
                     <argument>build</argument>
                     <argument>-t</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest
+                    </argument>
                     <argument>-f</argument>
                     <argument>${project.basedir}/${frontend.delivery.app.dir}/Dockerfile</argument>
                     <argument>${project.basedir}/${frontend.delivery.app.dir}</argument>
@@ -186,31 +195,19 @@
                   <arguments>
                     <argument>build</argument>
                     <argument>-t</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest</argument>
-                    <argument>-t</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:${project.version}</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest
+                    </argument>
+                    <!--                    <argument>-t</argument>-->
+                    <!--                    <argument>${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:${project.version}</argument>-->
                     <argument>-f</argument>
-                    <argument>${project.basedir}/${frontend.food.ordering.app.dir}/Dockerfile</argument>
+                    <argument>${project.basedir}/${frontend.food.ordering.app.dir}/Dockerfile
+                    </argument>
                     <argument>${project.basedir}/${frontend.food.ordering.app.dir}</argument>
                   </arguments>
                 </configuration>
               </execution>
-              <!-- Docker push for food-ordering-app -->
-              <execution>
-                <id>docker-push-food-ordering-app</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>docker</executable>
-                  <arguments>
-                    <argument>push</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}</argument>
-                    <argument>--all-tags</argument>
-                  </arguments>
-                </configuration>
-              </execution>
+
 
               <!-- Docker build for restaurant-app -->
               <execution>
@@ -224,31 +221,19 @@
                   <arguments>
                     <argument>build</argument>
                     <argument>-t</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest</argument>
-                    <argument>-t</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:${project.version}</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest
+                    </argument>
+                    <!--                    <argument>-t</argument>-->
+                    <!--                    <argument>${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:${project.version}</argument>-->
                     <argument>-f</argument>
-                    <argument>${project.basedir}/${frontend.restaurant.app.dir}/Dockerfile</argument>
+                    <argument>${project.basedir}/${frontend.restaurant.app.dir}/Dockerfile
+                    </argument>
                     <argument>${project.basedir}/${frontend.restaurant.app.dir}</argument>
                   </arguments>
                 </configuration>
               </execution>
-              <!-- Docker push for restaurant-app -->
-              <execution>
-                <id>docker-push-restaurant-app</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>docker</executable>
-                  <arguments>
-                    <argument>push</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}</argument>
-                    <argument>--all-tags</argument>
-                  </arguments>
-                </configuration>
-              </execution>
+
 
               <!-- Docker build for delivery-app -->
               <execution>
@@ -262,15 +247,57 @@
                   <arguments>
                     <argument>build</argument>
                     <argument>-t</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest</argument>
-                    <argument>-t</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:${project.version}</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest
+                    </argument>
+                    <!--                    <argument>-t</argument>-->
+                    <!--                    <argument>${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:${project.version}</argument>-->
                     <argument>-f</argument>
                     <argument>${project.basedir}/${frontend.delivery.app.dir}/Dockerfile</argument>
                     <argument>${project.basedir}/${frontend.delivery.app.dir}</argument>
                   </arguments>
                 </configuration>
               </execution>
+
+
+              <!-- Docker push for food-ordering-app -->
+              <execution>
+                <id>docker-push-food-ordering-app</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>push</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest
+                    </argument>
+                    <!--                    <argument>&#45;&#45;all-tags</argument>-->
+                  </arguments>
+                </configuration>
+              </execution>
+
+              <!-- Docker push for restaurant-app -->
+              <execution>
+                <id>docker-push-restaurant-app</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>push</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest
+                    </argument>
+                    <!--                    <argument>&#45;&#45;all-tags</argument>-->
+                  </arguments>
+                </configuration>
+              </execution>
+
               <!-- Docker push for delivery-app -->
               <execution>
                 <id>docker-push-delivery-app</id>
@@ -282,8 +309,10 @@
                   <executable>docker</executable>
                   <arguments>
                     <argument>push</argument>
-                    <argument>${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}</argument>
-                    <argument>--all-tags</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest
+                    </argument>
+                    <!--                    <argument>&#45;&#45;all-tags</argument>-->
                   </arguments>
                 </configuration>
               </execution>

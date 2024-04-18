@@ -188,18 +188,18 @@
                   <goal>build</goal>
                 </goals>
               </execution>
-              <execution>
-                <id>push-latest-tag</id>
-                <phase>package</phase>
-                <configuration>
-                  <to>
-                    <image>docker.io/${docker.repo.username}/${docker.image.name}:latest</image>
-                  </to>
-                </configuration>
-                <goals>
-                  <goal>build</goal>
-                </goals>
-              </execution>
+<!--              <execution>-->
+<!--                <id>push-latest-tag</id>-->
+<!--                <phase>package</phase>-->
+<!--                <configuration>-->
+<!--                  <to>-->
+<!--                    <image>docker.io/${docker.repo.username}/${docker.image.name}:latest</image>-->
+<!--                  </to>-->
+<!--                </configuration>-->
+<!--                <goals>-->
+<!--                  <goal>build</goal>-->
+<!--                </goals>-->
+<!--              </execution>-->
             </executions>
           </plugin>
         </plugins>
@@ -211,18 +211,18 @@
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-maven-plugin</artifactId>
-          <configuration>
-            <excludes>
-              <exclude>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-              </exclude>
-            </excludes>
-          </configuration>
-        </plugin>
+<!--        <plugin>-->
+<!--          <groupId>org.springframework.boot</groupId>-->
+<!--          <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--          <configuration>-->
+<!--            <excludes>-->
+<!--              <exclude>-->
+<!--                <groupId>org.projectlombok</groupId>-->
+<!--                <artifactId>lombok</artifactId>-->
+<!--              </exclude>-->
+<!--            </excludes>-->
+<!--          </configuration>-->
+<!--        </plugin>-->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
