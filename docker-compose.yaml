@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   food-ordering-app-client:
-    image: xmlynek/com.food.ordering.app/food-ordering-app:${COMMON_APP_VERSION:-latest}
+    image: xmlynek/com.food.ordering.app.food-ordering-app:${COMMON_APP_VERSION:-latest}
     ports:
       - "5173:80"
     restart: on-failure
@@ -20,7 +20,7 @@ services:
           memory: 128M
 
   restaurant-app-client:
-    image: xmlynek/com.food.ordering.app/restaurant-app:${COMMON_APP_VERSION:-latest}
+    image: xmlynek/com.food.ordering.app.restaurant-app:${COMMON_APP_VERSION:-latest}
     ports:
       - "5174:80"
     restart: on-failure
@@ -37,7 +37,7 @@ services:
           memory: 128M
 
   delivery-app-client:
-    image: xmlynek/com.food.ordering.app/delivery-app:${COMMON_APP_VERSION:-latest}
+    image: xmlynek/com.food.ordering.app.delivery-app:${COMMON_APP_VERSION:-latest}
     ports:
       - "5175:80"
     restart: on-failure
@@ -53,7 +53,7 @@ services:
           memory: 128M
 
   catalog-service:
-    image: xmlynek/com.food.ordering.app/catalog-service:${COMMON_APP_VERSION:-latest}
+    image: xmlynek/com.food.ordering.app.catalog-service:${COMMON_APP_VERSION:-latest}
     ports:
       - "8105:8080"
     restart: on-failure
@@ -72,13 +72,9 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms192m -Xmx192m"
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
     ports:
       - "9200:9200"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
     volumes:
       - ./volumes/catalog-service/elasticsearch:/usr/share/elasticsearch/data
 
@@ -99,7 +95,7 @@ services:
           memory: 128M
 
   order-service:
-    image: xmlynek/com.food.ordering.app/order-service:${COMMON_APP_VERSION:-latest}
+    image: xmlynek/com.food.ordering.app.order-service:${COMMON_APP_VERSION:-latest}
     ports:
       - "8075:8080"
     restart: on-failure
@@ -129,7 +125,7 @@ services:
           memory: 128M
 
   payment-service:
-    image: xmlynek/com.food.ordering.app/payment-service:${COMMON_APP_VERSION:-latest}
+    image: xmlynek/com.food.ordering.app.payment-service:${COMMON_APP_VERSION:-latest}
     ports:
       - "8085:8080"
     restart: on-failure
@@ -159,7 +155,7 @@ services:
           memory: 128M
 
   restaurant-service:
-    image: xmlynek/com.food.ordering.app/restaurant-service:${COMMON_APP_VERSION:-latest}
+    image: xmlynek/com.food.ordering.app.restaurant-service:${COMMON_APP_VERSION:-latest}
     ports:
       - "8090:8080"
     restart: on-failure
@@ -171,11 +167,11 @@ services:
       - cdcservice
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      GCP_STORAGE_BUCKET_NAME: food-ordering-app-media
-      GCP_STORAGE_PROJECT_ID: studied-stock-416418
+      GCP_STORAGE_BUCKET_NAME: ${GCP_STORAGE_BUCKET_NAME:-food-ordering-app-media}
+      GCP_STORAGE_PROJECT_ID: ${GCP_STORAGE_PROJECT_ID}
       GCP_CREDENTIALS_LOCATION: file:///tmp/keys/GCP_KEY.json
     volumes:
-      - ./volumes/restaurant-service/YOUR_GCP_KEY.json:/tmp/keys/GCP_KEY.json:ro
+      - ./volumes/restaurant-service/${GCP_KEY_FILE_NAME}:/tmp/keys/GCP_KEY.json:ro
 
   restaurant-service-postgres:
     image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
@@ -194,7 +190,7 @@ services:
           memory: 128M
 
   kitchen-service:
-    image: xmlynek/com.food.ordering.app/kitchen-service:${COMMON_APP_VERSION:-latest}
+    image: xmlynek/com.food.ordering.app.kitchen-service:${COMMON_APP_VERSION:-latest}
     ports:
       - "8095:8080"
     restart: on-failure
@@ -224,7 +220,7 @@ services:
           memory: 128M
 
   delivery-service:
-    image: xmlynek/com.food.ordering.app/delivery-service:${COMMON_APP_VERSION:-latest}
+    image: xmlynek/com.food.ordering.app.delivery-service:${COMMON_APP_VERSION:-latest}
     ports:
       - "8100:8080"
     restart: on-failure
@@ -254,7 +250,7 @@ services:
           memory: 128M
 
   api-gateway:
-    image: xmlynek/com.food.ordering.app/api-gateway:${COMMON_APP_VERSION:-latest}
+    image: xmlynek/com.food.ordering.app.api-gateway:${COMMON_APP_VERSION:-latest}
     ports:
       - "8070:8080"
     restart: on-failure

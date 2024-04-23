@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="start food-ordering-system" type="CompoundRunConfigurationType">
+    <toRun name="delivery-app" type="js.build_tools.npm" />
+    <toRun name="food-ordering-app" type="js.build_tools.npm" />
+    <toRun name="restaurant-app" type="js.build_tools.npm" />
+    <toRun name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="CatalogServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="DeliveryServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="KitchenServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="OrderServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="PaymentServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="RestaurantServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>
