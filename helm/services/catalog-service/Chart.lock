@@ -1,0 +1,9 @@
+dependencies:
+- name: postgresql
+  repository: file://../postgres
+  version: 0.1.0
+- name: elasticsearch
+  repository: file://../elasticsearch
+  version: 0.1.0
+digest: sha256:55582bb8f7d915c5151083f299aa799fc4003829922e29c5cecd523b4fe47e40
+generated: "2024-04-25T14:15:18.8882831+02:00"

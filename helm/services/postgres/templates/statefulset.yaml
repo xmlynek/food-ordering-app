@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.service.name }}
+spec:
+  serviceName: "{{ .Values.service.name }}"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        role: {{ .Values.service.name }}
+        {{- with .Values.postgresql.additionalLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: postgresql
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest"}}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            {{- include "helpers.list-env-variables" . | indent 12 }}
+          volumeMounts:
+            - name: postgresql-persistent-storage
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgresql-persistent-storage
+      spec:
+        accessModes: {{ .Values.storage.accessModes | toYaml | nindent 8 }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
+  selector:
+    matchLabels:
+      role: {{ .Values.service.name }}

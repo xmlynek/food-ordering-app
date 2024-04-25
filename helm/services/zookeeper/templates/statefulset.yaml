@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.service.name }}
+spec:
+  serviceName: "{{ .Values.service.name }}"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        role: {{ .Values.service.name }}
+        {{- with .Values.zookeeper.additionalLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: zookeeper
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest"}}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            {{- include "helpers.list-env-variables" . | indent 12 }}
+          volumeMounts:
+            - name: zookeeper-persistent-storage
+              mountPath: /var/lib/kafka/data
+  volumeClaimTemplates:
+    - metadata:
+        name: zookeeper-persistent-storage
+      spec:
+        accessModes: {{ .Values.storage.accessModes | toYaml | nindent 8 }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
+  selector:
+    matchLabels:
+      role: {{ .Values.service.name }}

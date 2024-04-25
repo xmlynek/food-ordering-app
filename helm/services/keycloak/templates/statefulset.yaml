@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.service.name }}
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: "{{ .Values.service.name }}"
+  replicas: 1
+  selector:
+    matchLabels:
+      role: {{ .Values.service.name }}
+  template:
+    metadata:
+      labels:
+        role: {{ .Values.service.name }}
+        {{- with .Values.keycloak.additionalLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: keycloak
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest"}}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+{{/*          command: ["/opt/keycloak/bin/kc.sh"]*/}}
+          args: ["start-dev", "--import-realm"]
+          env:
+            {{- include "helpers.list-env-variables" . | indent 12 }}
+          resources:
+                     {{- toYaml .Values.resources | nindent 12 }}
+{{/*          command: {{ toYaml .Values.command | nindent 12 }}*/}}
+          volumeMounts:
+            - name: import-volume
+              mountPath: /opt/keycloak/data/import
+      volumes:
+        - name: import-volume
+          hostPath:
+            path: {{ .Values.volumes.importVolume }}
+
+  volumeClaimTemplates:
+    - metadata:
+        name: keycloak-data
+      spec:
+        accessModes: {{ .Values.storage.accessModes | toYaml | nindent 8 }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}

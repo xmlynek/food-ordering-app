@@ -1,0 +1,58 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/keycloak/keycloak
+  tag: "20.0.3"
+  pullPolicy: IfNotPresent
+
+service:
+  name: keycloak
+  port: 8080
+  type: ClusterIP
+
+storage:
+  size: 1Gi
+  accessModes: ["ReadWriteOnce"]
+
+env:
+  secret: {}
+  normal:
+    KEYCLOAK_ADMIN: admin
+    KEYCLOAK_ADMIN_PASSWORD: admin
+    KC_DB: postgres
+    KC_DB_URL: jdbc:postgresql://keycloak-postgresql:5432/keycloak
+    KC_DB_USERNAME: admin
+    KC_DB_PASSWORD: password
+
+postgresql:
+  postgresql:
+    additionalLabels:
+      app: keycloak
+  service:
+    name: keycloak-postgresql
+  persistentVolume:
+    name: keycloak-postgresql-pv
+  env:
+    normal:
+      POSTGRES_DB: keycloak
+
+keycloak:
+  additionalLabels: {}
+
+volumes:
+  importVolume: "/run/desktop/mnt/host/c/Users/filip/OneDrive/Plocha/diplomka/food-ordering-app/helm/keycloak/export"
+
+
+resources:
+  limits:
+    memory: 512Mi
+
+command:
+#  - start-dev
+  - --import-realm
+
+nameOverride: "keycloak"
+fullnameOverride: "keycloak"
+
+
+

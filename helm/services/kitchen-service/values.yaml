@@ -1,0 +1,129 @@
+replicaCount: 1
+
+image:
+  repository: xmlynek/com.food.ordering.app.kitchen-service
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+env:
+  secret: {}
+  normal:
+    DATASOURCE_URL: "jdbc:postgresql://kitchen-service-postgresql:5432/kitchen_service"
+    OAUTH2_JWK_SET_URI: "http://keycloak:8080/realms/restaurant/protocol/openid-connect/certs"
+    EVENTUATE_KAFKA_BOOTSTRAP_SERVERS: "http://kafka:9092"
+    EVENTUATE_ZOOKEEPER_URL: "http://zookeeper:2181"
+
+postgresql:
+  postgresql:
+    additionalLabels:
+      app: kitchen-service
+  service:
+    name: kitchen-service-postgresql
+  persistentVolume:
+    name: kitchen-service-postgresql-pv
+  env:
+    normal:
+      POSTGRES_DB: kitchen_service
+
+
+
+imagePullSecrets: []
+nameOverride: "kitchen-service"
+fullnameOverride: "kitchen-service"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: LoadBalancer
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+livenessProbe:
+  initialDelaySeconds: 20
+  timeoutSeconds: 5
+  httpGet:
+    path: /actuator/health
+    port: http
+readinessProbe:
+  initialDelaySeconds: 20
+  timeoutSeconds: 5
+  httpGet:
+    path: /actuator/health
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

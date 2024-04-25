@@ -1,0 +1,28 @@
+replicaCount: 1
+
+image:
+  repository: eventuateio/eventuate-zookeeper
+  tag: "0.18.0.RELEASE"
+  pullPolicy: IfNotPresent
+
+service:
+  name: zookeeper
+  port: 2181
+  type: ClusterIP
+
+storage:
+  size: 1Gi
+  accessModes: ["ReadWriteOnce"]
+
+env:
+  secret: {}
+  normal: []
+
+zookeeper:
+  additionalLabels: {}
+
+nameOverride: "zookeeper"
+fullnameOverride: "zookeeper"
+
+
+
