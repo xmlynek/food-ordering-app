@@ -10,7 +10,7 @@ metadata:
 spec:
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
   clusterIP: None
   selector:
     role: {{ .Values.service.name }}

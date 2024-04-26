@@ -1,0 +1,43 @@
+apiVersion: v2
+appVersion: "0.0.1-SNAPSHOT"
+description: A Helm chart for Kubernetes
+name: food-ordering-app
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: keycloak
+    version: 0.1.0
+    repository: "file://../../services/keycloak"
+  - name: zookeeper
+    version: 0.1.0
+    repository: "file://../../services/zookeeper"
+  - name: kafka
+    version: 0.1.0
+    repository: "file://../../services/kafka"
+
+  - name: order-service
+    version: 0.1.0
+    repository: "file://../../services/order-service"
+  - name: kitchen-service
+    version: 0.1.0
+    repository: "file://../../services/kitchen-service"
+  - name: catalog-service
+    version: 0.1.0
+    repository: "file://../../services/catalog-service"
+  - name: delivery-service
+    version: 0.1.0
+    repository: "file://../../services/delivery-service"
+  - name: payment-service
+    version: 0.1.0
+    repository: "file://../../services/payment-service"
+  - name: restaurant-service
+    version: 0.1.0
+    repository: "file://../../services/restaurant-service"
+  - name: api-gateway
+    version: 0.1.0
+    repository: "file://../../services/api-gateway"
+
+  - name: food-ordering-app
+    version: 0.1.0
+    repository: "file://../../applications/food-ordering-app"

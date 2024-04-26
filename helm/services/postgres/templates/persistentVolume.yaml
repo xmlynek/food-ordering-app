@@ -11,4 +11,4 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: hostpath
   hostPath:
-    path: {{ printf "/tmp/postgres/%s" (.Values.persistentVolume.name | default "postgres-pv") }}
+    path: {{ printf "/tmp/postgres1/%s" (.Values.persistentVolume.name | default "postgres-pv") }}

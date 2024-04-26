@@ -1,0 +1,36 @@
+dependencies:
+- name: keycloak
+  repository: file://../../services/keycloak
+  version: 0.1.0
+- name: zookeeper
+  repository: file://../../services/zookeeper
+  version: 0.1.0
+- name: kafka
+  repository: file://../../services/kafka
+  version: 0.1.0
+- name: order-service
+  repository: file://../../services/order-service
+  version: 0.1.0
+- name: kitchen-service
+  repository: file://../../services/kitchen-service
+  version: 0.1.0
+- name: catalog-service
+  repository: file://../../services/catalog-service
+  version: 0.1.0
+- name: delivery-service
+  repository: file://../../services/delivery-service
+  version: 0.1.0
+- name: payment-service
+  repository: file://../../services/payment-service
+  version: 0.1.0
+- name: restaurant-service
+  repository: file://../../services/restaurant-service
+  version: 0.1.0
+- name: api-gateway
+  repository: file://../../services/api-gateway
+  version: 0.1.0
+- name: food-ordering-app
+  repository: file://../../applications/food-ordering-app
+  version: 0.1.0
+digest: sha256:5d24211ec0b22bb40937062437de5ed7117f5ee152796408350a2df7beb58e20
+generated: "2024-04-26T10:53:10.4466167+02:00"

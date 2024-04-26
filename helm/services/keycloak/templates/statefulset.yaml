@@ -20,18 +20,16 @@ spec:
     spec:
       terminationGracePeriodSeconds: 10
       containers:
-        - name: keycloak
+        - name: "{{ .Values.service.name }}"
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest"}}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.service.port }}
-{{/*          command: ["/opt/keycloak/bin/kc.sh"]*/}}
-          args: ["start-dev", "--import-realm"]
+            - containerPort: {{ .Values.service.targetPort }}
+          args: {{ .Values.image.args | toYaml | nindent 12 }}
           env:
             {{- include "helpers.list-env-variables" . | indent 12 }}
           resources:
                      {{- toYaml .Values.resources | nindent 12 }}
-{{/*          command: {{ toYaml .Values.command | nindent 12 }}*/}}
           volumeMounts:
             - name: import-volume
               mountPath: /opt/keycloak/data/import

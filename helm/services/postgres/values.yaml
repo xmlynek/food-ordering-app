@@ -3,6 +3,7 @@ postgresql:
 service:
   name: postgresql
   port: 5432
+  targetPort: 5432
   type: ClusterIP
 storage:
   size: 1Gi
