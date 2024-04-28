@@ -1,0 +1,6 @@
+apiVersion: v2
+description: Restaurant app Helm chart for Kubernetes
+name: restaurant-app
+type: application
+version: 0.1.0
+appVersion: "0.0.1-SNAPSHOT"

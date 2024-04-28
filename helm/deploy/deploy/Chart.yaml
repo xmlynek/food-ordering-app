@@ -15,6 +15,9 @@ dependencies:
   - name: kafka
     version: 0.1.0
     repository: "file://../../services/kafka"
+  - name: cdc-service
+    version: 0.1.0
+    repository: "file://../../services/cdc-service"
 
   - name: order-service
     version: 0.1.0
@@ -41,3 +44,9 @@ dependencies:
   - name: food-ordering-app
     version: 0.1.0
     repository: "file://../../applications/food-ordering-app"
+  - name: restaurant-app
+    version: 0.1.0
+    repository: "file://../../applications/restaurant-app"
+  - name: delivery-app
+    version: 0.1.0
+    repository: "file://../../applications/delivery-app"
