@@ -9,6 +9,6 @@ spec:
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: hostpath
+  storageClassName: standard
   hostPath:
     path: {{ printf "/tmp/postgres1/%s" (.Values.persistentVolume.name | default "postgres-pv") }}

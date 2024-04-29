@@ -1,0 +1,47 @@
+keycloak:
+  service:
+    port: 8070
+
+catalog-service:
+  service:
+    port: 8085
+  env:
+    normal:
+      OAUTH2_JWK_SET_URI: "http://keycloak:8070/realms/food-ordering-app/protocol/openid-connect/certs"
+
+delivery-service:
+  service:
+    port: 8084
+  env:
+    normal:
+      OAUTH2_JWK_SET_URI: "http://keycloak:8070/realms/delivery/protocol/openid-connect/certs"
+
+kitchen-service:
+  service:
+    port: 8083
+  env:
+    normal:
+      OAUTH2_JWK_SET_URI: "http://keycloak:8070/realms/restaurant/protocol/openid-connect/certs"
+
+restaurant-service:
+  service:
+    port: 8081
+  env:
+    normal:
+      OAUTH2_JWK_SET_URI: "http://keycloak:8070/realms/restaurant/protocol/openid-connect/certs"
+
+order-service:
+  service:
+    port: 8080
+  env:
+    normal:
+      OAUTH2_JWK_SET_URI: "http://keycloak:8070/realms/food-ordering-app/protocol/openid-connect/certs"
+
+api-gateway:
+  env:
+    normal:
+      CATALOG_SERVICE_URI: http://catalog-service:8085
+      DELIVERY_SERVICE_URI: http://delivery-service:8084
+      KITCHEN_SERVICE_URI: http://kitchen-service:8083
+      RESTAURANT_SERVICE_URI: http://restaurant-service:8081
+      ORDER_SERVICE_URI: http://order-service:8080

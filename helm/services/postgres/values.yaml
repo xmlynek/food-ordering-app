@@ -17,6 +17,8 @@ image:
   pullPolicy: IfNotPresent
   tag: 0.18.0.RELEASE
 
+persistentVolume:
+  name: ""
 
 env:
   secret: {}
@@ -24,3 +26,4 @@ env:
     POSTGRES_USER: admin
     POSTGRES_PASSWORD: password
     POSTGRES_DB: catalog_service
+    PGDATA: /var/lib/postgresql/data/pgdata

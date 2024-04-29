@@ -31,13 +31,9 @@ spec:
           resources:
                      {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - name: import-volume
-              mountPath: /opt/keycloak/data/import
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
       volumes:
-        - name: import-volume
-          hostPath:
-            path: {{ .Values.volumes.importVolume }}
-
+        {{- toYaml .Values.volumes | nindent 12 }}
   volumeClaimTemplates:
     - metadata:
         name: keycloak-data
