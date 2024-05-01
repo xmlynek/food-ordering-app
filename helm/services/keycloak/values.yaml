@@ -77,11 +77,12 @@ ingress:
   className: ""
   annotations:
     kubernetes.io/ingress.class: "gce"
-  rules:
-    - http:
-        paths:
-          - path: /*
-            pathType: ImplementationSpecific
+    kubernetes.io/ingress.global-static-ip-name: "keycloak-ingress-static-ip"
+  hosts:
+    - host: "auth.food-ordering-system.com"
+      paths:
+        - path: /*
+          pathType: ImplementationSpecific
   tls: []
 
 

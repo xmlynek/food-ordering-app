@@ -1,7 +1,7 @@
 apiVersion: v2
 appVersion: "0.0.1-RELEASE"
 description: A Helm chart for Kubernetes
-name: food-ordering-app
+name: food-ordering-system
 type: application
 version: 0.1.0
 

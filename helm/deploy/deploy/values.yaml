@@ -11,8 +11,8 @@ food-ordering-app:
     enabled: true
   env:
     normal:
-      REACT_KEYCLOAK_URL: "http://34.118.106.86:8080"  # Change this to your Keycloak URL
-      REACT_API_GATEWAY_URL: "http://34.116.174.157:8080" # Change this to your API GW URL
+      REACT_KEYCLOAK_URL: "http://34.116.174.157:8080"  # Change this to your Keycloak URL
+      REACT_API_GATEWAY_URL: "http://api-gw.food-ordering-system.com" # Change this to your API GW URL
 
 delivery-app:
   service:
@@ -22,8 +22,8 @@ delivery-app:
     enabled: true
   env:
     normal:
-      REACT_KEYCLOAK_URL: "http://34.118.106.86:8080" # Change this to your Keycloak URL
-      REACT_API_GATEWAY_URL: "http://34.116.174.157:8080" # Change this to your API GW URL
+      REACT_KEYCLOAK_URL: "http://34.116.174.157:8080" # Change this to your Keycloak URL
+      REACT_API_GATEWAY_URL: "http://api-gw.food-ordering-system.com" # Change this to your API GW URL
 
 restaurant-app:
   service:
@@ -33,8 +33,8 @@ restaurant-app:
     enabled: true
   env:
     normal:
-      REACT_KEYCLOAK_URL: "http://34.118.106.86:8080" # Change this to your Keycloak URL
-      REACT_API_GATEWAY_URL: "http://34.116.174.157:8080" # Change this to your API GW URL
+      REACT_KEYCLOAK_URL: "http://34.116.174.157:8080" # Change this to your Keycloak URL
+      REACT_API_GATEWAY_URL: "http://api-gw.food-ordering-system.com"
 
 catalog-service:
   service:
@@ -70,6 +70,10 @@ order-service:
   env:
     normal:
       OAUTH2_JWK_SET_URI: "http://keycloak:8080/realms/food-ordering-app/protocol/openid-connect/certs"
+
+payment-service:
+  service:
+    port: 8080
 
 api-gateway:
   service:

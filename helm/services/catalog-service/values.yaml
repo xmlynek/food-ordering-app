@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: xmlynek/com.food.ordering.app.catalog-service
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 

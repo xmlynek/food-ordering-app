@@ -2,8 +2,8 @@ replicaCount: 1
 
 image:
   repository: xmlynek/com.food.ordering.app.delivery-app
-  tag: 0.0.1-SNAPSHOT
-  pullPolicy: IfNotPresent
+  tag: ""
+  pullPolicy: Always
 
 imagePullSecrets:
 #  - name:
