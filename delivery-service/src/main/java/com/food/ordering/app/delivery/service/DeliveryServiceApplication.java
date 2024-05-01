@@ -14,13 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @SpringBootApplication
-@EnableDiscoveryClient
 @EnableConfigurationProperties(value = {CommandHandlerProperties.class})
 @Import({
     OptimisticLockingDecoratorConfiguration.class,
