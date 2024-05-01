@@ -3,4 +3,4 @@ description: Food ordering app Helm chart for Kubernetes
 name: food-ordering-app
 type: application
 version: 0.1.0
-appVersion: "0.0.1-SNAPSHOT"
+appVersion: "0.0.1-RELEASE"
