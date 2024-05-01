@@ -55,7 +55,7 @@ const RestaurantList: React.FC<RestaurantListProps> = ({}: RestaurantListProps) 
 
   return (
       <>
-        <Space style={{marginBottom: 16}}>
+        <Space style={{marginBottom: 16}} wrap>
           <Button onClick={() => requestSort("name")}>
             Sort by
             Name{sortConfig.key === "name" && (sortConfig.direction === "ascend" ?

@@ -53,7 +53,7 @@ const RestaurantMenuList: React.FC<MenuListProps> = ({}: MenuListProps) => {
 
   return (
       <Card title="Available Menu Products" bordered={false} style={{boxShadow: 'rgba(0, 0, 0, 0.36) 0px 22px 70px 4px'}}>
-        <Space style={{marginBottom: 16}}>
+        <Space style={{marginBottom: 16}} wrap>
           <Button onClick={() => requestSort("name")}>
             Sort by
             Name{sortConfig.key === "name" && (sortConfig.direction === "ascend" ?

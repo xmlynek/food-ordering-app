@@ -55,7 +55,7 @@ const MenuList: React.FC<MenuListProps> = ({deleteHandler}: MenuListProps) => {
 
   return (
       <>
-        <Space style={{marginBottom: 16}}>
+        <Space style={{marginBottom: 16}} wrap>
           <Button onClick={() => requestSort("isAvailable")}>
             Sort by
             Availability{sortConfig.key === "isAvailable" && (sortConfig.direction === "ascend" ?

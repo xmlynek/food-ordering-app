@@ -56,7 +56,7 @@ const DeliveryList: React.FC<OrderListProps> = ({queryKey, queryFn}: OrderListPr
 
   return (
       <>
-        <Space style={{marginBottom: 16}}>
+        <Space style={{marginBottom: 16}} wrap>
           <Button onClick={() => requestSort("lastModifiedAt")}>
             Sort by Last update{sortConfig.key === "lastModifiedAt" && (sortConfig.direction === "ascend" ?
               <UpOutlined/> : <DownOutlined/>)}
