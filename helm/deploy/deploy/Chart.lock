@@ -42,4 +42,4 @@ dependencies:
   repository: file://../../applications/delivery-app
   version: 0.1.0
 digest: sha256:099e1112c913f0531949d9fe9894c413a8cbe36b341fb8477f67769bd25866fa
-generated: "2024-04-28T16:45:54.6911003+02:00"
+generated: "2024-05-01T14:12:08.2244837+02:00"
