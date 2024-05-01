@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.food.ordering.app</groupId>
+    <artifactId>food-ordering-app</artifactId>
+    <version>0.0.1-RELEASE</version>
+  </parent>
+
+  <artifactId>frontend</artifactId>
+  <packaging>pom</packaging>
+
+  <properties>
+    <jib.skip>true</jib.skip>
+    <frontend-maven-plugin.version>1.15.0</frontend-maven-plugin.version>
+    <exec-maven-plugin.version>3.2.0</exec-maven-plugin.version>
+    <node.version>v21.1.0</node.version>
+    <npm.version>10.5.0</npm.version>
+    <frontend.delivery.app.dir>delivery-app</frontend.delivery.app.dir>
+    <frontend.restaurant.app.dir>restaurant-app</frontend.restaurant.app.dir>
+    <frontend.food.ordering.app.dir>food-ordering-app</frontend.food.ordering.app.dir>
+  </properties>
+
+  <profiles>
+    <profile>
+      <id>install-frontends</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>${frontend-maven-plugin.version}</version>
+            <configuration>
+              <nodeVersion>${node.version}</nodeVersion>
+              <installDirectory>/target</installDirectory>
+            </configuration>
+            <executions>
+              <execution>
+                <id>install node and npm</id>
+                <goals>
+                  <goal>install-node-and-npm</goal>
+                </goals>
+                <configuration>
+                  <nodeVersion>${node.version}</nodeVersion>
+                  <npmVersion>${npm.version}</npmVersion>
+                </configuration>
+              </execution>
+              <execution>
+                <id>npm install food-ordering-app</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>install</arguments>
+                  <workingDirectory>${frontend.food.ordering.app.dir}</workingDirectory>
+                </configuration>
+              </execution>
+              <execution>
+                <id>npm install restaurant-app</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>install</arguments>
+                  <workingDirectory>${frontend.restaurant.app.dir}</workingDirectory>
+                </configuration>
+              </execution>
+              <execution>
+                <id>npm install delivery-app</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>install</arguments>
+                  <workingDirectory>${frontend.delivery.app.dir}</workingDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>build-docker-images-local</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${exec-maven-plugin.version}</version>
+            <executions>
+              <!-- Docker build for food-ordering-app -->
+              <execution>
+                <id>docker-build-food-ordering-app</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>build</argument>
+                    <argument>-t</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest
+                    </argument>
+                    <argument>-f</argument>
+                    <argument>${project.basedir}/${frontend.food.ordering.app.dir}/Dockerfile
+                    </argument>
+                    <argument>${project.basedir}/${frontend.food.ordering.app.dir}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+
+              <!-- Docker build for restaurant-app -->
+              <execution>
+                <id>docker-build-restaurant-app</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>build</argument>
+                    <argument>-t</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest
+                    </argument>
+                    <argument>-f</argument>
+                    <argument>${project.basedir}/${frontend.restaurant.app.dir}/Dockerfile
+                    </argument>
+                    <argument>${project.basedir}/${frontend.restaurant.app.dir}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+
+              <!-- Docker build for delivery-app -->
+              <execution>
+                <id>docker-build-delivery-app</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>build</argument>
+                    <argument>-t</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest
+                    </argument>
+                    <argument>-f</argument>
+                    <argument>${project.basedir}/${frontend.delivery.app.dir}/Dockerfile</argument>
+                    <argument>${project.basedir}/${frontend.delivery.app.dir}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+
+    <profile>
+      <id>build-docker-images</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${exec-maven-plugin.version}</version>
+            <executions>
+              <!-- Docker build for food-ordering-app -->
+              <execution>
+                <id>docker-build-food-ordering-app</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>build</argument>
+                    <argument>-t</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:${docker.image.tag}
+                    </argument>
+<!--                    <argument>-t</argument>-->
+<!--                    <argument>-->
+<!--                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:latest-->
+<!--                    </argument>-->
+                    <argument>-f</argument>
+                    <argument>${project.basedir}/${frontend.food.ordering.app.dir}/Dockerfile
+                    </argument>
+                    <argument>${project.basedir}/${frontend.food.ordering.app.dir}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+
+
+              <!-- Docker build for restaurant-app -->
+              <execution>
+                <id>docker-build-restaurant-app</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>build</argument>
+                    <argument>-t</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:${docker.image.tag}
+                    </argument>
+<!--                    <argument>-t</argument>-->
+<!--                    <argument>-->
+<!--                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:latest-->
+<!--                    </argument>-->
+                    <argument>-f</argument>
+                    <argument>${project.basedir}/${frontend.restaurant.app.dir}/Dockerfile
+                    </argument>
+                    <argument>${project.basedir}/${frontend.restaurant.app.dir}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+
+
+              <!-- Docker build for delivery-app -->
+              <execution>
+                <id>docker-build-delivery-app</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>build</argument>
+                    <argument>-t</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:${docker.image.tag}
+                    </argument>
+<!--                    <argument>-t</argument>-->
+<!--                    <argument>-->
+<!--                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:latest-->
+<!--                    </argument>-->
+                    <argument>-f</argument>
+                    <argument>${project.basedir}/${frontend.delivery.app.dir}/Dockerfile</argument>
+                    <argument>${project.basedir}/${frontend.delivery.app.dir}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+
+
+              <!-- Docker push for food-ordering-app -->
+              <execution>
+                <id>docker-push-food-ordering-app</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>push</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.food.ordering.app.dir}:${docker.image.tag}
+                    </argument>
+<!--                    <argument>&#45;&#45;all-tags</argument>-->
+                  </arguments>
+                </configuration>
+              </execution>
+
+              <!-- Docker push for restaurant-app -->
+              <execution>
+                <id>docker-push-restaurant-app</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>push</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.restaurant.app.dir}:${docker.image.tag}
+                    </argument>
+<!--                    <argument>&#45;&#45;all-tags</argument>-->
+                  </arguments>
+                </configuration>
+              </execution>
+
+              <!-- Docker push for delivery-app -->
+              <execution>
+                <id>docker-push-delivery-app</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>push</argument>
+                    <argument>
+                      ${docker.repo.username}/${project.groupId}.${frontend.delivery.app.dir}:${docker.image.tag}
+                    </argument>
+<!--                    <argument>&#45;&#45;all-tags</argument>-->
+                  </arguments>
+                </configuration>
+              </execution>
+
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

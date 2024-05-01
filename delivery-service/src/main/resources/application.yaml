@@ -1,0 +1,61 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: delivery-service
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:flyway/{vendor}
+  jpa:
+    generate-ddl: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${OAUTH2_JWK_SET_URI}
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME:admin}
+    password: ${DATASOURCE_PASSWORD:password}
+    driver-class-name: ${DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+    hikari:
+      initialization-fail-timeout: 30000
+  thymeleaf:
+    enabled: false
+
+eventuatelocal:
+  kafka:
+    bootstrap:
+      servers: ${EVENTUATE_KAFKA_BOOTSTRAP_SERVERS:http://localhost:9092}
+  zookeeper:
+    connection:
+      string: ${EVENTUATE_ZOOKEEPER_URL:http://localhost:2181}
+
+
+eventuate:
+  database:
+    schema: ${EVENTUATE_DATABASE_SCHEMA:public}
+
+app:
+  properties:
+    command:
+      handler:
+        channel: ${SAGA_COMMAND_HANDLER_CHANNEL:delivery-service}
+
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        orm:
+          jpa: INFO
+        web:
+          filter:
+            org.springframework.web.filter.CommonsRequestLoggingFilter: INFO
+      hibernate:
+        SQL: WARN
+    io:
+      eventuate: WARN

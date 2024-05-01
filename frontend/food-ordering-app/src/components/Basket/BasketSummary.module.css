@@ -1,0 +1,17 @@
+.cardMargin {
+  margin-bottom: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.summaryCard {
+  margin-top: 10px;
+  box-shadow: rgba(0, 0, 0, 0.36) 0 22px 70px 4px;
+}
+
+.spaceBetween {
+  justify-content: space-between;
+}
+
+.marginTop {
+  margin-top: 16px;
+}

@@ -1,0 +1,34 @@
+SERVER_PORT: 8095
+DATASOURCE_PORT: 5435
+DATASOURCE_DATABASE: catalog_service
+DATASOURCE_USERNAME: admin
+DATASOURCE_PASSWORD: password
+DATASOURCE_HOST: localhost
+DATASOURCE_HOST_DB_DRIVER: postgresql
+
+DATASOURCE_URL: ${DATASOURCE_HOST_DB_DRIVER}://${DATASOURCE_HOST}:${DATASOURCE_PORT}/${DATASOURCE_DATABASE}
+
+FLYWAY_DATASOURCE_URL: jdbc:${DATASOURCE_URL}
+R2DBC_DATASOURCE_URL: r2dbc:${DATASOURCE_URL}
+
+ELASTICSEARCH_REACTIVE_CLIENT_ENDPOINTS: http://localhost:9200
+ELASTICSEARCH_REACTIVE_CLIENT_USERNAME: elastic
+ELASTICSEARCH_REACTIVE_CLIENT_PASSWORD: password
+
+OAUTH2_JWK_SET_URI: http://localhost:8083/realms/food-ordering-app/protocol/openid-connect/certs
+
+
+logging:
+  level:
+    reactor.netty.channel.ChannelOperationsHandler: DEBUG
+    reactor.netty.http.server.HttpServer: DEBUG
+    reactor.netty.http.client: DEBUG
+    io.netty.handler: DEBUG
+    io.netty.handler.proxy.HttpProxyHandler: TRACE
+    io.netty.handler.proxy.ProxyHandler: TRACE
+    org.springframework.web.reactive.function.client: DEBUG
+    reactor.netty.channel: DEBUG
+    org.springframework.orm.jpa: INFO
+    org.hibernate.SQL: INFO
+    io.eventuate: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

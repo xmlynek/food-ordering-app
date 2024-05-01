@@ -1,0 +1,37 @@
+replicaCount: 1
+
+image:
+  repository: eventuateio/eventuate-kafka
+  tag: "0.18.0.RELEASE"
+  pullPolicy: IfNotPresent
+
+service:
+  name: kafka
+  port: 9092
+  type: ClusterIP
+
+storage:
+  size: 1Gi
+  accessModes: ["ReadWriteOnce"]
+
+myNodeIp: "status.hostIP"
+
+env:
+  secret: {}
+  normal:
+    KAFKA_LISTENERS: LC://kafka:9092
+    KAFKA_ADVERTISED_LISTENERS: LC://kafka:9092
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LC:PLAINTEXT
+    KAFKA_INTER_BROKER_LISTENER_NAME: LC
+    KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    KAFKA_HEAP_OPTS: -Xmx256m
+
+zookeeper:
+  additionalLabels: {}
+
+nameOverride: "kafka"
+fullnameOverride: "kafka"
+
+
+

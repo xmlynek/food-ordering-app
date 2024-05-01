@@ -1,0 +1,5 @@
+CATALOG_SERVICE_URI: http://catalog-service:8080
+ORDER_SERVICE_URI: http://order-service:8080
+RESTAURANT_SERVICE_URI: http://restaurant-service:8080
+KITCHEN_SERVICE_URI: http://kitchen-service:8080
+DELIVERY_SERVICE_URI: http://delivery-service:8080

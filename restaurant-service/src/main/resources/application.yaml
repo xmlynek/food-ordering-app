@@ -1,0 +1,71 @@
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  application:
+    name: restaurant-service
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:flyway/{vendor}
+  jpa:
+    generate-ddl: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${OAUTH2_JWK_SET_URI}
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME:admin}
+    password: ${DATASOURCE_PASSWORD:password}
+    driver-class-name: ${DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+    hikari:
+      initialization-fail-timeout: 30000
+  thymeleaf:
+    enabled: false
+  cloud:
+    gcp:
+      credentials:
+        location: ${GCP_CREDENTIALS_LOCATION}
+      storage:
+        project-id: ${GCP_STORAGE_PROJECT_ID}
+        credentials:
+          default-scopes: ${GCP_STORAGE_CREDENTIALS_DEFAULT_SCOPES:www.googleapis.com/auth/devstorage.read_write}
+  servlet:
+    multipart:
+      max-file-size: ${MULTIPART_MAX_FILE_SIZE:4MB}
+      max-request-size: ${MULTIPART_MAX_REQUEST_SIZE:4MB}
+      resolve-lazily: true
+eventuatelocal:
+  kafka:
+    bootstrap:
+      servers: ${EVENTUATE_KAFKA_BOOTSTRAP_SERVERS:http://localhost:9092}
+  zookeeper:
+    connection:
+      string: ${EVENTUATE_ZOOKEEPER_URL:http://localhost:2181}
+
+
+eventuate:
+  database:
+    schema: ${EVENTUATE_DATABASE_SCHEMA:public}
+
+app:
+  gcp:
+    storage:
+      bucket-name: ${GCP_STORAGE_BUCKET_NAME}
+      public-url: ${GCP_STORAGE_URL:https://storage.googleapis.com}
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        orm:
+          jpa: INFO
+        web:
+          filter:
+            org.springframework.web.filter.CommonsRequestLoggingFilter: INFO
+      hibernate:
+        SQL: WARN
+    io:
+      eventuate: WARN

@@ -1,17 +1,59 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 spring:
+  application:
+    name: order-service
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:flyway/{vendor}
   jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-    database: postgresql
+    generate-ddl: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${OAUTH2_JWK_SET_URI}
   datasource:
-    url: jdbc:postgresql://localhost:5432/orders
-    username: admin
-    password: password
-    driver-class-name: org.postgresql.Driver
-  docker:
-    compose:
-      lifecycle-management: start_only
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME:admin}
+    password: ${DATASOURCE_PASSWORD:password}
+    driver-class-name: ${DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+    hikari:
+      initialization-fail-timeout: 30000
+
+eventuatelocal:
+  kafka:
+    bootstrap:
+      servers: ${EVENTUATE_KAFKA_BOOTSTRAP_SERVERS:http://localhost:9092}
+  zookeeper:
+    connection:
+      string: ${EVENTUATE_ZOOKEEPER_URL:http://localhost:2181}
+
+eventuate:
+  database:
+    schema: ${EVENTUATE_DATABASE_SCHEMA:public}
+
+app:
+  properties:
+    command:
+      destination:
+        kitchen-service: ${KITCHEN_SERVICE_COMMAND_DESTINATION:kitchen-service}
+        payment-service: ${PAYMENT_SERVICE_COMMAND_DESTINATION:payment-service}
+        delivery-service: ${DELIVERY_SERVICE_COMMAND_DESTINATION:delivery-service}
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        orm:
+          jpa: INFO
+        web:
+          filter:
+            org.springframework.web.filter.CommonsRequestLoggingFilter: INFO
+      hibernate:
+        SQL: WARN
+    io:
+      eventuate: WARN

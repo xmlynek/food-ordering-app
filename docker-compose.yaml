@@ -1,32 +1,440 @@
-services:
-  postgres:
-    image: 'postgres:latest'
-    environment:
-      - 'POSTGRES_DB=orders'
-      - 'POSTGRES_PASSWORD=password'
-      - 'POSTGRES_USER=admin'
-    ports:
-      - '5432:5432'
-    networks:
-      - postgres
+version: '3.7'
 
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
+services:
+  food-ordering-app-client:
+    image: xmlynek/com.food.ordering.app.food-ordering-app:${COMMON_APP_VERSION:-latest}
     ports:
-      - "5050:80"
+      - "5173:80"
+    restart: on-failure
+    environment:
+      REACT_API_GATEWAY_URL: http://localhost:8070
+      REACT_KEYCLOAK_URL: http://localhost:8080
+      REACT_KEYCLOAK_REALM: food-ordering-app
+      REACT_KEYCLOAK_CLIENT_ID: frontend
+      REACT_ORDER_SERVICE_PATH: /order-service/api/orders
+      REACT_CATALOG_SERVICE_PATH: /catalog-service/api/catalog/restaurants
+      REACT_STRIPE_PUBLISHABLE_KEY: ${REACT_STRIPE_PUBLISHABLE_KEY}
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  restaurant-app-client:
+    image: xmlynek/com.food.ordering.app.restaurant-app:${COMMON_APP_VERSION:-latest}
+    ports:
+      - "5174:80"
+    restart: on-failure
+    environment:
+      REACT_API_GATEWAY_URL: http://localhost:8070
+      REACT_KEYCLOAK_URL: http://localhost:8080
+      REACT_KEYCLOAK_REALM: restaurant
+      REACT_KEYCLOAK_CLIENT_ID: frontend
+      REACT_RESTAURANT_SERVICE_PATH: /restaurant-service/api/restaurants
+      REACT_KITCHEN_SERVICE_PATH: /kitchen-service/api/kitchen/restaurants
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  delivery-app-client:
+    image: xmlynek/com.food.ordering.app.delivery-app:${COMMON_APP_VERSION:-latest}
+    ports:
+      - "5175:80"
+    restart: on-failure
+    environment:
+      REACT_API_GATEWAY_URL: http://localhost:8070
+      REACT_KEYCLOAK_URL: http://localhost:8080
+      REACT_KEYCLOAK_REALM: delivery
+      REACT_KEYCLOAK_CLIENT_ID: delivery-client-app
+      REACT_DELIVERY_SERVICE_PATH: /delivery-service/api/delivery
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  catalog-service:
+    image: xmlynek/com.food.ordering.app.catalog-service:${COMMON_APP_VERSION:-latest}
+    ports:
+      - "8105:8080"
+    restart: on-failure
     depends_on:
-      - postgres
-    networks:
-      - postgres
+      - catalog-service-elasticsearch
+      - catalog-service-postgres
+      - kafka
+      - zookeeper
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  catalog-service-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION:-7.17.18}
+    restart: on-failure
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./volumes/catalog-service/elasticsearch:/usr/share/elasticsearch/data
+
+  catalog-service-postgres:
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
+    ports:
+      - "5435:5432"
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: catalog_service
+    volumes:
+      - ./volumes/catalog-service/postgres:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  order-service:
+    image: xmlynek/com.food.ordering.app.order-service:${COMMON_APP_VERSION:-latest}
+    ports:
+      - "8075:8080"
+    restart: on-failure
+    depends_on:
+      - keycloak
+      - kafka
+      - zookeeper
+      - order-service-postgres
+      - cdcservice
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  order-service-postgres:
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
+    ports:
+      - "5432:5432"
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: order_service
+    volumes:
+      - ./volumes/order-service/postgres:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  payment-service:
+    image: xmlynek/com.food.ordering.app.payment-service:${COMMON_APP_VERSION:-latest}
+    ports:
+      - "8085:8080"
+    restart: on-failure
+    depends_on:
+      - kafka
+      - zookeeper
+      - payment-service-postgres
+      - cdcservice
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      STRIPE_API_KEY: ${STRIPE_SECRET_KEY}
+
+  payment-service-postgres:
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
+    ports:
+      - "5433:5432"
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: payment_service
+    volumes:
+      - ./volumes/payment-service/postgres:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  restaurant-service:
+    image: xmlynek/com.food.ordering.app.restaurant-service:${COMMON_APP_VERSION:-latest}
+    ports:
+      - "8090:8080"
+    restart: on-failure
+    depends_on:
+      - keycloak
+      - kafka
+      - zookeeper
+      - restaurant-service-postgres
+      - cdcservice
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      GCP_STORAGE_BUCKET_NAME: ${GCP_STORAGE_BUCKET_NAME:-food-ordering-app-media}
+      GCP_STORAGE_PROJECT_ID: ${GCP_STORAGE_PROJECT_ID}
+      GCP_CREDENTIALS_LOCATION: file:///tmp/keys/GCP_KEY.json
+    volumes:
+      - ./volumes/restaurant-service/${GCP_KEY_FILE_NAME}:/tmp/keys/GCP_KEY.json:ro
+
+  restaurant-service-postgres:
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
+    ports:
+      - "5434:5432"
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: restaurant_service
+    volumes:
+      - ./volumes/restaurant-service/postgres:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  kitchen-service:
+    image: xmlynek/com.food.ordering.app.kitchen-service:${COMMON_APP_VERSION:-latest}
+    ports:
+      - "8095:8080"
+    restart: on-failure
+    depends_on:
+      - keycloak
+      - kafka
+      - zookeeper
+      - kitchen-service-postgres
+      - cdcservice
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  kitchen-service-postgres:
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
+    ports:
+      - "5436:5432"
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: kitchen_service
+    volumes:
+      - ./volumes/kitchen-service/postgres:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  delivery-service:
+    image: xmlynek/com.food.ordering.app.delivery-service:${COMMON_APP_VERSION:-latest}
+    ports:
+      - "8100:8080"
+    restart: on-failure
+    depends_on:
+      - keycloak
+      - kafka
+      - zookeeper
+      - delivery-service-postgres
+      - cdcservice
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  delivery-service-postgres:
+    image: eventuateio/eventuate-vanilla-postgres:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
+    ports:
+      - "5437:5432"
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: delivery_service
+    volumes:
+      - ./volumes/delivery-service/postgres:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  api-gateway:
+    image: xmlynek/com.food.ordering.app.api-gateway:${COMMON_APP_VERSION:-latest}
+    ports:
+      - "8070:8080"
+    restart: on-failure
+    depends_on:
+      - order-service
+      - catalog-service
+      - restaurant-service
+      - kitchen-service
+      - delivery-service
+      - payment-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-20.0.3}
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres:5432/keycloak
+      KC_DB_USERNAME: ${KC_DB_USERNAME:-admin}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:-password}
+    depends_on:
+      - keycloak-postgres
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    command:
+      - start-dev
+      - --import-realm
+    volumes:
+      - ./volumes/keycloak/export:/opt/keycloak/data/import
+
+  keycloak-postgres:
+    image: postgres:${POSTGRES_VERSION:-16.2}
+    ports:
+      - "5438:5432"
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${KC_DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD:-password}
+      POSTGRES_DB: keycloak
+    volumes:
+      - ./volumes/keycloak/postgres:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  zookeeper:
+    image: eventuateio/eventuate-zookeeper:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
+    ports:
+      - "2181:2181"
+    restart: on-failure
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      KAFKA_HEAP_OPTS: -Xmx64m
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  kafka:
+    image: eventuateio/eventuate-kafka:${EVENTUATE_COMMON_VERSION:-0.18.0.RELEASE}
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    restart: on-failure
+    environment:
+      KAFKA_LISTENERS: LC://kafka:29092,LX://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: LC://kafka:29092,LX://${DOCKER_HOST_IP:-localhost}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LC:PLAINTEXT,LX:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LC
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_HEAP_OPTS: -Xmx192m
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
   zipkin:
-    image: 'openzipkin/zipkin:latest'
+    image: openzipkin/zipkin:${ZIPKIN_VERSION:-latest}
     ports:
       - '9411:9411'
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 128M
 
-networks:
-  postgres:
-    driver: bridge
+  cdcservice:
+    image: eventuateio/eventuate-cdc-service:${EVENTUATE_CDC_VERSION:-0.16.0.RELEASE}
+    ports:
+      - "8099:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    restart: on-failure
+    depends_on:
+      - order-service-postgres
+      - payment-service-postgres
+      - restaurant-service-postgres
+      - kitchen-service-postgres
+      - delivery-service-postgres
+      - kafka
+    environment:
+      CDC_OPTS: "--debug"
+
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+
+      EVENTUATE_CDC_READER_READER1_TYPE: postgres-wal
+      EVENTUATE_CDC_READER_READER1_DATASOURCEURL: jdbc:postgresql://order-service-postgres:5432/order_service
+      EVENTUATE_CDC_READER_READER1_MONITORINGSCHEMA: public
+      EVENTUATE_CDC_READER_READER1_DATASOURCEUSERNAME: admin
+      EVENTUATE_CDC_READER_READER1_DATASOURCEPASSWORD: password
+      EVENTUATE_CDC_READER_READER1_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
+      EVENTUATE_CDC_READER_READER1_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/order_service
+      EVENTUATE_CDC_READER_READER1_OFFSETSTORAGETOPICNAME: db.history.common
+      EVENTUATE_CDC_READER_READER1_OUTBOXID: 1
+
+      EVENTUATE_CDC_READER_READER2_TYPE: postgres-wal
+      EVENTUATE_CDC_READER_READER2_DATASOURCEURL: jdbc:postgresql://payment-service-postgres:5432/payment_service
+      EVENTUATE_CDC_READER_READER2_MONITORINGSCHEMA: public
+      EVENTUATE_CDC_READER_READER2_DATASOURCEUSERNAME: admin
+      EVENTUATE_CDC_READER_READER2_DATASOURCEPASSWORD: password
+      EVENTUATE_CDC_READER_READER2_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
+      EVENTUATE_CDC_READER_READER2_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/payment_service
+      EVENTUATE_CDC_READER_READER2_OFFSETSTORAGETOPICNAME: db.history.common
+      EVENTUATE_CDC_READER_READER2_OUTBOXID: 2
+
+      EVENTUATE_CDC_READER_READER3_TYPE: postgres-wal
+      EVENTUATE_CDC_READER_READER3_DATASOURCEURL: jdbc:postgresql://restaurant-service-postgres:5432/restaurant_service
+      EVENTUATE_CDC_READER_READER3_MONITORINGSCHEMA: public
+      EVENTUATE_CDC_READER_READER3_DATASOURCEUSERNAME: admin
+      EVENTUATE_CDC_READER_READER3_DATASOURCEPASSWORD: password
+      EVENTUATE_CDC_READER_READER3_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
+      EVENTUATE_CDC_READER_READER3_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/restaurant_service
+      EVENTUATE_CDC_READER_READER3_OFFSETSTORAGETOPICNAME: db.history.common
+      EVENTUATE_CDC_READER_READER3_OUTBOXID: 3
+
+      EVENTUATE_CDC_READER_READER4_TYPE: postgres-wal
+      EVENTUATE_CDC_READER_READER4_DATASOURCEURL: jdbc:postgresql://kitchen-service-postgres:5432/kitchen_service
+      EVENTUATE_CDC_READER_READER4_MONITORINGSCHEMA: public
+      EVENTUATE_CDC_READER_READER4_DATASOURCEUSERNAME: admin
+      EVENTUATE_CDC_READER_READER4_DATASOURCEPASSWORD: password
+      EVENTUATE_CDC_READER_READER4_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
+      EVENTUATE_CDC_READER_READER4_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/kitchen_service
+      EVENTUATE_CDC_READER_READER4_OFFSETSTORAGETOPICNAME: db.history.common
+      EVENTUATE_CDC_READER_READER4_OUTBOXID: 4
+
+      EVENTUATE_CDC_READER_READER5_TYPE: postgres-wal
+      EVENTUATE_CDC_READER_READER5_DATASOURCEURL: jdbc:postgresql://delivery-service-postgres:5432/delivery_service
+      EVENTUATE_CDC_READER_READER5_MONITORINGSCHEMA: public
+      EVENTUATE_CDC_READER_READER5_DATASOURCEUSERNAME: admin
+      EVENTUATE_CDC_READER_READER5_DATASOURCEPASSWORD: password
+      EVENTUATE_CDC_READER_READER5_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
+      EVENTUATE_CDC_READER_READER5_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/delivery_service
+      EVENTUATE_CDC_READER_READER5_OFFSETSTORAGETOPICNAME: db.history.common
+      EVENTUATE_CDC_READER_READER5_OUTBOXID: 5
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE1_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE1_READER: reader1
+      EVENTUATE_CDC_PIPELINE_PIPELINE1_EVENTUATEDATABASESCHEMA: public
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_READER: reader2
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_EVENTUATEDATABASESCHEMA: public
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE3_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE3_READER: reader3
+      EVENTUATE_CDC_PIPELINE_PIPELINE3_EVENTUATEDATABASESCHEMA: public
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE4_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE4_READER: reader4
+      EVENTUATE_CDC_PIPELINE_PIPELINE4_EVENTUATEDATABASESCHEMA: public
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE5_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE5_READER: reader5
+      EVENTUATE_CDC_PIPELINE_PIPELINE5_EVENTUATEDATABASESCHEMA: public

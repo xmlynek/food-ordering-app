@@ -1,0 +1,36 @@
+elasticsearch:
+  additionalLabels: {}
+service:
+  name: elasticsearch
+  port: 9200
+  type: ClusterIP
+storage:
+  size: 2Gi
+  accessModes: ["ReadWriteOnce"]
+
+nameOverride: "elasticsearch"
+fullnameOverride: "elasticsearch"
+
+image:
+  repository: docker.elastic.co/elasticsearch/elasticsearch
+  pullPolicy: IfNotPresent
+  tag: 8.13.0
+
+persistentVolume:
+  name: "elasticsearch-pv"
+
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+
+
+env:
+  secret: {}
+  normal:
+    discovery.type: single-node
+    xpack.security.enabled: false
+    xpack.security.enrollment.enabled: false
+    bootstrap.memory_lock: true
+#    elasticsearchUsername: "elastic"
+#    elasticsearchPassword: "password"
+    ES_JAVA_OPTS: "-Xms1024m -Xmx1024m"

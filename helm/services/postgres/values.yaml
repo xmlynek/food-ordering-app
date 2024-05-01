@@ -1,0 +1,29 @@
+postgresql:
+  additionalLabels: {}
+service:
+  name: postgresql
+  port: 5432
+  targetPort: 5432
+  type: ClusterIP
+storage:
+  size: 1Gi
+  accessModes: ["ReadWriteOnce"]
+
+nameOverride: "postgresql"
+fullnameOverride: "postgresql"
+
+image:
+  repository: eventuateio/eventuate-vanilla-postgres
+  pullPolicy: IfNotPresent
+  tag: 0.18.0.RELEASE
+
+persistentVolume:
+  name: ""
+
+env:
+  secret: {}
+  normal:
+    POSTGRES_USER: admin
+    POSTGRES_PASSWORD: password
+    POSTGRES_DB: catalog_service
+    PGDATA: /var/lib/postgresql/data/pgdata

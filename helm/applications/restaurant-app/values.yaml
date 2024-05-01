@@ -1,0 +1,67 @@
+replicaCount: 1
+
+image:
+  repository: xmlynek/com.food.ordering.app.restaurant-app
+  tag: 0.0.1-SNAPSHOT
+  pullPolicy: IfNotPresent
+
+imagePullSecrets:
+#  - name:
+
+nameOverride: "restaurant-app"
+fullnameOverride: "restaurant-app"
+
+env:
+  secret: {}
+  normal:
+    REACT_API_GATEWAY_URL: "http://localhost:8060"
+    REACT_KEYCLOAK_URL: "http://localhost:8070"
+    REACT_KEYCLOAK_REALM: "restaurant"
+    REACT_KEYCLOAK_CLIENT_ID: "frontend"
+    REACT_RESTAURANT_SERVICE_PATH: "/restaurant-service/api/restaurants"
+    REACT_KITCHEN_SERVICE_PATH: "/kitchen-service/api/kitchen/restaurants"
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: LoadBalancer
+  port: 5174
+  targetPort: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+      kubernetes.io/ingress.class: "gce"
+      kubernetes.io/ingress.global-static-ip-name: "restaurant-ingress-static-ip"
+  hosts:
+    - host: "restaurant.food-ordering-system.com"
+      paths:
+        - path: /*
+          pathType: ImplementationSpecific
+  tls: []
+
+resources: {}
+
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

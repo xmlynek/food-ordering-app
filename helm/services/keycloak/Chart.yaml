@@ -1,0 +1,11 @@
+apiVersion: v2
+name: keycloak
+description: A Helm chart for Keycloak
+
+version: 0.1.0
+appVersion: "20.0.3"
+
+dependencies:
+  - name: postgresql
+    version: "0.1.0"
+    repository: "file://../postgres"

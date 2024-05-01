@@ -1,0 +1,88 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/keycloak/keycloak
+  tag: "20.0.3"
+  pullPolicy: IfNotPresent
+  args:
+    - "start-dev"
+    - "--import-realm"
+
+service:
+  name: keycloak
+  port: 8070
+  targetPort: 8080
+  type: LoadBalancer
+
+storage:
+  size: 1Gi
+  accessModes: ["ReadWriteOnce"]
+
+createPV: false
+
+env:
+  secret: {}
+  normal:
+    KEYCLOAK_ADMIN: admin
+    KEYCLOAK_ADMIN_PASSWORD: admin
+    KC_DB: postgres
+    KC_DB_URL: jdbc:postgresql://keycloak-postgresql:5432/keycloak
+    KC_DB_USERNAME: admin
+    KC_DB_PASSWORD: password
+
+postgresql:
+  postgresql:
+    additionalLabels:
+      app: keycloak
+  service:
+    name: keycloak-postgresql
+  persistentVolume:
+    name: keycloak-postgresql-pv1
+  env:
+    normal:
+      POSTGRES_DB: keycloak
+
+keycloak:
+  additionalLabels: {}
+
+#volumes:
+#  importVolume: "/run/desktop/mnt/host/c/Users/filip/OneDrive/Plocha/diplomka/food-ordering-app/helm/services/keycloak/export"
+
+volumes:
+  - name: import-realms
+    configMap:
+        name: keycloak-configmap
+
+#volumes:
+#  - name: import-realms
+#    hostPath:
+#      path: "./../export"
+#      type: DirectoryOrCreate
+
+volumeMounts:
+  - name: import-realms
+    mountPath: "/opt/keycloak/data/import"
+    readOnly: true
+
+resources:
+  limits:
+    memory: 512Mi
+
+
+nameOverride: "keycloak"
+fullnameOverride: "keycloak"
+
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+  rules:
+    - http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+  tls: []
+
+
+

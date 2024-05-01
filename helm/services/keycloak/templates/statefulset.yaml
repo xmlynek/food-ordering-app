@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.service.name }}
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: "{{ .Values.service.name }}"
+  replicas: 1
+  selector:
+    matchLabels:
+      role: {{ .Values.service.name }}
+  template:
+    metadata:
+      labels:
+        role: {{ .Values.service.name }}
+        {{- with .Values.keycloak.additionalLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: "{{ .Values.service.name }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest"}}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          args: {{ .Values.image.args | toYaml | nindent 12 }}
+          env:
+            {{- include "helpers.list-env-variables" . | indent 12 }}
+          resources:
+                     {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
+      volumes:
+        {{- toYaml .Values.volumes | nindent 12 }}
+  volumeClaimTemplates:
+    - metadata:
+        name: keycloak-data
+      spec:
+        accessModes: {{ .Values.storage.accessModes | toYaml | nindent 8 }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}

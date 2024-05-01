@@ -1,0 +1,22 @@
+.logo {
+  width: 120px;
+  height: 31px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px 24px 16px 0;
+  float: left;
+}
+
+.logoImage {
+  object-fit: cover;
+  margin-bottom: 10px;
+  width: 120px;
+  height: 31px;
+}
+
+.separateMenuItems {
+  margin-left: auto !important;
+}
+
+.marginFromRight {
+  margin-right: 10% !important;
+}

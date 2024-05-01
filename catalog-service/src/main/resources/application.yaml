@@ -1,0 +1,67 @@
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  application:
+    name: catalog-service
+  flyway:
+    url: ${FLYWAY_DATASOURCE_URL}
+    user: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    locations: ${FLYWAY_LOCATIONS:classpath:flyway/{vendor}}
+    baseline-on-migrate: true
+  jpa:
+    generate-ddl: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${OAUTH2_JWK_SET_URI}
+
+  r2dbc:
+    url: ${R2DBC_DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME:admin}
+    password: ${DATASOURCE_PASSWORD:password}
+    initialization-mode: always
+    name: ${DATASOURCE_DATABASE:catalog_service}
+
+  data:
+    elasticsearch:
+      client:
+        reactive:
+          endpoints: ${ELASTICSEARCH_REACTIVE_CLIENT_ENDPOINTS} # Change this to your Elasticsearch cluster address
+          username: ${ELASTICSEARCH_REACTIVE_CLIENT_USERNAME} # Optional: If your cluster is secured
+          password: ${ELASTICSEARCH_REACTIVE_CLIENT_PASSWORD} # Optional: If your cluster is secured
+  elasticsearch:
+    uris: ${ELASTICSEARCH_REACTIVE_CLIENT_ENDPOINTS}
+
+
+eventuatelocal:
+  kafka:
+    bootstrap:
+      servers: ${EVENTUATE_KAFKA_BOOTSTRAP_SERVERS:http://localhost:9092}
+  zookeeper:
+    connection:
+      string: ${EVENTUATE_ZOOKEEPER_URL:http://localhost:2181}
+
+eventuate:
+  reactive:
+    db:
+      driver: ${DATASOURCE_HOST_DB_DRIVER:postgresql}
+      host: ${DATASOURCE_HOST:localhost}
+      port: ${DATASOURCE_PORT:5432}
+      username: ${DATASOURCE_USERNAME:admin}
+      password: ${DATASOURCE_PASSWORD:password}
+      database: ${DATASOURCE_DATABASE:catalog_service}
+  database:
+    schema: ${EVENTUATE_DATABASE_SCHEMA:public}
+
+logging:
+  level:
+    root: INFO
+    reactor.netty: WARN
+    io.netty.handler: WARN
+    org.springframework.web.reactive.function.client: WARN
+    org.springframework.orm.jpa: WARN
+    org.hibernate.SQL: WARN
+    io.eventuate: INFO
+    org.springframework.web.filter.CommonsRequestLoggingFilter: WARN
