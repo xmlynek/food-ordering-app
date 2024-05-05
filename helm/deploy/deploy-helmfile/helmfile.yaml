@@ -1,0 +1,3 @@
+helmfiles:
+  - path: ./backend/helmfile.yaml
+  - path: ./frontend/helmfile.yaml

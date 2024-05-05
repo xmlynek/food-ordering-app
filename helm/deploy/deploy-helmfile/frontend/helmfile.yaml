@@ -1,0 +1,21 @@
+releases:
+  - name: food-ordering-app
+    namespace: default
+    chart: "../../../applications/food-ordering-app"
+    version: 0.1.0
+    values:
+      - ./values/food-ordering-app-values.yaml
+  - name: restaurant-app
+    namespace: default
+    chart: "../../../applications/restaurant-app"
+    version: 0.1.0
+    values:
+      - ./values/restaurant-app-values.yaml
+  - name: delivery-app
+    namespace: default
+    chart: "../../../applications/delivery-app"
+    version: 0.1.0
+    values:
+      - ./values/delivery-app-values.yaml
+
+

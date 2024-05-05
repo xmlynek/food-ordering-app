@@ -1,10 +1,39 @@
 keycloak:
   service:
     port: 8070
+    type: LoadBalancer
+
+food-ordering-app:
+  service:
+    port: 5173
+    type: LoadBalancer
+  env:
+    normal:
+      REACT_KEYCLOAK_URL: "http://localhost:8070"
+      REACT_API_GATEWAY_URL: "http://localhost:8060"
+
+restaurant-app:
+  service:
+    port: 5174
+    type: LoadBalancer
+  env:
+    normal:
+      REACT_KEYCLOAK_URL: "http://localhost:8070"
+      REACT_API_GATEWAY_URL: "http://localhost:8060"
+
+delivery-app:
+  service:
+    port: 5175
+    type: LoadBalancer
+  env:
+    normal:
+      REACT_KEYCLOAK_URL: "http://localhost:8070"
+      REACT_API_GATEWAY_URL: "http://localhost:8060"
 
 catalog-service:
   service:
     port: 8085
+    type: LoadBalancer
   env:
     normal:
       OAUTH2_JWK_SET_URI: "http://keycloak:8070/realms/food-ordering-app/protocol/openid-connect/certs"
@@ -12,6 +41,7 @@ catalog-service:
 delivery-service:
   service:
     port: 8084
+    type: LoadBalancer
   env:
     normal:
       OAUTH2_JWK_SET_URI: "http://keycloak:8070/realms/delivery/protocol/openid-connect/certs"
@@ -19,13 +49,20 @@ delivery-service:
 kitchen-service:
   service:
     port: 8083
+    type: LoadBalancer
   env:
     normal:
       OAUTH2_JWK_SET_URI: "http://keycloak:8070/realms/restaurant/protocol/openid-connect/certs"
 
+payment-service:
+  service:
+    port: 8082
+    type: LoadBalancer
+
 restaurant-service:
   service:
     port: 8081
+    type: LoadBalancer
   env:
     normal:
       OAUTH2_JWK_SET_URI: "http://keycloak:8070/realms/restaurant/protocol/openid-connect/certs"
@@ -33,11 +70,15 @@ restaurant-service:
 order-service:
   service:
     port: 8080
+    type: LoadBalancer
   env:
     normal:
       OAUTH2_JWK_SET_URI: "http://keycloak:8070/realms/food-ordering-app/protocol/openid-connect/certs"
 
 api-gateway:
+  service:
+    port: 8060
+    type: LoadBalancer
   env:
     normal:
       CATALOG_SERVICE_URI: http://catalog-service:8085

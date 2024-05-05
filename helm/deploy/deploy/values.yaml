@@ -1,8 +1,3 @@
-keycloak:
-  service:
-    port: 8080
-    type: LoadBalancer
-
 food-ordering-app:
   service:
     port: 80
@@ -36,52 +31,3 @@ restaurant-app:
       REACT_KEYCLOAK_URL: "http://34.116.174.157:8080" # Change this to your Keycloak URL
       REACT_API_GATEWAY_URL: "http://api-gw.food-ordering-system.com"
 
-catalog-service:
-  service:
-    port: 8080
-  env:
-    normal:
-      OAUTH2_JWK_SET_URI: "http://keycloak:8080/realms/food-ordering-app/protocol/openid-connect/certs"
-
-delivery-service:
-  service:
-    port: 8080
-  env:
-    normal:
-      OAUTH2_JWK_SET_URI: "http://keycloak:8080/realms/delivery/protocol/openid-connect/certs"
-
-kitchen-service:
-  service:
-    port: 8080
-  env:
-    normal:
-      OAUTH2_JWK_SET_URI: "http://keycloak:8080/realms/restaurant/protocol/openid-connect/certs"
-
-restaurant-service:
-  service:
-    port: 8080
-  env:
-    normal:
-      OAUTH2_JWK_SET_URI: "http://keycloak:8080/realms/restaurant/protocol/openid-connect/certs"
-
-order-service:
-  service:
-    port: 8080
-  env:
-    normal:
-      OAUTH2_JWK_SET_URI: "http://keycloak:8080/realms/food-ordering-app/protocol/openid-connect/certs"
-
-payment-service:
-  service:
-    port: 8080
-
-api-gateway:
-  service:
-    port: 8080
-  env:
-    normal:
-      CATALOG_SERVICE_URI: http://catalog-service:8080
-      DELIVERY_SERVICE_URI: http://delivery-service:8080
-      KITCHEN_SERVICE_URI: http://kitchen-service:8080
-      RESTAURANT_SERVICE_URI: http://restaurant-service:8080
-      ORDER_SERVICE_URI: http://order-service:8080

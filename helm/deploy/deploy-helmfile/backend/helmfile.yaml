@@ -1,0 +1,55 @@
+releases:
+  - name: keycloak
+    namespace: default
+    chart: "../../../services/keycloak"
+    version: 0.1.
+
+  - name: zookeeper
+    namespace: default
+    chart: "../../../services/zookeeper"
+    version: 0.1.0
+
+  - name: kafka
+    namespace: default
+    chart: "../../../services/kafka"
+    version: 0.1.0
+
+  - name: cdc-service
+    namespace: default
+    chart: "../../../services/cdc-service"
+    version: 0.1.0
+
+  - name: order-service
+    namespace: default
+    chart: "../../../services/order-service"
+    version: 0.1.0
+
+  - name: kitchen-service
+    namespace: default
+    chart: "../../../services/kitchen-service"
+    version: 0.1.0
+
+  - name: catalog-service
+    namespace: default
+    chart: "../../../services/catalog-service"
+    version: 0.1.0
+
+  - name: delivery-service
+    namespace: default
+    chart: "../../../services/delivery-service"
+    version: 0.1.0
+
+  - name: payment-service
+    namespace: default
+    chart: "../../../services/payment-service"
+    version: 0.1.0
+
+  - name: restaurant-service
+    namespace: default
+    chart: "../../../services/restaurant-service"
+    version: 0.1.0
+
+  - name: api-gateway
+    namespace: default
+    chart: "../../../services/api-gateway"
+    version: 0.1.0
