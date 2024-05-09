@@ -1,0 +1,3 @@
+gcp_project = "your-project-id-422720"
+gcp_credentials = "./credentials.json"
+dns_name = "your-dns.com"
