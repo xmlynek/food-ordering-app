@@ -1,0 +1,9 @@
+service:
+  port: 80
+  type: ClusterIP
+ingress:
+  enabled: true
+env:
+  normal:
+    REACT_KEYCLOAK_URL: "http://34.116.174.157:8080"  # Change this to your Keycloak URL
+    REACT_API_GATEWAY_URL: "http://api-gw.food-ordering-system.com" # Change this to your API GW URL

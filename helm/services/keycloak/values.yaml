@@ -10,7 +10,7 @@ image:
 
 service:
   name: keycloak
-  port: 8070
+  port: 8080
   targetPort: 8080
   type: LoadBalancer
 
