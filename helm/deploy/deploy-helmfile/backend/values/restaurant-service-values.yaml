@@ -1,0 +1,4 @@
+#env:
+#  normal:
+#    GCP_STORAGE_BUCKET_NAME: your-bucket-name
+#    GCP_STORAGE_PROJECT_ID: your-gcp-project-id

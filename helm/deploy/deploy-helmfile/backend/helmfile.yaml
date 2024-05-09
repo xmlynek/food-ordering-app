@@ -48,6 +48,8 @@ releases:
     namespace: default
     chart: "../../../services/restaurant-service"
     version: 0.1.0
+    values:
+      - "./values/restaurant-service-values.yaml"
 
   - name: api-gateway
     namespace: default
