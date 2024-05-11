@@ -6,6 +6,11 @@ spring:
     gateway:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: ${RATE_LIMITER_REPLENISH_RATE:25}
+            redis-rate-limiter.burstCapacity: ${RATE_LIMITER_BURST_CAPACITY:50}
+            key-resolver: "#{@ipKeyResolver}"
       globalcors:
         cors-configurations:
           '[/**]':
@@ -44,3 +49,7 @@ spring:
             - Path=/delivery-service/**
           filters:
             - RewritePath=/delivery-service(?<segment>.*), $\{segment}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
