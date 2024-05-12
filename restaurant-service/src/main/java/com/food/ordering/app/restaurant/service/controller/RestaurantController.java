@@ -9,6 +9,9 @@ import com.food.ordering.app.restaurant.service.service.RestaurantService;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -36,21 +39,28 @@ public class RestaurantController {
 
 
   @GetMapping
-  public ResponseEntity<Page<BasicRestaurantResponse>> getPrincipalRestaurants(
+//  @Cacheable(value = "restaurants", key = "{#root.methodName, #pageable.pageNumber, #pageable.pageSize}")
+  public Page<BasicRestaurantResponse> getPrincipalRestaurants(
       @SortDefault(value = "name", caseSensitive = false) @PageableDefault Pageable pageable) {
     Page<BasicRestaurantResponse> response = restaurantService.getAllRestaurants(pageable)
         .map(restaurantMapper::restaurantEntityToBasicRestaurantResponse);
-    return ResponseEntity.ok(response);
+//    return ResponseEntity.ok(response);
+    return response;
+//    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @GetMapping("/{restaurantId}")
-  public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable UUID restaurantId) {
+  @Cacheable(value = "restaurant", key = "{#restaurantId, @redisConfig.usernameKey}")
+  public RestaurantResponse getRestaurantById(@PathVariable UUID restaurantId) {
     RestaurantResponse response = restaurantMapper.restaurantEntityToRestaurantResponse(
         restaurantService.getRestaurantById(restaurantId));
-    return ResponseEntity.ok(response);
+    return response;
+//    return ResponseEntity.ok(response);
   }
 
   @PostMapping
+  @CachePut(value = "restaurant", key = "#result.body.id()") // Cache the newly created restaurant
+  @CacheEvict(value = "restaurants", allEntries = true) // Invalidate all entries from the restaurants cache
   public ResponseEntity<BasicRestaurantResponse> createRestaurant(
       @Valid @RequestBody RestaurantRequest restaurantRequest) {
     BasicRestaurantResponse response = restaurantMapper.restaurantEntityToBasicRestaurantResponse(
@@ -60,6 +70,8 @@ public class RestaurantController {
   }
 
   @PutMapping("/{restaurantId}")
+  @CacheEvict(value = "restaurants", allEntries = true) // Invalidate all entries from the restaurants cache
+  @CachePut(value = "restaurant", key = "#restaurantId") // Update the cache for this specific restaurant
   public ResponseEntity<BasicRestaurantResponse> updateRestaurant(@PathVariable UUID restaurantId,
       @Valid @RequestBody RestaurantUpdateRequest restaurantUpdateRequest) {
     BasicRestaurantResponse response = restaurantMapper.restaurantEntityToBasicRestaurantResponse(
@@ -68,6 +80,8 @@ public class RestaurantController {
   }
 
   @DeleteMapping("/{restaurantId}")
+  @CacheEvict(value = "restaurants", allEntries = true) // Invalidate all entries from the restaurants cache
+//  @CacheEvict(value = "restaurant", key = "#restaurantId") // Evict the specific restaurant from the cache
   public ResponseEntity<Void> deleteRestaurant(@PathVariable UUID restaurantId) {
     restaurantService.deleteRestaurant(restaurantId);
     return ResponseEntity.noContent().build();

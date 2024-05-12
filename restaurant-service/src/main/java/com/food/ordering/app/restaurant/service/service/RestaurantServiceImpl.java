@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RestaurantServiceImpl implements RestaurantService {
 
   private final RestaurantRepository restaurantRepository;
@@ -37,14 +38,13 @@ public class RestaurantServiceImpl implements RestaurantService {
         SecurityContextHolder.getContext().getAuthentication().getName(), pageable);
   }
 
-  //  @Transactional(readOnly = true)
+  @Transactional(readOnly = true)
   @Override
   public Restaurant getRestaurantById(UUID restaurantId) {
     return restaurantRepository.findByIdAndIsDeletedFalse(restaurantId)
         .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
   }
 
-  @Transactional
   @Override
   public Restaurant createRestaurant(Restaurant restaurant) {
     restaurant.setIsDeleted(false);
@@ -65,7 +65,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     return createdRestaurant;
   }
 
-  @Transactional
   @Override
   public Restaurant updateRestaurant(UUID restaurantId, RestaurantUpdateRequest restaurantUpdateRequest) {
     Restaurant restaurant = restaurantRepository.findById(restaurantId)
@@ -86,7 +85,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     return updatedRestaurant;
   }
 
-  @Transactional
   @Override
   public void deleteRestaurant(UUID restaurantId) {
     Restaurant restaurant = restaurantRepository.findById(restaurantId)

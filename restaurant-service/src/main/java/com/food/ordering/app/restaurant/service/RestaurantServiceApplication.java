@@ -14,11 +14,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @SpringBootApplication
+@EnableCaching
 @EnableConfigurationProperties({AppGCPConfigProperties.class})
 @Import({
     OptimisticLockingDecoratorConfiguration.class,
