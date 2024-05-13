@@ -10,6 +10,7 @@ import com.food.ordering.app.restaurant.service.entity.MenuItem;
 import com.food.ordering.app.restaurant.service.entity.Restaurant;
 import com.food.ordering.app.restaurant.service.event.publisher.RestaurantMenuItemDomainEventPublisher;
 import com.food.ordering.app.restaurant.service.mapper.MenuItemMapper;
+import com.food.ordering.app.restaurant.service.principal.PrincipalProvider;
 import com.food.ordering.app.restaurant.service.repository.MenuItemRepository;
 import com.food.ordering.app.restaurant.service.repository.RestaurantRepository;
 import java.io.IOException;
@@ -20,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,11 +36,12 @@ public class RestaurantMenuItemServiceImpl implements
   private final StorageService imageStorageService;
   private final RestaurantMenuItemDomainEventPublisher domainEventPublisher;
   private final MenuItemMapper menuItemMapper;
+  private final PrincipalProvider principalProvider;
 
   @Override
   public Page<MenuItem> getWholeRestaurantMenu(UUID restaurantId, Pageable pageable) {
     return menuItemRepository.findAllByRestaurantIdAndRestaurantOwnerIdAndIsDeletedFalse(
-        restaurantId, SecurityContextHolder.getContext().getAuthentication().getName(), pageable);
+        restaurantId, principalProvider.getName(), pageable);
   }
 
   @Override

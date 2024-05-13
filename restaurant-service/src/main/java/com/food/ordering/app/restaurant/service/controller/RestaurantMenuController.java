@@ -1,5 +1,7 @@
 package com.food.ordering.app.restaurant.service.controller;
 
+import com.food.ordering.app.restaurant.service.cache.evict.CustomCacheEvict;
+import com.food.ordering.app.restaurant.service.config.RedisConfig;
 import com.food.ordering.app.restaurant.service.dto.MenuItemRequest;
 import com.food.ordering.app.restaurant.service.dto.MenuItemResponse;
 import com.food.ordering.app.restaurant.service.dto.MenuItemUpdateRequest;
@@ -10,6 +12,10 @@ import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -33,43 +39,51 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Slf4j
+@CacheConfig(cacheNames = {RedisConfig.MENU_ITEM_CACHE_NAME,
+    RedisConfig.MENU_ITEMS_CACHE_NAME}, keyGenerator = "menuItemCacheKeyGenerator")
 public class RestaurantMenuController {
 
   private final RestaurantMenuItemService menuItemService;
   private final MenuItemMapper menuItemMapper;
 
   @GetMapping
-  public ResponseEntity<Page<MenuItemResponse>> getRestaurantMenu(@PathVariable UUID restaurantId,
+  @Cacheable(value = RedisConfig.MENU_ITEMS_CACHE_NAME, key = "{@principalProviderImpl.name, #restaurantId, #pageable.pageNumber, #pageable.pageSize}")
+  public Page<MenuItemResponse> getRestaurantMenu(@PathVariable UUID restaurantId,
       @SortDefault(value = "name", caseSensitive = false) @PageableDefault Pageable pageable) {
-    Page<MenuItemResponse> menuItems = menuItemService.getWholeRestaurantMenu(restaurantId,
+    return menuItemService.getWholeRestaurantMenu(restaurantId,
         pageable).map(menuItemMapper::menuItemToMenuItemResponse);
-    return ResponseEntity.ok(menuItems);
   }
 
   @GetMapping("/{menuId}")
-  public ResponseEntity<MenuItemResponse> getRestaurantMenuById(@PathVariable UUID restaurantId,
+  @Cacheable(value = RedisConfig.MENU_ITEM_CACHE_NAME)
+  public MenuItemResponse getRestaurantMenuById(@PathVariable UUID restaurantId,
       @PathVariable UUID menuId) {
-    MenuItemResponse menuItem = menuItemMapper.menuItemToMenuItemResponse(
+    return menuItemMapper.menuItemToMenuItemResponse(
         menuItemService.getMenuItemById(restaurantId, menuId));
-    return ResponseEntity.ok(menuItem);
   }
 
   @PostMapping
+  @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator")
+  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<MenuItemResponse> createRestaurantMenu(@PathVariable UUID restaurantId,
+  public MenuItemResponse createRestaurantMenu(@PathVariable UUID restaurantId,
       @Valid @RequestPart("menuItemRequest") MenuItemRequest menuItemRequest,
       @RequestPart("image") MultipartFile image) throws IOException {
 
-    MenuItemResponse newMenuItem = menuItemMapper.menuItemToMenuItemResponse(
+    return menuItemMapper.menuItemToMenuItemResponse(
         menuItemService.createMenuItem(restaurantId,
             menuItemMapper.menuItemRequestToMenuItem(menuItemRequest), image));
-
-    return new ResponseEntity<>(newMenuItem, HttpStatus.CREATED);
   }
 
   @PutMapping("/{menuId}")
-  public ResponseEntity<MenuItemResponse> updateRestaurantMenu(@PathVariable UUID restaurantId,
-      @PathVariable UUID menuId, @RequestPart(value = "image", required = false) MultipartFile image,
+  @Caching(evict = {
+      @CacheEvict(RedisConfig.MENU_ITEM_CACHE_NAME),
+      @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator")
+  })
+  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
+  public MenuItemResponse updateRestaurantMenu(@PathVariable UUID restaurantId,
+      @PathVariable UUID menuId,
+      @RequestPart(value = "image", required = false) MultipartFile image,
       @Valid @RequestPart("menuItemUpdateRequest") MenuItemUpdateRequest menuItemUpdateRequest)
       throws IOException {
     log.info("Updating menu item with id: {} within restaurant id: {}.", menuId, restaurantId);
@@ -78,10 +92,15 @@ public class RestaurantMenuController {
         menuItemService.updateMenuItem(restaurantId, menuId, menuItemUpdateRequest, image));
 
     log.info("Menu item with id: {} within restaurant id: {} was updated", menuId, restaurantId);
-    return ResponseEntity.ok(updatedMenuItem);
+    return updatedMenuItem;
   }
 
   @DeleteMapping("/{menuId}")
+  @Caching(evict = {
+      @CacheEvict(RedisConfig.MENU_ITEM_CACHE_NAME),
+      @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator")
+  })
+  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Void> deleteRestaurantMenu(@PathVariable UUID restaurantId,
       @PathVariable UUID menuId) {

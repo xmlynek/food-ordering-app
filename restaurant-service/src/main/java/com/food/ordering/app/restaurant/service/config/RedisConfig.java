@@ -1,50 +1,28 @@
 package com.food.ordering.app.restaurant.service.config;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @RequiredArgsConstructor
 public class RedisConfig {
 
-  private final JsonMapper jsonMapper;
+  public static final String RESTAURANT_CACHE_NAME = "restaurant";
+  public static final String RESTAURANTS_CACHE_NAME = "restaurants";
+  public static final String MENU_ITEM_CACHE_NAME = "menu-item";
+  public static final String MENU_ITEMS_CACHE_NAME = "menu-items";
 
-
-  public String getUsernameKey() {
-    return SecurityContextHolder.getContext().getAuthentication().getName();
+  @Bean
+  public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+    RedisTemplate<String, Object> template = new RedisTemplate<>();
+    template.setConnectionFactory(connectionFactory);
+    template.setKeySerializer(new StringRedisSerializer());
+    template.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
+    return template;
   }
-
-//  @Bean
-//  public RedisCacheConfiguration cacheConfiguration() {
-//    return RedisCacheConfiguration.defaultCacheConfig()
-//        .entryTtl(Duration.ofMinutes(10))
-//        .disableCachingNullValues()
-//        .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(jsonMapper)));
-//  }
-
-//  @Bean
-//  public RedisCacheConfiguration cacheConfiguration(ObjectMapper mapper) {
-//    var myMapper = mapper.copy().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-//        .activateDefaultTyping(jsonMapper.getPolymorphicTypeValidator(),
-//            ObjectMapper.DefaultTyping.EVERYTHING, JsonTypeInfo.As.PROPERTY);
-//
-//    return RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(5))
-//        .disableCachingNullValues().serializeValuesWith(
-//            SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(myMapper)));
-//  }
-
-//  @Bean
-//  public RedisCacheConfiguration cacheConfiguration() {
-//    ObjectMapper objectMapper = new ObjectMapper();
-//    objectMapper.registerModule(new JavaTimeModule());  // Support for Java 8 Time types
-//    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-//    objectMapper.activateDefaultTyping(objectMapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-//
-//    return RedisCacheConfiguration.defaultCacheConfig()
-//        .entryTtl(Duration.ofMinutes(10))
-//        .disableCachingNullValues()
-//        .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper)));
-//  }
 }

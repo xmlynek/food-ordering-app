@@ -9,6 +9,7 @@ import com.food.ordering.app.restaurant.service.entity.Restaurant;
 import com.food.ordering.app.restaurant.service.event.publisher.RestaurantDomainEventPublisher;
 import com.food.ordering.app.restaurant.service.mapper.AddressMapper;
 import com.food.ordering.app.restaurant.service.mapper.RestaurantMapper;
+import com.food.ordering.app.restaurant.service.principal.PrincipalProvider;
 import com.food.ordering.app.restaurant.service.repository.RestaurantRepository;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -16,7 +17,6 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,13 +29,14 @@ public class RestaurantServiceImpl implements RestaurantService {
   private final RestaurantDomainEventPublisher domainEventPublisher;
   private final RestaurantMapper restaurantMapper;
   private final AddressMapper addressMapper;
+  private final PrincipalProvider principalProvider;
 
 
   @Transactional(readOnly = true)
   @Override
   public Page<Restaurant> getAllRestaurants(Pageable pageable) {
-    return restaurantRepository.findAllByOwnerIdAndIsDeletedFalse(
-        SecurityContextHolder.getContext().getAuthentication().getName(), pageable);
+    return restaurantRepository.findAllByOwnerIdAndIsDeletedFalse(principalProvider.getName(),
+        pageable);
   }
 
   @Transactional(readOnly = true)
@@ -52,7 +53,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     restaurant.setIsAvailable(
         true); // TODO: set to false by default until the restaurant contains some menus?
     restaurant.setLastModifiedAt(LocalDateTime.now());
-    restaurant.setOwnerId(SecurityContextHolder.getContext().getAuthentication().getName());
+    restaurant.setOwnerId(principalProvider.getName());
 
     Restaurant createdRestaurant = restaurantRepository.save(restaurant);
 
@@ -66,7 +67,8 @@ public class RestaurantServiceImpl implements RestaurantService {
   }
 
   @Override
-  public Restaurant updateRestaurant(UUID restaurantId, RestaurantUpdateRequest restaurantUpdateRequest) {
+  public Restaurant updateRestaurant(UUID restaurantId,
+      RestaurantUpdateRequest restaurantUpdateRequest) {
     Restaurant restaurant = restaurantRepository.findById(restaurantId)
         .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
     restaurant.setName(restaurantUpdateRequest.name());
