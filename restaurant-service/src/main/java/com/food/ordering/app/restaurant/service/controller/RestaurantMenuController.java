@@ -1,6 +1,5 @@
 package com.food.ordering.app.restaurant.service.controller;
 
-import com.food.ordering.app.restaurant.service.cache.evict.CustomCacheEvict;
 import com.food.ordering.app.restaurant.service.config.RedisConfig;
 import com.food.ordering.app.restaurant.service.dto.MenuItemRequest;
 import com.food.ordering.app.restaurant.service.dto.MenuItemResponse;
@@ -47,7 +46,7 @@ public class RestaurantMenuController {
   private final MenuItemMapper menuItemMapper;
 
   @GetMapping
-  @Cacheable(value = RedisConfig.MENU_ITEMS_CACHE_NAME, key = "{@principalProviderImpl.name, #restaurantId, #pageable.pageNumber, #pageable.pageSize}")
+//  @Cacheable(value = RedisConfig.MENU_ITEMS_CACHE_NAME, key = "{@principalProviderImpl.name, #restaurantId, #pageable.pageNumber, #pageable.pageSize}")
   public Page<MenuItemResponse> getRestaurantMenu(@PathVariable UUID restaurantId,
       @SortDefault(value = "name", caseSensitive = false) @PageableDefault Pageable pageable) {
     return menuItemService.getWholeRestaurantMenu(restaurantId,
@@ -64,7 +63,7 @@ public class RestaurantMenuController {
 
   @PostMapping
   @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator")
-  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
+//  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
   @ResponseStatus(HttpStatus.CREATED)
   public MenuItemResponse createRestaurantMenu(@PathVariable UUID restaurantId,
       @Valid @RequestPart("menuItemRequest") MenuItemRequest menuItemRequest,
@@ -80,7 +79,7 @@ public class RestaurantMenuController {
       @CacheEvict(RedisConfig.MENU_ITEM_CACHE_NAME),
       @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator")
   })
-  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
+//  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
   public MenuItemResponse updateRestaurantMenu(@PathVariable UUID restaurantId,
       @PathVariable UUID menuId,
       @RequestPart(value = "image", required = false) MultipartFile image,
@@ -100,7 +99,7 @@ public class RestaurantMenuController {
       @CacheEvict(RedisConfig.MENU_ITEM_CACHE_NAME),
       @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator")
   })
-  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
+//  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Void> deleteRestaurantMenu(@PathVariable UUID restaurantId,
       @PathVariable UUID menuId) {

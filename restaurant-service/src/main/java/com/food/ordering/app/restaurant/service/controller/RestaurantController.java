@@ -1,6 +1,5 @@
 package com.food.ordering.app.restaurant.service.controller;
 
-import com.food.ordering.app.restaurant.service.cache.evict.CustomCacheEvict;
 import com.food.ordering.app.restaurant.service.config.RedisConfig;
 import com.food.ordering.app.restaurant.service.dto.BasicRestaurantResponse;
 import com.food.ordering.app.restaurant.service.dto.RestaurantRequest;
@@ -45,7 +44,7 @@ public class RestaurantController {
 
 
   @GetMapping
-  @Cacheable(value = RedisConfig.RESTAURANTS_CACHE_NAME, key = "{@principalProviderImpl.name, #pageable.pageNumber, #pageable.pageSize}")
+//  @Cacheable(value = RedisConfig.RESTAURANTS_CACHE_NAME, key = "{@principalProviderImpl.name, #pageable.pageNumber, #pageable.pageSize}")
   public Page<BasicRestaurantResponse> getPrincipalRestaurants(
       @SortDefault(value = "name", caseSensitive = false) @PageableDefault Pageable pageable) {
     return restaurantService.getAllRestaurants(pageable)
@@ -61,7 +60,7 @@ public class RestaurantController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  @CustomCacheEvict(cacheName = RedisConfig.RESTAURANTS_CACHE_NAME)
+//  @CustomCacheEvict(cacheName = RedisConfig.RESTAURANTS_CACHE_NAME)
   public BasicRestaurantResponse createRestaurant(
       @Valid @RequestBody RestaurantRequest restaurantRequest) {
     return restaurantMapper.restaurantEntityToBasicRestaurantResponse(
@@ -71,7 +70,7 @@ public class RestaurantController {
 
   @PutMapping("/{restaurantId}")
   @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME)
-  @CustomCacheEvict(cacheName = RedisConfig.RESTAURANTS_CACHE_NAME)
+//  @CustomCacheEvict(cacheName = RedisConfig.RESTAURANTS_CACHE_NAME)
   public BasicRestaurantResponse updateRestaurant(@PathVariable UUID restaurantId,
       @Valid @RequestBody RestaurantUpdateRequest restaurantUpdateRequest) {
     return restaurantMapper.restaurantEntityToBasicRestaurantResponse(
@@ -80,7 +79,7 @@ public class RestaurantController {
 
   @DeleteMapping("/{restaurantId}")
   @Caching(evict = {@CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME)})
-  @CustomCacheEvict(cacheName = RedisConfig.RESTAURANTS_CACHE_NAME)
+//  @CustomCacheEvict(cacheName = RedisConfig.RESTAURANTS_CACHE_NAME)
   public ResponseEntity<Void> deleteRestaurant(@PathVariable UUID restaurantId) {
     restaurantService.deleteRestaurant(restaurantId);
     return ResponseEntity.noContent().build();
