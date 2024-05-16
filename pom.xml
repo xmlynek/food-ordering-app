@@ -12,7 +12,7 @@
 
   <groupId>com.food.ordering.app</groupId>
   <artifactId>food-ordering-app</artifactId>
-  <version>0.0.1-RELEASE</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>food-ordering-app</name>
   <description>food-ordering-app</description>
