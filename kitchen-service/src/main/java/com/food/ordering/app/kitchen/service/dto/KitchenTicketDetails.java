@@ -2,6 +2,7 @@ package com.food.ordering.app.kitchen.service.dto;
 
 import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +15,7 @@ public record KitchenTicketDetails(UUID id,
                                    KitchenTicketStatus status,
                                    DeliveryStatus deliveryStatus,
                                    BigDecimal totalPrice,
-                                   List<KitchenTicketItemDetails> ticketItems) {
+                                   List<KitchenTicketItemDetails> ticketItems) implements
+    Serializable {
 
 }

@@ -1,7 +1,6 @@
 package com.food.ordering.app.kitchen.service.event.handler;
 
 import com.food.ordering.app.common.enums.DeliveryStatus;
-import com.food.ordering.app.common.event.DeliveryAssignedToCourierEvent;
 import com.food.ordering.app.common.event.DeliveryStatusChangedEvent;
 import com.food.ordering.app.common.event.RestaurantCreatedEvent;
 import com.food.ordering.app.common.event.RestaurantDeletedEvent;
@@ -47,7 +46,6 @@ public class KitchenServiceEventHandler {
         .onEvent(RestaurantMenuItemRevisedEvent.class, this::reviseMenuItem)
         .onEvent(RestaurantMenuItemDeletedEvent.class, this::deleteMenuItem)
         .andForAggregateType("com.food.ordering.app.delivery.service.entity.Delivery")
-        .onEvent(DeliveryAssignedToCourierEvent.class, this::handleDeliveryAssigned)
         .onEvent(DeliveryStatusChangedEvent.class, this::handleDeliveryStatusChanged)
         .build();
   }
@@ -155,48 +153,24 @@ public class KitchenServiceEventHandler {
     }
   }
 
-  private void handleDeliveryAssigned(DomainEventEnvelope<DeliveryAssignedToCourierEvent> de) {
-    UUID deliveryId = null;
-    UUID orderId = null;
-    try {
-      deliveryId = UUID.fromString(de.getAggregateId());
-      DeliveryAssignedToCourierEvent event = de.getEvent();
-      orderId = event.orderId();
-
-      log.info(
-          "Handling DeliveryAssignedToCourierEvent for delivery with ID {} for order with ID {}",
-          deliveryId, orderId);
-
-      kitchenTicketService.assignDeliveryDetails(event);
-
-      log.info("Successfully updated order with ID {} with delivery data for delivery ID {}",
-          orderId, deliveryId);
-    } catch (Exception e) {
-      log.error(
-          "Error handling DeliveryAssignedToCourierEvent for delivery ID {} and order ID {}: {}",
-          deliveryId, orderId, e.getMessage(), e);
-//      throw e;
-    }
-  }
-
   private void handleDeliveryStatusChanged(DomainEventEnvelope<DeliveryStatusChangedEvent> de) {
     UUID deliveryId = null;
-    UUID orderId = null;
+    UUID ticketId = null;
     try {
       deliveryId = UUID.fromString(de.getAggregateId());
       DeliveryStatusChangedEvent event = de.getEvent();
-      orderId = event.orderId();
+      ticketId = event.kitchenTicketId();
       DeliveryStatus status = event.status();
 
-      log.info("Handling DeliveryStatusChangedEvent for delivery with ID {} for order with ID {}",
-          deliveryId, orderId);
+      log.info("Handling DeliveryStatusChangedEvent for delivery with ID {} for ticket with ID {}",
+          deliveryId, ticketId);
 
-      kitchenTicketService.updateDeliveryStatus(event);
+      kitchenTicketService.updateDeliveryDetails(ticketId, deliveryId, status);
 
       log.info("Successfully updated the status for delivery ID {} to {}", deliveryId, status);
     } catch (Exception e) {
-      log.error("Error handling DeliveryStatusChangedEvent for delivery ID {} and order ID {}: {}",
-          deliveryId, orderId, e.getMessage(), e);
+      log.error("Error handling DeliveryStatusChangedEvent for delivery ID {} and ticket ID {}: {}",
+          deliveryId, ticketId, e.getMessage(), e);
 //      throw e;
     }
   }

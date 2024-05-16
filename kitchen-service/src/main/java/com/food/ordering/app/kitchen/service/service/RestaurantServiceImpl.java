@@ -7,6 +7,7 @@ import com.food.ordering.app.kitchen.service.repository.RestaurantRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,6 +24,7 @@ public class RestaurantServiceImpl implements RestaurantService {
   }
 
   @Override
+  @CacheEvict(value = "kitchenTicketDetails", allEntries = true, beforeInvocation = true)
   public Restaurant reviseRestaurant(UUID restaurantId,
       RestaurantRevisedEvent restaurantRevisedEvent) {
     Restaurant restaurant = restaurantRepository.findById(restaurantId)

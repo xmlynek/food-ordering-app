@@ -13,7 +13,4 @@ public interface KitchenTicketRepository extends JpaRepository<KitchenTicket, UU
   @NonNull
   <T> Optional<T> findByIdAndRestaurantIdAndRestaurantOwnerId(@NonNull UUID id,
       @NonNull UUID restaurantId, @NonNull String ownerId, Class<T> type);
-
-  @NonNull
-  Optional<KitchenTicket> findByIdAndDeliveryId(@NonNull UUID id, @NonNull UUID deliveryId);
 }

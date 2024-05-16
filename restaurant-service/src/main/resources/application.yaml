@@ -8,7 +8,7 @@ spring:
     redis:
       time-to-live: 360000
       cache-null-values: false
-      key-prefix: restaurant-service-cache-
+      key-prefix: ${spring.application.name}-cache-
   data:
     redis:
       host: ${REDIS_HOST:localhost}

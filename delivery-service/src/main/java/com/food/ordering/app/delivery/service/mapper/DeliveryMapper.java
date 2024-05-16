@@ -1,7 +1,6 @@
 package com.food.ordering.app.delivery.service.mapper;
 
 import com.food.ordering.app.common.command.CreateDeliveryOrderCommand;
-import com.food.ordering.app.common.event.DeliveryAssignedToCourierEvent;
 import com.food.ordering.app.common.event.DeliveryStatusChangedEvent;
 import com.food.ordering.app.delivery.service.dto.DeliveryResponse;
 import com.food.ordering.app.delivery.service.entity.Delivery;
@@ -31,13 +30,6 @@ public interface DeliveryMapper {
       @Mapping(target = "restaurantAddress", source = "restaurant.address"),
   })
   DeliveryResponse deliveryDetailsViewToDeliveryResponse(DeliveryDetailsView view);
-
-  @Mappings({
-      @Mapping(target = "status", source = "deliveryStatus"),
-      @Mapping(target = "deliveryId", source = "id"),
-      @Mapping(target = "assignedAt", expression = "java(java.time.LocalDateTime.now())"),
-  })
-  DeliveryAssignedToCourierEvent deliveryToDeliveryAssignedToCourierEvent(Delivery delivery);
 
   @Mappings({
       @Mapping(target = "status", source = "deliveryStatus"),

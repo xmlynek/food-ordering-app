@@ -24,5 +24,5 @@ public interface DeliveryService {
 
   void completeDelivery(UUID deliveryId);
 
-  void updateKitchenTicketStatus(UUID kitchenTicketId, KitchenTicketStatus kitchenTicketStatus);
+  Delivery updateKitchenTicketStatus(UUID kitchenTicketId, KitchenTicketStatus kitchenTicketStatus);
 }

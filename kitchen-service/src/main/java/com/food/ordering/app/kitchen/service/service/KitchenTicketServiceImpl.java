@@ -1,10 +1,10 @@
 package com.food.ordering.app.kitchen.service.service;
 
+import static com.food.ordering.app.kitchen.service.exception.KitchenTicketNotFoundException.KITCHEN_TICKET_WITH_DELIVERY_ID_NOT_FOUND_EXCEPTION_MESSAGE;
+
 import com.food.ordering.app.common.command.CreateKitchenTicketCommand;
 import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
-import com.food.ordering.app.common.event.DeliveryAssignedToCourierEvent;
-import com.food.ordering.app.common.event.DeliveryStatusChangedEvent;
 import com.food.ordering.app.common.event.KitchenTicketStatusChangedEvent;
 import com.food.ordering.app.common.exception.InvalidPriceValueException;
 import com.food.ordering.app.common.exception.RestaurantNotFoundException;
@@ -32,6 +32,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -59,6 +61,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   }
 
   @Override
+  @Cacheable(value = "kitchenTicketDetails", key = "{authentication.name, #ticketId}")
   public KitchenTicketDetailsView getKitchenTicketDetails(UUID restaurantId, UUID ticketId) {
     return kitchenTicketRepository.findByIdAndRestaurantIdAndRestaurantOwnerId(ticketId,
             restaurantId, SecurityContextHolder.getContext().getAuthentication().getName(),
@@ -67,6 +70,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   }
 
   @Override
+  @CacheEvict(value = "kitchenTicketDetails", key = "{authentication.name, #ticketId}", beforeInvocation = true)
   public void cancelKitchenTicket(UUID ticketId) {
     KitchenTicket kitchenTicket = kitchenTicketRepository.findById(ticketId)
         .orElseThrow(() -> new KitchenTicketNotFoundException(ticketId));
@@ -76,6 +80,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
 
   @Override
   @Transactional
+  @CacheEvict(value = "kitchenTicketDetails", key = "{authentication.name, #ticketId}", beforeInvocation = true)
   public void completeKitchenTicket(UUID restaurantId, UUID ticketId) {
     KitchenTicket kitchenTicket = kitchenTicketRepository.findByIdAndRestaurantIdAndRestaurantOwnerId(
             ticketId, restaurantId, SecurityContextHolder.getContext().getAuthentication().getName(),
@@ -95,29 +100,21 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   }
 
   @Override
-  public void assignDeliveryDetails(DeliveryAssignedToCourierEvent event) {
-    UUID ticketId = event.kitchenTicketId();
-
+  @CacheEvict(value = "kitchenTicketDetails", key = "{authentication.name, #ticketId}", beforeInvocation = true)
+  public void updateDeliveryDetails(UUID ticketId, UUID deliveryId, DeliveryStatus deliveryStatus) {
     KitchenTicket kitchenTicket = kitchenTicketRepository.findById(ticketId)
         .orElseThrow(() -> new KitchenTicketNotFoundException(ticketId));
 
-    kitchenTicket.setDeliveryId(event.deliveryId());
-    kitchenTicket.setDeliveryStatus(event.status());
+    if (kitchenTicket.getDeliveryId() != null && kitchenTicket.getDeliveryId() != deliveryId) {
+      throw new KitchenTicketNotFoundException(
+          String.format(KITCHEN_TICKET_WITH_DELIVERY_ID_NOT_FOUND_EXCEPTION_MESSAGE, ticketId,
+              deliveryId));
+    }
 
-    kitchenTicketRepository.save(kitchenTicket);
-  }
+    kitchenTicket.setDeliveryId(deliveryId);
+    kitchenTicket.setDeliveryStatus(deliveryStatus);
 
-  @Override
-  public void updateDeliveryStatus(DeliveryStatusChangedEvent event) {
-    UUID ticketId = event.kitchenTicketId();
-
-    KitchenTicket kitchenTicket = kitchenTicketRepository.findByIdAndDeliveryId(ticketId,
-            event.deliveryId())
-        .orElseThrow(() -> new KitchenTicketNotFoundException(ticketId));
-
-    kitchenTicket.setDeliveryStatus(event.status());
-
-    if (event.status() == DeliveryStatus.AT_DELIVERY) {
+    if (deliveryStatus == DeliveryStatus.AT_DELIVERY) {
       kitchenTicket.setStatus(KitchenTicketStatus.FINISHED);
 
       domainEventPublisher.publish(kitchenTicket, Collections.singletonList(
