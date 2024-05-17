@@ -347,6 +347,14 @@ services:
         limits:
           memory: 128M
 
+  redis:
+    image: redis:${REDIS_VERSION:-latest}
+    restart: on-failure
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./volumes/redis:/data
+
   cdcservice:
     image: eventuateio/eventuate-cdc-service:${EVENTUATE_CDC_VERSION:-0.16.0.RELEASE}
     ports:
