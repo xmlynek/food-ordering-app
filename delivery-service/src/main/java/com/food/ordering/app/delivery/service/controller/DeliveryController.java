@@ -5,6 +5,9 @@ import com.food.ordering.app.delivery.service.mapper.DeliveryMapper;
 import com.food.ordering.app.delivery.service.service.DeliveryService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -29,12 +32,11 @@ public class DeliveryController {
   private final DeliveryMapper deliveryMapper;
 
   @GetMapping
-  public ResponseEntity<Page<DeliveryResponse>> getAllAvailableDeliveries(
+  @Cacheable(value = "availableDeliveries", key = "{#pageable}")
+  public Page<DeliveryResponse> getAllAvailableDeliveries(
       @SortDefault(value = "createdAt", direction = Direction.DESC) @PageableDefault Pageable pageable) {
-    Page<DeliveryResponse> deliveryResponses = deliveryService.getAllAvailableDeliveryDetailsViews(pageable)
+    return deliveryService.getAllAvailableDeliveryDetailsViews(pageable)
         .map(deliveryMapper::deliveryDetailsViewToDeliveryResponse);
-
-    return ResponseEntity.ok(deliveryResponses);
   }
 
   @GetMapping("/history")
@@ -48,14 +50,17 @@ public class DeliveryController {
   }
 
   @GetMapping("/{deliveryId}")
-  public ResponseEntity<DeliveryResponse> getDeliveryById(@PathVariable UUID deliveryId) {
-    DeliveryResponse deliveryResponse = deliveryMapper.deliveryDetailsViewToDeliveryResponse(
+  @Cacheable(value = "deliveryDetails", key = "{#deliveryId}")
+  public DeliveryResponse getDeliveryById(@PathVariable UUID deliveryId) {
+    return deliveryMapper.deliveryDetailsViewToDeliveryResponse(
         deliveryService.getDeliveryDetailsViewById(deliveryId));
-
-    return ResponseEntity.ok(deliveryResponse);
   }
 
   @PostMapping("/{deliveryId}/assign")
+  @Caching(evict = {
+      @CacheEvict(value = "deliveryDetails", key = "{#deliveryId}", beforeInvocation = true),
+      @CacheEvict(value = "availableDeliveries", allEntries = true, beforeInvocation = true)
+  })
   public ResponseEntity<Void> assignDeliveryToCourier(@PathVariable UUID deliveryId) {
     deliveryService.assignDeliveryToCourier(deliveryId);
 
@@ -63,6 +68,7 @@ public class DeliveryController {
   }
 
   @PostMapping("/{deliveryId}/pick-up")
+  @CacheEvict(value = "deliveryDetails", key = "{#deliveryId}", beforeInvocation = true)
   public ResponseEntity<Void> pickUpDelivery(@PathVariable UUID deliveryId) {
     deliveryService.pickUpDelivery(deliveryId);
 
@@ -70,6 +76,7 @@ public class DeliveryController {
   }
 
   @PostMapping("/{deliveryId}/complete")
+  @CacheEvict(value = "deliveryDetails", key = "{#deliveryId}", beforeInvocation = true)
   public ResponseEntity<Void> completeDelivery(@PathVariable UUID deliveryId) {
     deliveryService.completeDelivery(deliveryId);
 

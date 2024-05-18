@@ -9,6 +9,7 @@ import com.food.ordering.app.restaurant.service.entity.Restaurant;
 import com.food.ordering.app.restaurant.service.event.publisher.RestaurantDomainEventPublisher;
 import com.food.ordering.app.restaurant.service.mapper.AddressMapper;
 import com.food.ordering.app.restaurant.service.mapper.RestaurantMapper;
+import com.food.ordering.app.restaurant.service.principal.PrincipalProvider;
 import com.food.ordering.app.restaurant.service.repository.RestaurantRepository;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -16,35 +17,35 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RestaurantServiceImpl implements RestaurantService {
 
   private final RestaurantRepository restaurantRepository;
   private final RestaurantDomainEventPublisher domainEventPublisher;
   private final RestaurantMapper restaurantMapper;
   private final AddressMapper addressMapper;
+  private final PrincipalProvider principalProvider;
 
 
   @Transactional(readOnly = true)
   @Override
   public Page<Restaurant> getAllRestaurants(Pageable pageable) {
-    return restaurantRepository.findAllByOwnerIdAndIsDeletedFalse(
-        SecurityContextHolder.getContext().getAuthentication().getName(), pageable);
+    return restaurantRepository.findAllByOwnerIdAndIsDeletedFalse(principalProvider.getName(),
+        pageable);
   }
 
-  //  @Transactional(readOnly = true)
+  @Transactional(readOnly = true)
   @Override
   public Restaurant getRestaurantById(UUID restaurantId) {
     return restaurantRepository.findByIdAndIsDeletedFalse(restaurantId)
         .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
   }
 
-  @Transactional
   @Override
   public Restaurant createRestaurant(Restaurant restaurant) {
     restaurant.setIsDeleted(false);
@@ -52,7 +53,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     restaurant.setIsAvailable(
         true); // TODO: set to false by default until the restaurant contains some menus?
     restaurant.setLastModifiedAt(LocalDateTime.now());
-    restaurant.setOwnerId(SecurityContextHolder.getContext().getAuthentication().getName());
+    restaurant.setOwnerId(principalProvider.getName());
 
     Restaurant createdRestaurant = restaurantRepository.save(restaurant);
 
@@ -65,9 +66,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     return createdRestaurant;
   }
 
-  @Transactional
   @Override
-  public Restaurant updateRestaurant(UUID restaurantId, RestaurantUpdateRequest restaurantUpdateRequest) {
+  public Restaurant updateRestaurant(UUID restaurantId,
+      RestaurantUpdateRequest restaurantUpdateRequest) {
     Restaurant restaurant = restaurantRepository.findById(restaurantId)
         .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
     restaurant.setName(restaurantUpdateRequest.name());
@@ -86,7 +87,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     return updatedRestaurant;
   }
 
-  @Transactional
   @Override
   public void deleteRestaurant(UUID restaurantId) {
     Restaurant restaurant = restaurantRepository.findById(restaurantId)

@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: delivery-service
+  cache:
+    type: redis
+    redis:
+      time-to-live: 360000
+      cache-null-values: false
+      key-prefix: ${spring.application.name}-cache-
   flyway:
     baseline-on-migrate: true
     baseline-version: 0

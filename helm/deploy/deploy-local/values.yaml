@@ -86,3 +86,21 @@ api-gateway:
       KITCHEN_SERVICE_URI: http://kitchen-service:8083
       RESTAURANT_SERVICE_URI: http://restaurant-service:8081
       ORDER_SERVICE_URI: http://order-service:8080
+
+redis:
+  volumePermissions:
+    enabled: true
+  fullnameOverride: redis
+  auth:
+    enabled: false
+  #  password: password
+  master:
+    persistence:
+      enabled: true
+      size: 2Gi
+  architecture: replication # or standalone might be enough
+  replica:
+    persistence:
+      size: 2Gi
+  metrics:
+    enabled: true

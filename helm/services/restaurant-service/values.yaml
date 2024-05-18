@@ -16,6 +16,7 @@ env:
     GCP_STORAGE_BUCKET_NAME: food-ordering-app-media
     GCP_STORAGE_PROJECT_ID: studied-stock-416418
     GCP_CREDENTIALS_LOCATION: file:///tmp/keys/YOUR_GCP_KEY.json
+    REDIS_HOST: redis-master
 
 postgresql:
   postgresql:

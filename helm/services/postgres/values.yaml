@@ -6,7 +6,7 @@ service:
   targetPort: 5432
   type: ClusterIP
 storage:
-  size: 1Gi
+  size: 4Gi
   accessModes: ["ReadWriteOnce"]
 
 nameOverride: "postgresql"

@@ -1,9 +1,8 @@
 package com.food.ordering.app.kitchen.service.service;
 
 import com.food.ordering.app.common.command.CreateKitchenTicketCommand;
+import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
-import com.food.ordering.app.common.event.DeliveryAssignedToCourierEvent;
-import com.food.ordering.app.common.event.DeliveryStatusChangedEvent;
 import com.food.ordering.app.common.response.kitchen.KitchenTicketCreated;
 import com.food.ordering.app.kitchen.service.entity.KitchenTicket;
 import com.food.ordering.app.kitchen.service.repository.projection.KitchenTicketDetailsView;
@@ -23,7 +22,6 @@ public interface KitchenTicketService {
 
   void completeKitchenTicket(UUID restaurantId, UUID ticketId);
 
-  void assignDeliveryDetails(DeliveryAssignedToCourierEvent event);
+  void updateDeliveryDetails(UUID ticketId, UUID deliveryId, DeliveryStatus deliveryStatus);
 
-  void updateDeliveryStatus(DeliveryStatusChangedEvent event);
 }

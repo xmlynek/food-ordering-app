@@ -1,4 +1,7 @@
 dependencies:
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 19.3.3
 - name: keycloak
   repository: file://../../services/keycloak
   version: 0.1.0
@@ -41,5 +44,5 @@ dependencies:
 - name: delivery-app
   repository: file://../../applications/delivery-app
   version: 0.1.0
-digest: sha256:099e1112c913f0531949d9fe9894c413a8cbe36b341fb8477f67769bd25866fa
-generated: "2024-04-28T16:45:54.6911003+02:00"
+digest: sha256:ae4de91f628452d03bfbc0a2f50286b4d3886e783705f68dd4b6235fbe5bdffb
+generated: "2024-05-18T19:36:08.0056927+02:00"

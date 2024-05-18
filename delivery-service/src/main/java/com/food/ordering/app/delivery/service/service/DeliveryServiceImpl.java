@@ -3,7 +3,6 @@ package com.food.ordering.app.delivery.service.service;
 import com.food.ordering.app.common.command.CreateDeliveryOrderCommand;
 import com.food.ordering.app.common.enums.DeliveryStatus;
 import com.food.ordering.app.common.enums.KitchenTicketStatus;
-import com.food.ordering.app.common.event.DeliveryAssignedToCourierEvent;
 import com.food.ordering.app.common.event.DeliveryStatusChangedEvent;
 import com.food.ordering.app.common.exception.RestaurantNotFoundException;
 import com.food.ordering.app.delivery.service.entity.Delivery;
@@ -23,6 +22,8 @@ import java.util.Collections;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,6 +42,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
 
   @Override
+  @CacheEvict(value = "availableDeliveries", allEntries = true, beforeInvocation = true)
   public Delivery createDelivery(CreateDeliveryOrderCommand command) {
     Restaurant restaurant = restaurantRepository.findById(command.restaurantId())
         .orElseThrow(() -> new RestaurantNotFoundException(command.restaurantId()));
@@ -100,16 +102,15 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     delivery.setLastModifiedAt(LocalDateTime.now());
 
-    delivery.setCourierId(
-        courierId);
+    delivery.setCourierId(courierId);
 
-    DeliveryAssignedToCourierEvent deliveryAssignedToCourierEvent = deliveryMapper.deliveryToDeliveryAssignedToCourierEvent(
+    DeliveryStatusChangedEvent deliveryStatusChangedEvent = deliveryMapper.deliveryToDeliveryStatusChangedEvent(
         delivery);
 
     Delivery updatedDelivery = deliveryRepository.save(delivery);
 
     deliveryDomainEventPublisher.publish(updatedDelivery,
-        Collections.singletonList(deliveryAssignedToCourierEvent));
+        Collections.singletonList(deliveryStatusChangedEvent));
 
     log.info("Delivery {} assigned to courier {}", deliveryId, courierId);
   }
@@ -189,7 +190,11 @@ public class DeliveryServiceImpl implements DeliveryService {
   }
 
   @Override
-  public void updateKitchenTicketStatus(UUID kitchenTicketId,
+  @Caching(evict = {
+      @CacheEvict(value = "deliveryDetails", key = "{#result.id}"),
+      @CacheEvict(value = "availableDeliveries", allEntries = true, beforeInvocation = true)
+  })
+  public Delivery updateKitchenTicketStatus(UUID kitchenTicketId,
       KitchenTicketStatus kitchenTicketStatus) {
     Delivery delivery = deliveryRepository.findByKitchenTicketId(kitchenTicketId)
         .orElseThrow(() -> new DeliveryNotFoundException(
@@ -197,6 +202,6 @@ public class DeliveryServiceImpl implements DeliveryService {
                 kitchenTicketId)));
 
     delivery.setKitchenTicketStatus(kitchenTicketStatus);
-    deliveryRepository.save(delivery);
+    return deliveryRepository.save(delivery);
   }
 }

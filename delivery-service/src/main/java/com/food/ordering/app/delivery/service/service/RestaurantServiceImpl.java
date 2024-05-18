@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +26,10 @@ public class RestaurantServiceImpl implements RestaurantService {
   }
 
   @Override
+  @Caching(evict = {
+      @CacheEvict(value = "deliveryDetails", allEntries = true, beforeInvocation = true),
+      @CacheEvict(value = "availableDeliveries", allEntries = true, beforeInvocation = true)
+  })
   public Restaurant reviseRestaurant(UUID restaurantId,
       RestaurantRevisedEvent restaurantRevisedEvent) {
     Restaurant restaurant = restaurantRepository.findById(restaurantId)

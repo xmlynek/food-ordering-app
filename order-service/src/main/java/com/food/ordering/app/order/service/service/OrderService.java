@@ -46,6 +46,4 @@ public interface OrderService {
 
   void updateOrderDeliveryData(UUID orderId, UUID deliveryId, DeliveryStatus deliveryStatus);
 
-  void updateDeliveryStatus(UUID deliveryId, DeliveryStatus deliveryStatus);
-
 }

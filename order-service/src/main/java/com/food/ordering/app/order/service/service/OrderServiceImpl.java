@@ -17,6 +17,8 @@ import com.food.ordering.app.order.service.repository.projection.OrderMenuItemDe
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
+  @Cacheable(value = "orderDetails", key = "{@principalProviderImpl.name, #orderId}")
   public OrderDetails getOrderDetailsById(UUID orderId) {
     Order order = orderRepository.findByIdAndCustomerId(orderId,
             UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()))
@@ -72,6 +75,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   @Transactional
+  @CacheEvict(value = "orderDetails", key = "{@principalProviderImpl.name, #orderId}", beforeInvocation = true)
   public void updateOrderStatus(UUID orderId, OrderStatus orderStatus) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new OrderNotFoundException(orderId));
@@ -80,6 +84,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   @Transactional
+  @CacheEvict(value = "orderDetails", key = "{@principalProviderImpl.name, #orderId}", beforeInvocation = true)
   public void setFailureMessages(UUID orderId, List<String> failureMessages) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new OrderNotFoundException(orderId));
@@ -88,6 +93,8 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   @Transactional
+  // ticketId is the same as the orderId in our implementation
+  @CacheEvict(value = "orderDetails", key = "{@principalProviderImpl.name, #ticketId}", beforeInvocation = true)
   public void updateKitchenTicketStatus(UUID ticketId, KitchenTicketStatus kitchenTicketStatus) {
     Order order = orderRepository.findByKitchenTicketId(ticketId)
         .orElseThrow(() -> new OrderNotFoundException(
@@ -97,6 +104,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   @Transactional
+  @CacheEvict(value = "orderDetails", key = "{@principalProviderImpl.name, #orderId}", beforeInvocation = true)
   public void updateKitchenTicketData(UUID orderId, UUID ticketId,
       KitchenTicketStatus kitchenTicketStatus) {
     Order order = orderRepository.findById(orderId)
@@ -106,26 +114,24 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
+  @CacheEvict(value = "orderDetails", key = "{@principalProviderImpl.name, #orderId}", beforeInvocation = true)
   public void updateOrderDeliveryData(UUID orderId, UUID deliveryId,
       DeliveryStatus deliveryStatus) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new OrderNotFoundException(orderId));
+
+    if (order.getDeliveryId() != null && order.getDeliveryId() != deliveryId) {
+      throw new OrderNotFoundException(
+          String.format("Order not found with delivery id %s", deliveryId.toString()));
+    }
+
     order.setDeliveryId(deliveryId);
     order.setDeliveryStatus(deliveryStatus);
-    orderRepository.save(order);
-  }
-
-  @Override
-  public void updateDeliveryStatus(UUID deliveryId, DeliveryStatus deliveryStatus) {
-    Order order = orderRepository.findByDeliveryId(deliveryId)
-        .orElseThrow(() -> new OrderNotFoundException(
-            String.format("Order not found with delivery id %s", deliveryId.toString())));
 
     if (deliveryStatus == DeliveryStatus.DELIVERED) {
       order.setOrderStatus(OrderStatus.COMPLETED);
     }
 
-    order.setDeliveryStatus(deliveryStatus);
     orderRepository.save(order);
   }
 }

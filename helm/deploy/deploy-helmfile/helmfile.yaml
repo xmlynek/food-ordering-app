@@ -1,3 +1,7 @@
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+
 helmfiles:
   - path: ./backend/helmfile.yaml
   - path: ./frontend/helmfile.yaml

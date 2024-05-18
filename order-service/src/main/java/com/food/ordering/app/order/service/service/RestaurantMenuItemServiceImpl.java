@@ -9,6 +9,7 @@ import com.food.ordering.app.order.service.repository.RestaurantMenuItemReposito
 import com.food.ordering.app.order.service.repository.RestaurantRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,6 +31,7 @@ public class RestaurantMenuItemServiceImpl implements RestaurantMenuItemService 
   }
 
   @Override
+  @CacheEvict(value = "orders", allEntries = true, beforeInvocation = true)
   public MenuItem reviseMenuItem(UUID menuItemId, RestaurantMenuItemRevisedEvent event) {
 
     MenuItem menuItem = menuItemRepository.findById(menuItemId)

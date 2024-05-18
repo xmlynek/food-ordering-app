@@ -13,6 +13,7 @@ env:
     OAUTH2_JWK_SET_URI: "http://keycloak:8080/realms/delivery/protocol/openid-connect/certs"
     EVENTUATE_KAFKA_BOOTSTRAP_SERVERS: "http://kafka:9092"
     EVENTUATE_ZOOKEEPER_URL: "http://zookeeper:2181"
+    REDIS_HOST: redis-master
 
 postgresql:
   postgresql:

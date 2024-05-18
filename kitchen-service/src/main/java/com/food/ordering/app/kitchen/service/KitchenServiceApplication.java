@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,6 +26,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
     JsonObjectMapperJavaTimeModuleConfiguration.class,
     EventuateTramFlywayMigrationConfiguration.class
 })
+@EnableCaching
 public class KitchenServiceApplication {
 
   private final Logger _logger = LoggerFactory.getLogger(getClass());
