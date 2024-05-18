@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  @Cacheable(value = "orderDetails", key = "{authentication.name, #orderId}")
+  @Cacheable(value = "orderDetails", key = "{@principalProviderImpl.name, #orderId}")
   public OrderDetails getOrderDetailsById(UUID orderId) {
     Order order = orderRepository.findByIdAndCustomerId(orderId,
             UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()))
@@ -75,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   @Transactional
-  @CacheEvict(value = "orderDetails", key = "{authentication.name, #orderId}", beforeInvocation = true)
+  @CacheEvict(value = "orderDetails", key = "{@principalProviderImpl.name, #orderId}", beforeInvocation = true)
   public void updateOrderStatus(UUID orderId, OrderStatus orderStatus) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new OrderNotFoundException(orderId));
@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   @Transactional
-  @CacheEvict(value = "orderDetails", key = "{authentication.name, #orderId}", beforeInvocation = true)
+  @CacheEvict(value = "orderDetails", key = "{@principalProviderImpl.name, #orderId}", beforeInvocation = true)
   public void setFailureMessages(UUID orderId, List<String> failureMessages) {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new OrderNotFoundException(orderId));
@@ -94,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
   @Override
   @Transactional
   // ticketId is the same as the orderId in our implementation
-  @CacheEvict(value = "orderDetails", key = "{authentication.name, #ticketId}", beforeInvocation = true)
+  @CacheEvict(value = "orderDetails", key = "{@principalProviderImpl.name, #ticketId}", beforeInvocation = true)
   public void updateKitchenTicketStatus(UUID ticketId, KitchenTicketStatus kitchenTicketStatus) {
     Order order = orderRepository.findByKitchenTicketId(ticketId)
         .orElseThrow(() -> new OrderNotFoundException(
@@ -104,7 +104,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   @Transactional
-  @CacheEvict(value = "orderDetails", key = "{authentication.name, #orderId}", beforeInvocation = true)
+  @CacheEvict(value = "orderDetails", key = "{@principalProviderImpl.name, #orderId}", beforeInvocation = true)
   public void updateKitchenTicketData(UUID orderId, UUID ticketId,
       KitchenTicketStatus kitchenTicketStatus) {
     Order order = orderRepository.findById(orderId)
@@ -114,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  @CacheEvict(value = "orderDetails", key = "{authentication.name, #orderId}", beforeInvocation = true)
+  @CacheEvict(value = "orderDetails", key = "{@principalProviderImpl.name, #orderId}", beforeInvocation = true)
   public void updateOrderDeliveryData(UUID orderId, UUID deliveryId,
       DeliveryStatus deliveryStatus) {
     Order order = orderRepository.findById(orderId)

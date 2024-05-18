@@ -1,5 +1,6 @@
 package com.food.ordering.app.kitchen.service.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -8,6 +9,6 @@ public record KitchenTicketItemDetails(UUID id,
                                        Integer quantity,
                                        BigDecimal price,
                                        String name,
-                                       String imageUrl) {
+                                       String imageUrl) implements Serializable {
 
 }

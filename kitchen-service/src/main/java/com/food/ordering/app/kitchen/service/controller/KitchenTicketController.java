@@ -7,6 +7,7 @@ import com.food.ordering.app.kitchen.service.mapper.KitchenTicketMapper;
 import com.food.ordering.app.kitchen.service.service.KitchenTicketService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -42,12 +43,12 @@ public class KitchenTicketController {
   }
 
   @GetMapping("/{ticketId}")
-  public ResponseEntity<KitchenTicketDetails> getRestaurantKitchenTicketByKitchenId(
+  @Cacheable(value = "kitchenTicketDetails", key = "{@principalProviderImpl.name, #kitchenTicketId}")
+  public KitchenTicketDetails getRestaurantKitchenTicketByKitchenId(
       @PathVariable(name = "restaurantId") UUID restaurantId,
       @PathVariable(name = "ticketId") UUID kitchenTicketId) {
-    KitchenTicketDetails restaurantOrderTicketResponse = kitchenTicketMapper.kitchenTicketDetailsViewToKitchenTicketDetails(
+    return kitchenTicketMapper.kitchenTicketDetailsViewToKitchenTicketDetails(
         kitchenTicketService.getKitchenTicketDetails(restaurantId, kitchenTicketId));
-    return ResponseEntity.ok(restaurantOrderTicketResponse);
   }
 
   @PostMapping("/{ticketId}/complete")

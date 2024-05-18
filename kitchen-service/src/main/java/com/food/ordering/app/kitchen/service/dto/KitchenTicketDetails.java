@@ -15,7 +15,6 @@ public record KitchenTicketDetails(UUID id,
                                    KitchenTicketStatus status,
                                    DeliveryStatus deliveryStatus,
                                    BigDecimal totalPrice,
-                                   List<KitchenTicketItemDetails> ticketItems) implements
-    Serializable {
+                                   List<KitchenTicketItemDetails> ticketItems) implements Serializable {
 
 }

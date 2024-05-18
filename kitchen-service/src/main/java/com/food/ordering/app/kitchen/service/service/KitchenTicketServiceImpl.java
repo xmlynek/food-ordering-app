@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -61,7 +60,6 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   }
 
   @Override
-  @Cacheable(value = "kitchenTicketDetails", key = "{authentication.name, #ticketId}")
   public KitchenTicketDetailsView getKitchenTicketDetails(UUID restaurantId, UUID ticketId) {
     return kitchenTicketRepository.findByIdAndRestaurantIdAndRestaurantOwnerId(ticketId,
             restaurantId, SecurityContextHolder.getContext().getAuthentication().getName(),
@@ -70,7 +68,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   }
 
   @Override
-  @CacheEvict(value = "kitchenTicketDetails", key = "{authentication.name, #ticketId}", beforeInvocation = true)
+  @CacheEvict(value = "kitchenTicketDetails", key = "{@principalProviderImpl.name, #ticketId}", beforeInvocation = true)
   public void cancelKitchenTicket(UUID ticketId) {
     KitchenTicket kitchenTicket = kitchenTicketRepository.findById(ticketId)
         .orElseThrow(() -> new KitchenTicketNotFoundException(ticketId));
@@ -80,7 +78,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
 
   @Override
   @Transactional
-  @CacheEvict(value = "kitchenTicketDetails", key = "{authentication.name, #ticketId}", beforeInvocation = true)
+  @CacheEvict(value = "kitchenTicketDetails", key = "{@principalProviderImpl.name, #ticketId}", beforeInvocation = true)
   public void completeKitchenTicket(UUID restaurantId, UUID ticketId) {
     KitchenTicket kitchenTicket = kitchenTicketRepository.findByIdAndRestaurantIdAndRestaurantOwnerId(
             ticketId, restaurantId, SecurityContextHolder.getContext().getAuthentication().getName(),
@@ -100,7 +98,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   }
 
   @Override
-  @CacheEvict(value = "kitchenTicketDetails", key = "{authentication.name, #ticketId}", beforeInvocation = true)
+  @CacheEvict(value = "kitchenTicketDetails", key = "{@principalProviderImpl.name, #ticketId}", beforeInvocation = true)
   public void updateDeliveryDetails(UUID ticketId, UUID deliveryId, DeliveryStatus deliveryStatus) {
     KitchenTicket kitchenTicket = kitchenTicketRepository.findById(ticketId)
         .orElseThrow(() -> new KitchenTicketNotFoundException(ticketId));
