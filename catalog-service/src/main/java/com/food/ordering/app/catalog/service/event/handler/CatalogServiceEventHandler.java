@@ -76,7 +76,8 @@ public class CatalogServiceEventHandler {
         .onErrorResume(e -> {
           log.error("Error revising restaurant with ID {}: {}", de.getAggregateId(),
               e.getMessage(), e);
-          return Mono.error(e);
+//          return Mono.error(e);
+          return Mono.empty();
         });
   }
 
@@ -93,7 +94,8 @@ public class CatalogServiceEventHandler {
         .onErrorResume(e -> {
           log.error("Error deleting restaurant with ID {}: {}", de.getAggregateId(),
               e.getMessage(), e);
-          return Mono.error(e);
+//          return Mono.error(e);
+          return Mono.empty();
         });
   }
 
