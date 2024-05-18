@@ -55,3 +55,9 @@ releases:
     namespace: default
     chart: "../../../services/api-gateway"
     version: 0.1.0
+
+  - name: redis
+    chart: bitnami/redis
+    version: 19.3.3
+    values:
+      - "./values/redis-values.yaml"

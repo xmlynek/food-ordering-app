@@ -5,7 +5,7 @@ service:
   port: 9200
   type: ClusterIP
 storage:
-  size: 2Gi
+  size: 4Gi
   accessModes: ["ReadWriteOnce"]
 
 nameOverride: "elasticsearch"

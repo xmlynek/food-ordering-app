@@ -1,0 +1,16 @@
+auth:
+  enabled: false
+#  password: password
+volumePermissions:
+  enabled: true
+fullnameOverride: redis
+master:
+  persistence:
+    enabled: true
+    size: 2Gi
+architecture: replication # standalone might be enough
+replica:
+  persistence:
+    size: 2Gi
+metrics:
+  enabled: true

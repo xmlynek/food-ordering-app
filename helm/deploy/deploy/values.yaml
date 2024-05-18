@@ -31,3 +31,20 @@ restaurant-app:
       REACT_KEYCLOAK_URL: "http://34.116.174.157:8080" # Change this to your Keycloak URL
       REACT_API_GATEWAY_URL: "http://api-gw.food-ordering-system.com"
 
+redis:
+  volumePermissions:
+    enabled: true
+  fullnameOverride: redis
+  auth:
+    enabled: false
+  #  password: password
+  master:
+    persistence:
+      enabled: true
+      size: 2Gi
+  architecture: replication # or standalone might be enough
+  replica:
+    persistence:
+      size: 2Gi
+  metrics:
+    enabled: true

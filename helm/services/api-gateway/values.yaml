@@ -14,6 +14,7 @@ env:
     RESTAURANT_SERVICE_URI: http://restaurant-service:8080
     KITCHEN_SERVICE_URI: http://kitchen-service:8080
     DELIVERY_SERVICE_URI: http://delivery-service:8080
+    REDIS_HOST: redis-master
 
 
 imagePullSecrets: []
