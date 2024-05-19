@@ -19,6 +19,7 @@ import com.food.ordering.app.kitchen.service.event.publisher.KitchenDomainEventP
 import com.food.ordering.app.kitchen.service.exception.IllegalKitchenTicketStatusException;
 import com.food.ordering.app.kitchen.service.exception.KitchenTicketNotFoundException;
 import com.food.ordering.app.kitchen.service.exception.MenuItemNotAvailableException;
+import com.food.ordering.app.kitchen.service.principal.PrincipalProvider;
 import com.food.ordering.app.kitchen.service.repository.KitchenTicketRepository;
 import com.food.ordering.app.kitchen.service.repository.RestaurantMenuItemRepository;
 import com.food.ordering.app.kitchen.service.repository.RestaurantRepository;
@@ -36,7 +37,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,26 +49,26 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   private final RestaurantRepository restaurantRepository;
   private final KitchenTicketRepository kitchenTicketRepository;
   private final KitchenDomainEventPublisher domainEventPublisher;
+  private final PrincipalProvider principalProvider;
 
   @Override
   public Page<KitchenTicket> getAllKitchenTicketsByRestaurantId(UUID restaurantId,
       Pageable pageable, KitchenTicketStatus ticketStatus) {
     Specification<KitchenTicket> spec = KitchenTicketSpecifications
         .withRestaurantIdAndRestaurantOwnerIdAndOptionalStatus(restaurantId,
-            SecurityContextHolder.getContext().getAuthentication().getName(), ticketStatus);
+            principalProvider.getName(), ticketStatus);
     return kitchenTicketRepository.findAll(spec, pageable);
   }
 
   @Override
   public KitchenTicketDetailsView getKitchenTicketDetails(UUID restaurantId, UUID ticketId) {
     return kitchenTicketRepository.findByIdAndRestaurantIdAndRestaurantOwnerId(ticketId,
-            restaurantId, SecurityContextHolder.getContext().getAuthentication().getName(),
-            KitchenTicketDetailsView.class)
+            restaurantId, principalProvider.getName(), KitchenTicketDetailsView.class)
         .orElseThrow(() -> new KitchenTicketNotFoundException(restaurantId, ticketId));
   }
 
   @Override
-  @CacheEvict(value = "kitchenTicketDetails", key = "{@principalProviderImpl.name, #ticketId}", beforeInvocation = true)
+  @CacheEvict(value = "kitchenTicketDetails", key = "{#ticketId}", beforeInvocation = true)
   public void cancelKitchenTicket(UUID ticketId) {
     KitchenTicket kitchenTicket = kitchenTicketRepository.findById(ticketId)
         .orElseThrow(() -> new KitchenTicketNotFoundException(ticketId));
@@ -78,11 +78,10 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
 
   @Override
   @Transactional
-  @CacheEvict(value = "kitchenTicketDetails", key = "{@principalProviderImpl.name, #ticketId}", beforeInvocation = true)
+  @CacheEvict(value = "kitchenTicketDetails", key = "{#ticketId}", beforeInvocation = true)
   public void completeKitchenTicket(UUID restaurantId, UUID ticketId) {
     KitchenTicket kitchenTicket = kitchenTicketRepository.findByIdAndRestaurantIdAndRestaurantOwnerId(
-            ticketId, restaurantId, SecurityContextHolder.getContext().getAuthentication().getName(),
-            KitchenTicket.class)
+            ticketId, restaurantId, principalProvider.getName(), KitchenTicket.class)
         .orElseThrow(() -> new KitchenTicketNotFoundException(restaurantId, ticketId));
 
     if (kitchenTicket.getStatus() != KitchenTicketStatus.PREPARING) {
@@ -98,7 +97,7 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
   }
 
   @Override
-  @CacheEvict(value = "kitchenTicketDetails", key = "{@principalProviderImpl.name, #ticketId}", beforeInvocation = true)
+  @CacheEvict(value = "kitchenTicketDetails", key = "{#ticketId}", beforeInvocation = true)
   public void updateDeliveryDetails(UUID ticketId, UUID deliveryId, DeliveryStatus deliveryStatus) {
     KitchenTicket kitchenTicket = kitchenTicketRepository.findById(ticketId)
         .orElseThrow(() -> new KitchenTicketNotFoundException(ticketId));

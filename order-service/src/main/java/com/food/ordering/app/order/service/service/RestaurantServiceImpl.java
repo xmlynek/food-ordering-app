@@ -24,7 +24,7 @@ public class RestaurantServiceImpl implements RestaurantService {
   }
 
   @Override
-  @CacheEvict(value = "orders", allEntries = true, beforeInvocation = true)
+  @CacheEvict(value = "orderDetails", allEntries = true, beforeInvocation = true)
   public Restaurant reviseRestaurant(UUID restaurantId,
       RestaurantRevisedEvent restaurantRevisedEvent) {
     Restaurant restaurant = restaurantRepository.findById(restaurantId)

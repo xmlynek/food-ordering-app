@@ -31,7 +31,7 @@ public class RestaurantMenuItemServiceImpl implements RestaurantMenuItemService 
   }
 
   @Override
-  @CacheEvict(value = "orders", allEntries = true, beforeInvocation = true)
+  @CacheEvict(value = "orderDetails", allEntries = true, beforeInvocation = true)
   public MenuItem reviseMenuItem(UUID menuItemId, RestaurantMenuItemRevisedEvent event) {
 
     MenuItem menuItem = menuItemRepository.findById(menuItemId)

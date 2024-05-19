@@ -62,7 +62,7 @@ public class RestaurantMenuController {
   }
 
   @PostMapping
-  @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator")
+  @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator", beforeInvocation = true)
 //  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
   @ResponseStatus(HttpStatus.CREATED)
   public MenuItemResponse createRestaurantMenu(@PathVariable UUID restaurantId,
@@ -76,8 +76,8 @@ public class RestaurantMenuController {
 
   @PutMapping("/{menuId}")
   @Caching(evict = {
-      @CacheEvict(RedisConfig.MENU_ITEM_CACHE_NAME),
-      @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator")
+      @CacheEvict(value = RedisConfig.MENU_ITEM_CACHE_NAME, beforeInvocation = true),
+      @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator", beforeInvocation = true)
   })
 //  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
   public MenuItemResponse updateRestaurantMenu(@PathVariable UUID restaurantId,
@@ -96,8 +96,8 @@ public class RestaurantMenuController {
 
   @DeleteMapping("/{menuId}")
   @Caching(evict = {
-      @CacheEvict(RedisConfig.MENU_ITEM_CACHE_NAME),
-      @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator")
+      @CacheEvict(value = RedisConfig.MENU_ITEM_CACHE_NAME, beforeInvocation = true),
+      @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, keyGenerator = "restaurantCacheKeyGenerator", beforeInvocation = true)
   })
 //  @CustomCacheEvict(cacheName = RedisConfig.MENU_ITEMS_CACHE_NAME)
   @ResponseStatus(HttpStatus.NO_CONTENT)

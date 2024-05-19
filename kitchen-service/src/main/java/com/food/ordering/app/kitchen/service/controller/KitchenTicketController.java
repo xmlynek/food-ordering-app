@@ -43,7 +43,7 @@ public class KitchenTicketController {
   }
 
   @GetMapping("/{ticketId}")
-  @Cacheable(value = "kitchenTicketDetails", key = "{@principalProviderImpl.name, #kitchenTicketId}")
+  @Cacheable(value = "kitchenTicketDetails", key = "{#kitchenTicketId}") // TODO: might cause security issues
   public KitchenTicketDetails getRestaurantKitchenTicketByKitchenId(
       @PathVariable(name = "restaurantId") UUID restaurantId,
       @PathVariable(name = "ticketId") UUID kitchenTicketId) {

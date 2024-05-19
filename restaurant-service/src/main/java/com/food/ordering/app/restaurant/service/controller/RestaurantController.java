@@ -69,7 +69,7 @@ public class RestaurantController {
   }
 
   @PutMapping("/{restaurantId}")
-  @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME)
+  @CacheEvict(value = RedisConfig.RESTAURANT_CACHE_NAME, beforeInvocation = true)
 //  @CustomCacheEvict(cacheName = RedisConfig.RESTAURANTS_CACHE_NAME)
   public BasicRestaurantResponse updateRestaurant(@PathVariable UUID restaurantId,
       @Valid @RequestBody RestaurantUpdateRequest restaurantUpdateRequest) {
