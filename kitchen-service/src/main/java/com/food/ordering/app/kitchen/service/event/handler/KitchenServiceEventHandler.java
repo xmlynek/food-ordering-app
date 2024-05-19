@@ -171,7 +171,7 @@ public class KitchenServiceEventHandler {
     } catch (Exception e) {
       log.error("Error handling DeliveryStatusChangedEvent for delivery ID {} and ticket ID {}: {}",
           deliveryId, ticketId, e.getMessage(), e);
-//      throw e;
+      throw e;
     }
   }
 }

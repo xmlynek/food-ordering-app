@@ -102,7 +102,8 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
     KitchenTicket kitchenTicket = kitchenTicketRepository.findById(ticketId)
         .orElseThrow(() -> new KitchenTicketNotFoundException(ticketId));
 
-    if (kitchenTicket.getDeliveryId() != null && kitchenTicket.getDeliveryId() != deliveryId) {
+    if (kitchenTicket.getDeliveryId() != null && !kitchenTicket.getDeliveryId()
+        .equals(deliveryId)) {
       throw new KitchenTicketNotFoundException(
           String.format(KITCHEN_TICKET_WITH_DELIVERY_ID_NOT_FOUND_EXCEPTION_MESSAGE, ticketId,
               deliveryId));
@@ -111,7 +112,8 @@ public class KitchenTicketServiceImpl implements KitchenTicketService {
     kitchenTicket.setDeliveryId(deliveryId);
     kitchenTicket.setDeliveryStatus(deliveryStatus);
 
-    if (deliveryStatus == DeliveryStatus.AT_DELIVERY) {
+    if (deliveryStatus == DeliveryStatus.AT_DELIVERY
+        || deliveryStatus == DeliveryStatus.DELIVERED) {
       kitchenTicket.setStatus(KitchenTicketStatus.FINISHED);
 
       domainEventPublisher.publish(kitchenTicket, Collections.singletonList(

@@ -195,7 +195,7 @@ public class OrderServiceEventHandler {
       log.info("Successfully updated the status for delivery ID {} to {}", deliveryId, status);
     } catch (Exception e) {
       log.error("Error handling DeliveryStatusChangedEvent for delivery ID {} and order ID {}: {}", deliveryId, orderId, e.getMessage(), e);
-//      throw e;
+      throw e;
     }
   }
 }

@@ -120,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new OrderNotFoundException(orderId));
 
-    if (order.getDeliveryId() != null && order.getDeliveryId() != deliveryId) {
+    if (order.getDeliveryId() != null && !order.getDeliveryId().equals(deliveryId)) {
       throw new OrderNotFoundException(
           String.format("Order not found with delivery id %s", deliveryId.toString()));
     }
