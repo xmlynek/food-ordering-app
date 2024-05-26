@@ -1,0 +1,47 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'order-service-metrics'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['http://order-service:8080']
+        labels:
+          application: 'Order service'
+  - job_name: 'api-gateway-metrics'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['http://api-gateway:8080']
+        labels:
+          application: 'Api gateway'
+  - job_name: 'restaurant-service-metrics'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['http://restaurant-service:8080']
+        labels:
+          application: 'Restaurant service'
+  - job_name: 'payment-service-metrics'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['http://payment-service:8080']
+        labels:
+          application: 'Payment service'
+  - job_name: 'kitchen-service-metrics'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['http://kitchen-service:8080']
+        labels:
+          application: 'Kitchen service'
+  - job_name: 'delivery-service-metrics'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['http://delivery-service:8080']
+        labels:
+          application: 'Delivery service'
+  - job_name: 'catalog-service-metrics'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['http://catalog-service:8080']
+        labels:
+          application: 'Catalog service'

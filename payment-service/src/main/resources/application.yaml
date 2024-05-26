@@ -18,6 +18,22 @@ spring:
     hikari:
       initialization-fail-timeout: 30000
 
+management:
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_TRACING_ENDPOINT:http://localhost:9411/api/v2/spans}
+  tracing:
+    enabled: true
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:0.15}
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 eventuatelocal:
   kafka:
     bootstrap:
