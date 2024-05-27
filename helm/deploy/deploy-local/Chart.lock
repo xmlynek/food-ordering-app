@@ -2,6 +2,9 @@ dependencies:
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 19.3.3
+- name: kube-prometheus-stack
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 58.7.2
 - name: keycloak
   repository: file://../../services/keycloak
   version: 0.1.0
@@ -44,5 +47,5 @@ dependencies:
 - name: delivery-app
   repository: file://../../applications/delivery-app
   version: 0.1.0
-digest: sha256:ae4de91f628452d03bfbc0a2f50286b4d3886e783705f68dd4b6235fbe5bdffb
-generated: "2024-05-18T19:36:08.0056927+02:00"
+digest: sha256:89fc2ba8b44f23f85e7876afae46ae5896d9a2371765ac2e606993958184869d
+generated: "2024-05-27T14:41:23.985474+02:00"
