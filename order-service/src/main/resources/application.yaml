@@ -1,6 +1,5 @@
 server:
   port: ${SERVER_PORT:8080}
-
 spring:
   application:
     name: order-service
@@ -54,6 +53,8 @@ app:
         delivery-service: ${DELIVERY_SERVICE_COMMAND_DESTINATION:delivery-service}
 
 logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
   level:
     root: INFO
     org:

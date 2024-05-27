@@ -55,6 +55,8 @@ app:
           channel: ${SAGA_COMMAND_HANDLER_CHANNEL:payment-service}
 
 logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
   level:
     root: INFO
     org:
