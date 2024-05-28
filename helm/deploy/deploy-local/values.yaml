@@ -105,6 +105,10 @@ redis:
   metrics:
     enabled: true
 
+zipkin:
+  service:
+    type: LoadBalancer
+
 kube-prometheus-stack:
   grafana:
     adminPassword:

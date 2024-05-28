@@ -14,6 +14,10 @@ dependencies:
     version: 58.7.2
     repository: https://prometheus-community.github.io/helm-charts
 
+  - name: zipkin
+    version: 0.3.3
+    repository: https://zipkin.io/zipkin-helm
+
   - name: keycloak
     version: 0.1.0
     repository: "file://../../services/keycloak"

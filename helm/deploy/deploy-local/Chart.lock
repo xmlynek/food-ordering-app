@@ -5,6 +5,9 @@ dependencies:
 - name: kube-prometheus-stack
   repository: https://prometheus-community.github.io/helm-charts
   version: 58.7.2
+- name: zipkin
+  repository: https://zipkin.io/zipkin-helm
+  version: 0.3.3
 - name: keycloak
   repository: file://../../services/keycloak
   version: 0.1.0
@@ -47,5 +50,5 @@ dependencies:
 - name: delivery-app
   repository: file://../../applications/delivery-app
   version: 0.1.0
-digest: sha256:89fc2ba8b44f23f85e7876afae46ae5896d9a2371765ac2e606993958184869d
-generated: "2024-05-27T14:41:23.985474+02:00"
+digest: sha256:cf8e9c64a15a5e8f2413240fc83ffb2378380a33114aa9e301a64f2b40bada8d
+generated: "2024-05-27T22:19:25.3134651+02:00"
