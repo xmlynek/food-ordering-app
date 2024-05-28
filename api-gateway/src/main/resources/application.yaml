@@ -2,6 +2,8 @@ server:
   port: ${SERVER_PORT:8080}
 
 spring:
+  application:
+    name: api-gateway
   cloud:
     gateway:
       default-filters:
@@ -53,3 +55,22 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
+management:
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_TRACING_ENDPOINT:http://localhost:9411/api/v2/spans}
+  tracing:
+    enabled: true
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:0.35}
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

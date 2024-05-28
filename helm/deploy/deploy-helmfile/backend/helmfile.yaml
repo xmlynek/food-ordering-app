@@ -61,3 +61,15 @@ releases:
     version: 19.3.3
     values:
       - "./values/redis-values.yaml"
+
+  - name: prometheus-stack
+    chart: prometheus-community/kube-prometheus-stack
+    version: 58.7.2
+    values:
+      - "./values/prometheus-stack-values.yaml"
+
+  - name: zipkin
+    chart: zipkin/zipkin
+    version: 0.3.3
+    values:
+      - "./values/zipkin-values.yaml"
