@@ -27,6 +27,7 @@
     <module>kitchen-service</module>
     <module>delivery-service</module>
     <module>frontend</module>
+    <module>embedding-service</module>
   </modules>
 
   <properties>
@@ -45,6 +46,7 @@
     <docker.repo.username>xmlynek</docker.repo.username>
     <jib.maven.plugin.version>3.4.2</jib.maven.plugin.version>
     <jib.skip>false</jib.skip>
+    <spring-cloud-aws-dependencies.version>3.2.0</spring-cloud-aws-dependencies.version>
   </properties>
 
   <dependencyManagement>
@@ -53,6 +55,13 @@
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct</artifactId>
         <version>${org.mapstruct.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.awspring.cloud</groupId>
+        <artifactId>spring-cloud-aws-dependencies</artifactId>
+        <version>${spring-cloud-aws-dependencies.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.projectlombok</groupId>

@@ -4,6 +4,7 @@ ORDER_SERVICE_URI: http://localhost:8080
 RESTAURANT_SERVICE_URI: http://localhost:8085
 KITCHEN_SERVICE_URI: http://localhost:8088
 DELIVERY_SERVICE_URI: http://localhost:8092
+EMBEDDINGS_SERVICE_URI: http://localhost:5000
 
 
 logging:

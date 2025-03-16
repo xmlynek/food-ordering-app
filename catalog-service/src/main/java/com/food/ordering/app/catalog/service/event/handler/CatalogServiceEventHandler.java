@@ -10,6 +10,7 @@ import com.food.ordering.app.common.event.RestaurantCreatedEvent;
 import com.food.ordering.app.common.event.RestaurantDeletedEvent;
 import com.food.ordering.app.common.event.RestaurantMenuItemCreatedEvent;
 import com.food.ordering.app.common.event.RestaurantMenuItemDeletedEvent;
+import com.food.ordering.app.common.event.RestaurantMenuItemImageEmbeddingsCalculatedEvent;
 import com.food.ordering.app.common.event.RestaurantMenuItemRevisedEvent;
 import com.food.ordering.app.common.event.RestaurantRevisedEvent;
 import com.food.ordering.app.common.exception.MenuItemNotFoundException;
@@ -45,7 +46,37 @@ public class CatalogServiceEventHandler {
         .onEvent(RestaurantMenuItemCreatedEvent.class, this::createMenuItem)
         .onEvent(RestaurantMenuItemRevisedEvent.class, this::reviseMenuItem)
         .onEvent(RestaurantMenuItemDeletedEvent.class, this::deleteMenuItem)
+        .andForAggregateType("com.food.ordering.app.restaurant.service.entity.MenuItemEmbeddings")
+        .onEvent(RestaurantMenuItemImageEmbeddingsCalculatedEvent.class,
+            this::updateMenuItemEmbeddings)
         .build();
+  }
+
+  private Mono<Void> updateMenuItemEmbeddings(
+      DomainEventEnvelope<RestaurantMenuItemImageEmbeddingsCalculatedEvent> de) {
+    return Mono.defer(() -> {
+          RestaurantMenuItemImageEmbeddingsCalculatedEvent event = de.getEvent();
+          String restaurantId = event.restaurantId();
+          String menuItemId = event.productId();
+          log.info(
+              "Handling RestaurantMenuItemImageEmbeddingsCalculatedEvent for restaurant with ID {} and menu item with ID {}",
+              restaurantId, menuItemId);
+
+          MenuItem menuItem = menuItemMapper.restaurantMenuItemImageEmbeddingsEvent(event);
+
+          return menuItemService.reviseMenuItem(menuItem).doOnSuccess(
+              r -> log.info("MenuItem with ID {} in restaurant with ID {} revised", menuItemId,
+                  restaurantId)).then();
+        })
+        .retryWhen(Retry.backoff(3, Duration.ofSeconds(15))
+            .filter(e -> e instanceof MenuItemNotFoundException
+                || e instanceof RestaurantNotFoundException))
+        .onErrorResume(e -> {
+          log.error(
+              "Error revising image embeddings for menu item with ID {} in restaurant with ID {}: {}",
+              de.getAggregateId(), de.getEvent().restaurantId(), e.getMessage(), e);
+          return Mono.empty();
+        });
   }
 
 

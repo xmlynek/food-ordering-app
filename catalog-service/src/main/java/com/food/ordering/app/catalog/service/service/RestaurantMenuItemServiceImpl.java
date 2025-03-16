@@ -50,6 +50,8 @@ public class RestaurantMenuItemServiceImpl implements RestaurantMenuItemService 
           existingItem.setImageUrl(
               updatedMenuItem.getImageUrl() != null ? updatedMenuItem.getImageUrl()
                   : existingItem.getImageUrl());
+          existingItem.setQ768_image_embeddings(updatedMenuItem.getQ768_image_embeddings() != null ?
+              updatedMenuItem.getQ768_image_embeddings() : existingItem.getQ768_image_embeddings());
           existingItem.setLastModifiedAt(LocalDateTime.now());
 
           return menuItemRepository.save(existingItem);

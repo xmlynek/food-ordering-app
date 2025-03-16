@@ -1,6 +1,29 @@
 version: '3.7'
 
 services:
+  minio:
+    image: bitnami/minio:${MINIO_VERSION:-latest}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    restart: on-failure
+#    volumes:
+#      - ./volumes/minio/data:/bitnami/minio/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-password}
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:${KAFKA_UI_VERSION:-latest}
+    ports:
+      - "8060:8080"
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+
   catalog-service-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION:-7.17.18}
     restart: on-failure

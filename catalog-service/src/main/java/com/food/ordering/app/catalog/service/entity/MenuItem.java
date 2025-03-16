@@ -50,6 +50,9 @@ public class MenuItem {
   @Field(type = FieldType.Text)
   private String imageUrl;
 
+  @Field(type = FieldType.Dense_Vector, dims = 768)
+  private float[] q768_image_embeddings;
+
   @Field(name = "join_field")
   @JoinTypeRelations(relations = @JoinTypeRelation(parent = "restaurant", children = {"menu_item"}))
   private JoinField<String> joinField;
