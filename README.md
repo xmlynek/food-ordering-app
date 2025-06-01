@@ -63,3 +63,52 @@ machine and follow the steps below:
 
 If you encounter any issues related to service API activation, you will need to enable the required
 APIs manually.
+
+## Architecture
+
+### Application high level overview diagram
+
+![Application_Diagram_High_level_overview.png](readme-images/Application_Diagram_High_level_overview.png)
+
+![food-ordering-app-overview.png](readme-images/food-ordering-app-overview.png)
+
+![restaurant-app-overview.png](readme-images/restaurant-app-overview.png)
+
+![delivery-app-overview.png](readme-images/delivery-app-overview.png)
+
+### Use cases
+
+#### Food ordering application
+![food-ordering-app-use-case.png](readme-images/food-ordering-app-use-case.png)
+
+#### Restaurant application
+
+![restaurant-app-use-case.png](readme-images/restaurant-app-use-case.png)
+
+#### Delivery application
+
+![delivery-app-use-case.png](readme-images/delivery-app-use-case.png)
+
+### Distributed transactions - SAGA
+
+![create_order_saga.png](readme-images/create_order_saga.png)
+
+![create_order_saga_details.png](readme-images/create_order_saga_details.png)
+
+### CQRS
+
+#### Restaurant Service
+
+![Restaurant_service_CQRS.png](readme-images/Restaurant_service_CQRS.png)
+
+![Restaurant_CQRS_details.png](readme-images/Restaurant_CQRS_details.png)
+
+### Events
+
+#### Delivery Service
+
+![Delivery_service_events.png](readme-images/Delivery_service_events.png)
+
+#### Kitchen Service
+
+![Kitchen_service_events.png](readme-images/Kitchen_service_events.png)
