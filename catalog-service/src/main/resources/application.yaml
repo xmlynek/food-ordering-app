@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: catalog-service
+  main:
+    web-application-type: reactive
   flyway:
     url: ${FLYWAY_DATASOURCE_URL}
     user: ${DATASOURCE_USERNAME}
@@ -34,6 +36,26 @@ spring:
   elasticsearch:
     uris: ${ELASTICSEARCH_REACTIVE_CLIENT_ENDPOINTS}
 
+management:
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_TRACING_ENDPOINT:http://localhost:9411/api/v2/spans}
+  tracing:
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:0.15}
+    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            request: true
+    tags:
+      application: ${spring.application.name}
 
 eventuatelocal:
   kafka:
@@ -56,6 +78,8 @@ eventuate:
     schema: ${EVENTUATE_DATABASE_SCHEMA:public}
 
 logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
   level:
     root: INFO
     reactor.netty: WARN

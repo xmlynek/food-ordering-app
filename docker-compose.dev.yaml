@@ -200,10 +200,25 @@ services:
     ports:
       - '9411:9411'
     restart: on-failure
-    deploy:
-      resources:
-        limits:
-          memory: 128M
+    environment:
+      - STORAGE_TYPE=mem
+
+  prometheus:
+    image: prom/prometheus:${PROMETHEUS_VERSION:-latest}
+    restart: on-failure
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./volumes/prometheus/prometheus-local.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:${GRAFANA_VERSION:-latest}
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: on-failure
+    volumes:
+      - ./volumes/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
 
   cdcservice:
     image: eventuateio/eventuate-cdc-service:${EVENTUATE_CDC_VERSION:-0.16.0.RELEASE}
