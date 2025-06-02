@@ -7,9 +7,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.JoinTypeRelation;
+import org.springframework.data.elasticsearch.annotations.JoinTypeRelations;
+import org.springframework.data.elasticsearch.core.join.JoinField;
 
+@Document(indexName = "restaurants")
 @Getter
 @Setter
 @Builder
@@ -17,7 +23,11 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @NoArgsConstructor
 public class MenuItem {
 
+  @Id
   private String id;
+
+  @Field(type = FieldType.Keyword)
+  private String restaurantId;
 
   @Field(type = FieldType.Text)
   private String name;
@@ -39,4 +49,11 @@ public class MenuItem {
 
   @Field(type = FieldType.Text)
   private String imageUrl;
+
+  @Field(type = FieldType.Dense_Vector, dims = 768)
+  private float[] q768_image_embeddings;
+
+  @Field(name = "join_field")
+  @JoinTypeRelations(relations = @JoinTypeRelation(parent = "restaurant", children = {"menu_item"}))
+  private JoinField<String> joinField;
 }

@@ -10,6 +10,9 @@
   </parent>
 
   <artifactId>api-gateway</artifactId>
+  <properties>
+    <feign-reactor-spring-cloud-starter.version>4.2.1</feign-reactor-spring-cloud-starter.version>
+  </properties>
 
 
   <dependencies>
@@ -24,6 +27,17 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.playtika.reactivefeign/feign-reactor-spring-cloud-starter -->
+    <dependency>
+      <groupId>com.playtika.reactivefeign</groupId>
+      <artifactId>feign-reactor-spring-cloud-starter</artifactId>
+      <version>${feign-reactor-spring-cloud-starter.version}</version>
+      <type>pom</type>
     </dependency>
   </dependencies>
 

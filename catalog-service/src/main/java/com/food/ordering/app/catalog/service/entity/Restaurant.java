@@ -1,9 +1,9 @@
 package com.food.ordering.app.catalog.service.entity;
 
+import static com.food.ordering.app.catalog.service.service.RestaurantMenuItemQueryServiceImpl.RESTAURANT_RELATION_NAME;
+
 import com.food.ordering.app.common.model.Address;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +13,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.JoinTypeRelation;
+import org.springframework.data.elasticsearch.annotations.JoinTypeRelations;
+import org.springframework.data.elasticsearch.core.join.JoinField;
 
 @Document(indexName = "restaurants")
 @Getter
@@ -43,8 +46,8 @@ public class Restaurant {
   @Field(type = FieldType.Boolean)
   private Boolean isAvailable;
 
-  @Field(type = FieldType.Nested, includeInParent = true)
+  @Field(name = "join_field")
+  @JoinTypeRelations(relations = @JoinTypeRelation(parent = "restaurant", children = {"menu_item"}))
   @Builder.Default
-  private List<MenuItem> menuItems = new ArrayList<>();
-
+  private JoinField<String> joinField = new JoinField<>(RESTAURANT_RELATION_NAME);
 }
