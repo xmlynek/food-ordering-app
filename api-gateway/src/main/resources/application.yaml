@@ -2,6 +2,8 @@ server:
   port: ${SERVER_PORT:8080}
 
 spring:
+  application:
+    name: api-gateway
   cloud:
     gateway:
       default-filters:
@@ -25,31 +27,134 @@ spring:
             - Path=/catalog-service/**
           filters:
             - RewritePath=/catalog-service(?<segment>.*), $\{segment}
+            - name: CircuitBreaker
+              args:
+                name: catalogService
+                fallbackUri: forward:/fallback/catalog-service
         - id: order-service
           uri: ${ORDER_SERVICE_URI}
           predicates:
             - Path=/order-service/**
           filters:
             - RewritePath=/order-service(?<segment>.*), $\{segment}
+            - name: CircuitBreaker
+              args:
+                name: orderService
+                fallbackUri: forward:/fallback/order-service
         - id: restaurant-service
           uri: ${RESTAURANT_SERVICE_URI}
           predicates:
             - Path=/restaurant-service/**
           filters:
             - RewritePath=/restaurant-service(?<segment>.*), $\{segment}
+            - name: CircuitBreaker
+              args:
+                name: restaurantService
+                fallbackUri: forward:/fallback/restaurant-service
         - id: kitchen-service
           uri: ${KITCHEN_SERVICE_URI}
           predicates:
             - Path=/kitchen-service/**
           filters:
             - RewritePath=/kitchen-service(?<segment>.*), $\{segment}
+            - name: CircuitBreaker
+              args:
+                name: kitchenService
+                fallbackUri: forward:/fallback/kitchen-service
         - id: delivery-service
           uri: ${DELIVERY_SERVICE_URI}
           predicates:
             - Path=/delivery-service/**
           filters:
             - RewritePath=/delivery-service(?<segment>.*), $\{segment}
+            - name: CircuitBreaker
+              args:
+                name: deliveryService
+                fallbackUri: forward:/fallback/delivery-service
   data:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoint:
+    health:
+      show-details: ALWAYS
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_TRACING_ENDPOINT:http://localhost:9411/api/v2/spans}
+  tracing:
+    enabled: true
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:0.35}
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 100
+        permittedNumberOfCallsInHalfOpenState: 10
+        minimumNumberOfCalls: 10
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+      shared:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 16
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 3s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        recordExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+        ignoreExceptions:
+          - org.springframework.web.client.HttpClientErrorException
+    instances:
+      catalogService:
+        baseConfig: shared
+      orderService:
+        baseConfig: shared
+      restaurantService:
+        baseConfig: shared
+      kitchenService:
+        baseConfig: shared
+      deliveryService:
+        baseConfig: shared
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 2s
+        cancelRunningFuture: true
+        event-consumer-buffer-size: 10
+      shared:
+        timeoutDuration: 1s
+        cancelRunningFuture: true
+        event-consumer-buffer-size: 10
+    instances:
+      catalogService:
+        baseConfig: shared
+      orderService:
+        baseConfig: shared
+      restaurantService:
+        baseConfig: shared
+      kitchenService:
+        baseConfig: shared
+      deliveryService:
+        baseConfig: shared
