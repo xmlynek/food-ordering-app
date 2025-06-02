@@ -13,12 +13,14 @@ public interface MenuItemMapper {
 
   @Mappings({
       @Mapping(target = "id", expression = "java(menuItemId)"),
+      @Mapping(target = "joinField", ignore = true),
   })
   MenuItem restaurantMenuItemCreatedEvent(String menuItemId, RestaurantMenuItemCreatedEvent event);
 
   @Mappings({
-    @Mapping(target = "createdAt", ignore = true),
-    @Mapping(target = "id", expression = "java(menuItemId)"),
+      @Mapping(target = "createdAt", ignore = true),
+      @Mapping(target = "joinField", ignore = true),
+      @Mapping(target = "id", expression = "java(menuItemId)"),
   })
   MenuItem restaurantMenuItemRevisedEvent(String menuItemId, RestaurantMenuItemRevisedEvent event);
 

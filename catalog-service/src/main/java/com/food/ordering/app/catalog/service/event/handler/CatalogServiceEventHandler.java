@@ -12,13 +12,17 @@ import com.food.ordering.app.common.event.RestaurantMenuItemCreatedEvent;
 import com.food.ordering.app.common.event.RestaurantMenuItemDeletedEvent;
 import com.food.ordering.app.common.event.RestaurantMenuItemRevisedEvent;
 import com.food.ordering.app.common.event.RestaurantRevisedEvent;
+import com.food.ordering.app.common.exception.MenuItemNotFoundException;
+import com.food.ordering.app.common.exception.RestaurantNotFoundException;
 import io.eventuate.tram.events.subscriber.DomainEventEnvelope;
 import io.eventuate.tram.reactive.events.subscriber.ReactiveDomainEventHandlers;
 import io.eventuate.tram.reactive.events.subscriber.ReactiveDomainEventHandlersBuilder;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 @Component
 @Slf4j
@@ -101,47 +105,54 @@ public class CatalogServiceEventHandler {
 
   private Mono<Void> createMenuItem(DomainEventEnvelope<RestaurantMenuItemCreatedEvent> de) {
     return Mono.defer(() -> {
-      String menuItemId = de.getAggregateId();
-      RestaurantMenuItemCreatedEvent event = de.getEvent();
-      String restaurantId = event.restaurantId();
+          String menuItemId = de.getAggregateId();
+          RestaurantMenuItemCreatedEvent event = de.getEvent();
+          String restaurantId = event.restaurantId();
 
-      log.info(
-          "Handling RestaurantMenuItemCreatedEvent for restaurant with ID {} and menu item with ID {}",
-          restaurantId, menuItemId);
+          log.info(
+              "Handling RestaurantMenuItemCreatedEvent for restaurant with ID {} and menu item with ID {}",
+              restaurantId, menuItemId);
 
-      MenuItem menuItem = menuItemMapper.restaurantMenuItemCreatedEvent(menuItemId, event);
+          MenuItem menuItem = menuItemMapper.restaurantMenuItemCreatedEvent(menuItemId, event);
 
-      return menuItemService.addMenuItem(restaurantId, menuItem).doOnSuccess(
-          r -> log.info("MenuItem with ID {} in restaurant with ID {} created", r.getId(),
-              restaurantId)).then();
-    }).onErrorResume(e -> {
-      log.error("Error creating menu item with ID {} in restaurant with ID {}: {}",
-          de.getAggregateId(), de.getEvent().restaurantId(), e.getMessage(), e);
+          return menuItemService.addMenuItem(restaurantId, menuItem).doOnSuccess(
+              r -> log.info("MenuItem with ID {} in restaurant with ID {} created", r.getId(),
+                  restaurantId)).then();
+        })
+        .retryWhen(Retry.backoff(3, Duration.ofSeconds(15))
+            .filter(e -> e instanceof RestaurantNotFoundException))
+        .onErrorResume(e -> {
+          log.error("Error creating menu item with ID {} in restaurant with ID {}: {}",
+              de.getAggregateId(), de.getEvent().restaurantId(), e.getMessage(), e);
 //      return Mono.error(e);
-      return Mono.empty();
-    });
+          return Mono.empty();
+        });
   }
 
   public Mono<Void> reviseMenuItem(DomainEventEnvelope<RestaurantMenuItemRevisedEvent> de) {
     return Mono.defer(() -> {
-      String menuItemId = de.getAggregateId();
-      RestaurantMenuItemRevisedEvent event = de.getEvent();
-      String restaurantId = event.restaurantId();
-      log.info(
-          "Handling RestaurantMenuItemRevisedEvent for restaurant with ID {} and menu item with ID {}",
-          restaurantId, menuItemId);
+          String menuItemId = de.getAggregateId();
+          RestaurantMenuItemRevisedEvent event = de.getEvent();
+          String restaurantId = event.restaurantId();
+          log.info(
+              "Handling RestaurantMenuItemRevisedEvent for restaurant with ID {} and menu item with ID {}",
+              restaurantId, menuItemId);
 
-      MenuItem menuItem = menuItemMapper.restaurantMenuItemRevisedEvent(menuItemId, event);
+          MenuItem menuItem = menuItemMapper.restaurantMenuItemRevisedEvent(menuItemId, event);
 
-      return menuItemService.reviseMenuItem(restaurantId, menuItem).doOnSuccess(
-          r -> log.info("MenuItem with ID {} in restaurant with ID {} revised", r.getId(),
-              restaurantId)).then();
-    }).onErrorResume(e -> {
-      log.error("Error revising menu item with ID {} in restaurant with ID {}: {}",
-          de.getAggregateId(), de.getEvent().restaurantId(), e.getMessage(), e);
+          return menuItemService.reviseMenuItem(menuItem).doOnSuccess(
+              r -> log.info("MenuItem with ID {} in restaurant with ID {} revised", menuItemId,
+                  restaurantId)).then();
+        })
+        .retryWhen(Retry.backoff(3, Duration.ofSeconds(15))
+            .filter(e -> e instanceof MenuItemNotFoundException
+                || e instanceof RestaurantNotFoundException))
+        .onErrorResume(e -> {
+          log.error("Error revising menu item with ID {} in restaurant with ID {}: {}",
+              de.getAggregateId(), de.getEvent().restaurantId(), e.getMessage(), e);
 //      return Mono.error(e);
-      return Mono.empty();
-    });
+          return Mono.empty();
+        });
   }
 
   private Mono<Void> deleteMenuItem(DomainEventEnvelope<RestaurantMenuItemDeletedEvent> de) {
@@ -153,7 +164,7 @@ public class CatalogServiceEventHandler {
           "Handling RestaurantMenuItemDeletedEvent for menu item with ID {} in restaurant with ID {}",
           menuItemId, restaurantId);
 
-      return menuItemService.deleteMenuItem(restaurantId, menuItemId)
+      return menuItemService.deleteMenuItem(menuItemId)
           .doOnSuccess(
               r -> log.info("MenuItem with ID {} in restaurant with ID {} was deleted", menuItemId,
                   restaurantId)).then();

@@ -12,7 +12,7 @@ import org.mapstruct.Mappings;
 public interface RestaurantMapper {
 
   @Mappings({
-      @Mapping(target = "menuItems", ignore = true),
+      @Mapping(target = "joinField", ignore = true),
   })
   Restaurant restaurantCreatedEventToRestaurant(String id,
       RestaurantCreatedEvent restaurantCreatedEvent);

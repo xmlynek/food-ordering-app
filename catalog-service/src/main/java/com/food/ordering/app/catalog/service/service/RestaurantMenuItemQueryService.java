@@ -1,6 +1,5 @@
 package com.food.ordering.app.catalog.service.service;
 
-import com.food.ordering.app.catalog.service.dto.MenuItemDto;
 import com.food.ordering.app.catalog.service.entity.MenuItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,5 +9,5 @@ public interface RestaurantMenuItemQueryService {
 
   Mono<Page<MenuItem>> findAllAvailableMenuItems(String restaurantId, Pageable pageable);
 
-  Mono<MenuItemDto> findMenuItemById(String restaurantId, String menuItemId);
+  Mono<MenuItem> findMenuItemById(String restaurantId, String menuItemId);
 }
